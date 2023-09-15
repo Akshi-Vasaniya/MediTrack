@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CustomOutlinedTextInputLayout" parent="">
+        <item name="boxStrokeColor">@color/darkblue</item> <!-- Change this to your desired color -->
+    </style>
+</resources>

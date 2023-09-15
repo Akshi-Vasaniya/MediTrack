@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".LoginFragment">
+
+    <ImageView
+        android:id="@+id/top_shape"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="-60dp"
+        android:layout_marginRight="-60dp"
+        android:src="@drawable/shape" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="108dp"
+                android:layout_marginHorizontal="20dp"
+                android:text="Login"
+                android:textSize="70sp"
+                android:textStyle="bold"
+                android:textColor="@color/prusianblue"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="20dp"
+                android:text="Please sign in to continue"
+                android:textSize="20dp"
+                android:textColor="@color/lightblack"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="10dp"
+            android:paddingVertical="20dp"
+            android:paddingHorizontal="10dp">
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Email:"-->
+<!--                android:textSize="18dp"-->
+<!--                android:textColor="@color/black"/>-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/email"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="Enter Email"
+                    android:textColor="@color/prusianblue"
+                    android:drawableLeft="@drawable/round_mail_24"
+                    android:drawablePadding="10dp"/>
+            </com.google.android.material.textfield.TextInputLayout>
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Mobile No.:"-->
+<!--                android:textSize="18dp"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:layout_marginTop="10dp"/>-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/password"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="Enter Password"
+                    android:textColor="@color/prusianblue"
+                    android:drawableLeft="@drawable/round_password_24"
+                    android:drawablePadding="10dp" />
+            </com.google.android.material.textfield.TextInputLayout>
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Enter OTP:"-->
+<!--                android:textSize="18dp"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:layout_marginTop="15dp"/>-->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Login"
+                android:textColor="@color/white"
+                app:backgroundTint="@null"
+                android:background="@drawable/button_background"
+                app:icon="@drawable/round_arrow_right_alt_24"
+                app:iconGravity="textEnd"
+                app:iconTint="@color/white"/>
+            <TextView
+                android:id="@+id/already_account"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Don't have an account?"
+                android:layout_gravity="end"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp"
+                android:textColor="@color/greentype" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/bottom_shape"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="-60dp"
+        android:layout_marginLeft="-60dp"
+        android:src="@drawable/shape"
+        android:rotation="180"/>
+
+</FrameLayout>
