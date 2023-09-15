@@ -1,4 +1,4 @@
-package com.example.meditrack
+package com.example.meditrack.register
 
 import androidx.lifecycle.ViewModel
 

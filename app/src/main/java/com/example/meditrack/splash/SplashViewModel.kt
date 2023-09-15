@@ -1,4 +1,4 @@
-package com.example.meditrack
+package com.example.meditrack.splash
 
 import androidx.lifecycle.ViewModel
 
