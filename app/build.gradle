@@ -7,6 +7,7 @@ android {
     namespace 'com.example.meditrack'
     compileSdk 33
 
+
     defaultConfig {
         applicationId "com.example.meditrack"
         minSdk 24
@@ -69,5 +70,10 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
 
+    //Image Library
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+
+    //SDP for responsive layout
+    implementation 'com.intuit.sdp:sdp-android:1.1.0'
 
 }
