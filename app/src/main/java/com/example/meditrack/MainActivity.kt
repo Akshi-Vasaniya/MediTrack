@@ -17,27 +17,30 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+//        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+//
+//        this.supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
-        this.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        setSupportActionBar(findViewById(R.id.toolbar))
 
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container_faculty) as NavHostFragment
-
-        appBarConfiguration = AppBarConfiguration.Builder(
-            setOf(
-                R.id.splashFragment,
-                R.id.loginFragment,
-                R.id.registrationFragment
-            )
-        ).build()
-
-        navController = navHostFragment.findNavController()
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
+//        val navHostFragment =
+//            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container_faculty) as NavHostFragment
+//
+//        appBarConfiguration = AppBarConfiguration.Builder(
+//            setOf(
+//                R.id.splashFragment,
+//                R.id.loginFragment,
+//                R.id.registrationFragment,
+//                R.id.homeFragment
+//            )
+//        ).build()
+//
+//        navController = navHostFragment.findNavController()
+//        setupActionBarWithNavController(navController, appBarConfiguration)
+//        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp() || super.onSupportNavigateUp()
-    }
+//    override fun onSupportNavigateUp(): Boolean {
+//        return navController.navigateUp() || super.onSupportNavigateUp()
+//    }
 }

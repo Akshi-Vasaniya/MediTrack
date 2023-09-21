@@ -8,7 +8,6 @@
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.example.meditrack.splash.SplashFragment"
-
         tools:layout="@layout/fragment_splash" >
         <action
             android:id="@+id/action_splashFragment_to_loginFragment"
@@ -17,7 +16,6 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.meditrack.login.LoginFragment"
-
         tools:layout="@layout/fragment_login" >
         <action
             android:id="@+id/action_loginFragment_to_registrationFragment"
@@ -26,5 +24,14 @@
     <fragment
         android:id="@+id/registrationFragment"
         android:name="com.example.meditrack.register.RegistrationFragment"
-        tools:layout="@layout/fragment_registration" />
+        tools:layout="@layout/fragment_registration" >
+        <action
+            android:id="@+id/action_registrationFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.meditrack.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" />
 </navigation>
