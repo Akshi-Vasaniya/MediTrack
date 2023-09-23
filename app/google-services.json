@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "245219775206",
+    "project_id": "meditrack-ed326",
+    "storage_bucket": "meditrack-ed326.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:245219775206:android:a98a3fa8c4b7e5a549a127",
+        "android_client_info": {
+          "package_name": "com.example.meditrack"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGbE1AI5T9-7CZGpgWDdVJN1S07vRiyPc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

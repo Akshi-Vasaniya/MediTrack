@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".register.RegistrationFragment">
+    tools:context=".mainActivity.register.RegistrationFragment">
 
     <ImageView
         android:id="@+id/top_shape"
@@ -33,11 +33,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="25dp"
                 android:layout_marginHorizontal="20dp"
                 android:text="Registration"
-                android:textSize="48sp"
-                android:textStyle="bold"
+                android:textSize="@dimen/_30sdp"
+                android:fontFamily="@font/comfortaa_bold"
                 android:textColor="@color/prusianblue"/>
             <TextView
                 android:layout_width="wrap_content"
@@ -45,18 +45,28 @@
                 android:layout_marginTop="2dp"
                 android:layout_marginHorizontal="20dp"
                 android:text="Please sign up to continue"
-                android:textSize="20dp"
+                android:textSize="@dimen/_10sdp"
+                android:fontFamily="@font/comfortaa_regular"
                 android:textColor="@color/lightblack"/>
         </LinearLayout>
-        <ImageView
-            android:id="@+id/profile_image"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+        <LinearLayout
+            android:id="@+id/profile_image_layout"
+            android:layout_width="@dimen/_80sdp"
+            android:layout_height="@dimen/_80sdp"
+            android:layout_marginTop="@dimen/_20sdp"
             android:layout_gravity="center"
-            android:padding="12dp"
-            android:layout_marginTop="15dp"
-            android:src="@drawable/noun_profile_1192752"
-            android:background="@drawable/circle_image"/>
+            android:background="@drawable/circle_image">
+            <ImageView
+                android:id="@+id/profile_image"
+                android:layout_width="@dimen/_80sdp"
+                android:layout_height="@dimen/_80sdp"
+                android:src="@drawable/noun_profile_1192752"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:paddingTop="12dp"
+                />
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -70,21 +80,27 @@
                 android:orientation="horizontal">
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_43sdp"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    >
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/name"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:hint="Enter Name"
+                        android:hint="Name"
                         android:textColor="@color/prusianblue"
                         android:drawableLeft="@drawable/noun_name_2776910"
-                        android:drawablePadding="10dp" />
+                        android:drawablePadding="10dp"
+                        android:textSize="@dimen/_10sdp"
+                        android:padding="10dp"
+                        android:inputType="textPersonName"
+                        android:fontFamily="@font/comfortaa_regular"
+                        />
                 </com.google.android.material.textfield.TextInputLayout>
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_43sdp"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_weight="1"
                     android:layout_marginLeft="5dp">
@@ -92,31 +108,46 @@
                         android:id="@+id/surname"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:hint="Enter Surname"
+                        android:hint="Surname"
                         android:textColor="@color/prusianblue"
                         android:drawableLeft="@drawable/noun_name_2776910"
-                        android:drawablePadding="10dp"/>
+                        android:drawablePadding="10dp"
+                        android:textSize="@dimen/_10sdp"
+                        android:padding="10dp"
+                        android:inputType="textPersonName"
+                        android:fontFamily="@font/comfortaa_regular"/>
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
+
+
             <!--            <TextView-->
             <!--                android:layout_width="wrap_content"-->
             <!--                android:layout_height="wrap_content"-->
             <!--                android:text="Email:"-->
             <!--                android:textSize="18dp"-->
             <!--                android:textColor="@color/black"/>-->
+
+
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_43sdp"
+                android:layout_marginTop="@dimen/_10sdp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:hint="Enter Email"
-                    android:textColor="@color/prusianblue"
                     android:drawableLeft="@drawable/round_mail_24"
-                    android:drawablePadding="10dp"/>
+                    android:drawablePadding="10dp"
+                    android:fontFamily="@font/comfortaa_regular"
+                    android:hint="Email"
+                    android:inputType="textEmailAddress"
+                    android:textColor="@color/prusianblue"
+                    android:padding="10dp"
+                    android:textSize="@dimen/_10sdp" />
             </com.google.android.material.textfield.TextInputLayout>
+
             <!--            <TextView-->
             <!--                android:layout_width="wrap_content"-->
             <!--                android:layout_height="wrap_content"-->
@@ -124,34 +155,52 @@
             <!--                android:textSize="18dp"-->
             <!--                android:textColor="@color/black"-->
             <!--                android:layout_marginTop="10dp"/>-->
+
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_43sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                app:passwordToggleEnabled="true"
+                app:passwordToggleTint="@color/prusianblue"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:hint="Enter Password"
+                    android:hint="Password"
                     android:textColor="@color/prusianblue"
-                    android:drawableLeft="@drawable/round_password_24"
-                    android:drawablePadding="10dp" />
+                    android:drawableStart="@drawable/round_password_24"
+                    android:drawablePadding="10dp"
+                    android:textSize="@dimen/_10sdp"
+                    android:padding="10dp"
+                    android:inputType="textPassword"
+                    android:fontFamily="@font/comfortaa_regular"/>
             </com.google.android.material.textfield.TextInputLayout>
+
+
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_43sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                app:passwordToggleEnabled="true"
+                app:passwordToggleTint="@color/prusianblue"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/confirm_password"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:hint="Enter Password"
+                    android:hint="Confirm Password"
                     android:textColor="@color/prusianblue"
-                    android:drawableLeft="@drawable/round_password_24"
-                    android:drawablePadding="10dp" />
+                    android:drawableStart="@drawable/round_password_24"
+                    android:drawablePadding="10dp"
+                    android:textSize="@dimen/_10sdp"
+                    android:padding="10dp"
+                    android:inputType="textPassword"
+                    android:fontFamily="@font/comfortaa_regular"/>
             </com.google.android.material.textfield.TextInputLayout>
+
 <!--            <com.google.android.material.button.MaterialButton-->
 <!--                android:layout_width="wrap_content"-->
 <!--                android:layout_height="25dp"-->
@@ -198,14 +247,16 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/register_btn"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_35sdp"
                 android:layout_marginTop="10dp"
                 android:text="Register"
+                android:textAlignment="center"
                 android:textColor="@color/white"
                 app:backgroundTint="@null"
                 android:background="@drawable/button_background"
                 app:icon="@drawable/round_arrow_right_alt_24"
                 app:iconGravity="textEnd"
+                android:fontFamily="@font/comfortaa_bold"
                 app:iconTint="@color/white"/>
             <TextView
                 android:id="@+id/already_account"
@@ -213,9 +264,11 @@
                 android:layout_height="wrap_content"
                 android:text="Already have an account?"
                 android:layout_gravity="end"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
-                android:textColor="@color/greentype" />
+                android:textSize="@dimen/_10sdp"
+                android:textColor="@color/greentype"
+                android:fontFamily="@font/comfortaa_regular"/>
         </LinearLayout>
     </LinearLayout>
 
