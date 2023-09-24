@@ -14,6 +14,8 @@
     <color name="yellowtype">#FCEE21</color>
     <color name="greentype">#009245</color>
     <color name="darkblue">#003F7D</color>
-    <color name="prusianblue">#053F5C</color>
+    <color name="prusianblue">#ffffff</color>
     <color name="transparent">#00000000</color>
+
+    <color name="dialogBackground">#60000000</color>
 </resources>

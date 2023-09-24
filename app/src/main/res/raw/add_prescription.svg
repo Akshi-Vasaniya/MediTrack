@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!-- Generator: Adobe Illustrator 22.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+<svg version="1.1"
+    id="Icons"
+    xmlns="http://www.w3.org/2000/svg"
+    x="0px"
+    y="0px"
+    viewBox="0 0 512 512"
+    style="enable-background:new 0 0 512 512;"
+    xml:space="preserve">
 <g>
 	<path id="XMLID_62_" style="fill:#FC840A;" d="M512,255.904c0,70.692-28.654,134.692-74.981,181.019S326.692,511.904,256,511.904
 		S121.308,483.25,74.981,436.924S0,326.597,0,255.904S28.654,121.212,74.981,74.885S185.308-0.096,256-0.096

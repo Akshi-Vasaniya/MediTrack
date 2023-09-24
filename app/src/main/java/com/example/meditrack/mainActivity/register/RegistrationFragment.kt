@@ -1,15 +1,13 @@
 package com.example.meditrack.mainActivity.register
 
 import android.app.Activity.RESULT_OK
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.*
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,21 +19,21 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.meditrack.R
 import com.example.meditrack.dataModel.User
+import com.example.meditrack.dataModel.User.Companion.isUsernameAvailable
 import com.example.meditrack.databinding.FragmentRegistrationBinding
+import com.example.meditrack.exception.handleException
 import com.example.meditrack.firebase.firebaseAuth
 import com.example.meditrack.firebase.userReference
 import com.example.meditrack.regularExpression.ListPattern
 import com.example.meditrack.regularExpression.MatchPattern.Companion.validate
+import com.example.meditrack.utility.progressDialog
 import com.example.meditrack.utility.utilityFunction
 import com.example.meditrack.utility.utilityFunction.Companion.bitmapToBase64
 import com.example.meditrack.utility.utilityFunction.Companion.uriToBitmap
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import java.io.ByteArrayOutputStream
-import java.io.FileNotFoundException
-import java.io.IOException
-import java.io.InputStream
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class RegistrationFragment : Fragment() {
@@ -54,6 +52,7 @@ class RegistrationFragment : Fragment() {
     private var inputProfileImage:Bitmap?=null
     private val TAG = "RegisterFragment"
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -69,6 +68,11 @@ class RegistrationFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         (activity as AppCompatActivity?)!!.supportActionBar!!.show()
+        binding.fragmentRegistrationEmailTextInputEditText.text?.clear()
+        binding.fragmentRegistrationNameTextInputEditText.text?.clear()
+        binding.fragmentRegistrationPasswordTextInputEditText.text?.clear()
+        binding.fragmentRegistrationSurnameTextInputEditText.text?.clear()
+        binding.fragmentRegistrationConfirmPasswordTextInputEditText.text?.clear()
     }
 
 
@@ -76,45 +80,53 @@ class RegistrationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentRegistrationBinding.bind(view)
 
-        binding.alreadyAccount.setOnClickListener {
+        binding.fragmentRegistrationLoginAccountText.setOnClickListener {
             findNavController().popBackStack()
             findNavController().navigate(R.id.loginFragment)
         }
 
         binding.apply {
-            name.addTextChangedListener(object : TextWatcher {
+            fragmentRegistrationNameTextInputEditText.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     val userInput = s.toString()
-                    if (!userInput.validate(ListPattern.getNameRegex())) {
-                        name.error = "Invalid name format"
+                    if(userInput=="")
+                    {
+                        fragmentRegistrationNameTextInputLayout.helperText="Required"
+                    }
+                    else if (!userInput.validate(ListPattern.getNameRegex())) {
+                        fragmentRegistrationNameTextInputLayout.helperText = "Invalid name format"
                     } else {
                         // Input is valid, clear the error
-                        name.error = null
-                        inputName=name.text.toString()
+                        fragmentRegistrationNameTextInputLayout.helperText = null
+                        inputName=fragmentRegistrationNameTextInputEditText.text.toString()
                     }
                 }
 
                 override fun afterTextChanged(s: Editable?) {}
             })
 
-            surname.addTextChangedListener(object :TextWatcher{
+            fragmentRegistrationSurnameTextInputEditText.addTextChangedListener(object :TextWatcher{
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     val userInput = s.toString()
-                    if (!userInput.validate(ListPattern.getNameRegex())) {
-                        surname.error = "Invalid surname format"
+                    if(userInput=="")
+                    {
+                        fragmentRegistrationSurnameTextInputLayout.helperText="Required"
+                    }
+                    else if (!userInput.validate(ListPattern.getNameRegex())) {
+                        fragmentRegistrationSurnameTextInputLayout.helperText = "Invalid surname format"
                     } else {
                         // Input is valid, clear the error
-                        if(inputName!=null && inputName==surname.text.toString())
+                        if(inputName!=null && inputName==fragmentRegistrationSurnameTextInputEditText.text.toString())
                         {
-                            surname.error="Surname is same as Name"
+                            fragmentRegistrationSurnameTextInputLayout.helperText = "Surname is same as Name"
                         }
                         else{
-                            surname.error = null
-                            inputSurname=surname.text.toString()
+                            fragmentRegistrationSurnameTextInputLayout.helperText = null
+                            inputSurname=fragmentRegistrationSurnameTextInputEditText.text.toString()
                         }
 
                     }
@@ -124,7 +136,7 @@ class RegistrationFragment : Fragment() {
 
             })
 
-            email.addTextChangedListener(object :TextWatcher{
+            fragmentRegistrationEmailTextInputEditText.addTextChangedListener(object :TextWatcher{
                 override fun beforeTextChanged(
                     s: CharSequence?,
                     start: Int,
@@ -136,17 +148,21 @@ class RegistrationFragment : Fragment() {
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     val userInput = s.toString()
-                    if (!userInput.validate(ListPattern.getEmailRegex())) {
-                        email.error = "Invalid email format"
+                    if(userInput=="")
+                    {
+                        fragmentRegistrationEmailTextInputLayout.helperText="Required"
+                    }
+                    else if (!userInput.validate(ListPattern.getEmailRegex())) {
+                        fragmentRegistrationEmailTextInputLayout.helperText = "Invalid email format"
                     } else {
                         // Input is valid, clear the error
-                        email.error = null
-                        inputEmail=email.text.toString()
+                        fragmentRegistrationEmailTextInputLayout.helperText = null
+                        inputEmail=fragmentRegistrationEmailTextInputEditText.text.toString()
                     }
                 }
             })
 
-            password.addTextChangedListener(object :TextWatcher{
+            fragmentRegistrationPasswordTextInputEditText.addTextChangedListener(object :TextWatcher{
                 override fun afterTextChanged(s: Editable?) {}
 
                 override fun beforeTextChanged(
@@ -158,23 +174,27 @@ class RegistrationFragment : Fragment() {
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     val userInput = s.toString()
-                    if (!userInput.validate(ListPattern.getPasswordRegex())) {
-                        password.error = "Invalid password format"
+                    if(userInput=="")
+                    {
+                        fragmentRegistrationPasswordTextInputLayout.helperText="Required"
+                    }
+                    else if (!userInput.validate(ListPattern.getPasswordRegex())) {
+                        fragmentRegistrationPasswordTextInputLayout.helperText = "Invalid password format"
                     } else {
                         // Input is valid, clear the error
-                        if(inputConfirmPassword!=null && password.text.toString()!=inputConfirmPassword){
-                            confirmPassword.error="Not Match"
+                        if(inputConfirmPassword!=null && fragmentRegistrationPasswordTextInputEditText.text.toString()!=inputConfirmPassword){
+                            fragmentRegistrationConfirmPasswordTextInputLayout.helperText="Not Match"
                         }
                         else{
-                            password.error = null
-                            inputPassword=password.text.toString()
+                            fragmentRegistrationPasswordTextInputLayout.helperText = null
+                            inputPassword=fragmentRegistrationPasswordTextInputEditText.text.toString()
                         }
 
                     }
                 }
             })
 
-            confirmPassword.addTextChangedListener(object : TextWatcher{
+            fragmentRegistrationConfirmPasswordTextInputEditText.addTextChangedListener(object : TextWatcher{
                 override fun beforeTextChanged(
                     s: CharSequence?,
                     start: Int,
@@ -184,17 +204,21 @@ class RegistrationFragment : Fragment() {
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     val userInput = s.toString()
-                    if (!userInput.validate(ListPattern.getPasswordRegex())) {
-                        confirmPassword.error = "Invalid confirm password format"
+                    if(userInput=="")
+                    {
+                        fragmentRegistrationConfirmPasswordTextInputLayout.helperText="Required"
+                    }
+                    else if (!userInput.validate(ListPattern.getPasswordRegex())) {
+                        fragmentRegistrationConfirmPasswordTextInputLayout.helperText = "Invalid confirm password format"
                     } else {
                         // Input is valid, clear the error
-                        if(inputPassword==null || inputPassword!=confirmPassword.text.toString())
+                        if(inputPassword==null || inputPassword!=fragmentRegistrationConfirmPasswordTextInputEditText.text.toString())
                         {
-                            confirmPassword.error="Not Match"
+                            fragmentRegistrationConfirmPasswordTextInputLayout.helperText="Not Match"
                         }
                         else{
-                            confirmPassword.error = null
-                            inputConfirmPassword = confirmPassword.text.toString()
+                            fragmentRegistrationConfirmPasswordTextInputLayout.helperText = null
+                            inputConfirmPassword = fragmentRegistrationConfirmPasswordTextInputEditText.text.toString()
                         }
 
                     }
@@ -204,13 +228,13 @@ class RegistrationFragment : Fragment() {
 
             })
 
-            registerBtn.setOnClickListener {
+            fragmentRegistrationRegisterButton.setOnClickListener {
 
-                if(name.error==null &&
-                    surname.error==null &&
-                    email.error==null &&
-                    password.error==null &&
-                    confirmPassword.error==null &&
+                if(fragmentRegistrationNameTextInputLayout.helperText==null &&
+                    fragmentRegistrationSurnameTextInputLayout.helperText==null &&
+                    fragmentRegistrationEmailTextInputLayout.helperText==null &&
+                    fragmentRegistrationPasswordTextInputLayout.helperText==null &&
+                    fragmentRegistrationConfirmPasswordTextInputLayout.helperText==null &&
                     inputName!=null &&
                     inputSurname!=null &&
                     inputEmail!=null &&
@@ -221,32 +245,38 @@ class RegistrationFragment : Fragment() {
                     inputPassword= inputPassword!!.trim()
                     inputName= inputName!!.trim().uppercase()
                     inputSurname= inputSurname!!.trim().uppercase()
-
+                    progressDialog.getInstance(requireActivity()).start("Loading...")
                     firebaseAuth.getFireBaseAuth().createUserWithEmailAndPassword(inputEmail!!,inputPassword!!).addOnCompleteListener {
                         if(it.isSuccessful)
                         {
-                            var imageString:String? = null
-                            if(inputProfileImage!=null){
-                                imageString = bitmapToBase64(inputProfileImage!!)
-                            }
-                            val User = User(inputName!!, inputSurname!!, inputEmail!!,imageString)
-                            userReference.getUserReference().child(inputName!!).setValue(User).addOnSuccessListener {
-                                firebaseAuth.getCurrentUser()?.sendEmailVerification()?.addOnSuccessListener {
-                                    Toast.makeText(requireContext(),"Verify Your Email",Toast.LENGTH_SHORT).show()
-                                    findNavController().navigate(R.id.loginFragment)
-                                }?.addOnFailureListener {
-                                    Log.i(TAG,it.toString())
-                                    Toast.makeText(requireContext(),it.toString(),Toast.LENGTH_SHORT).show()
+                            MainScope().launch(Dispatchers.IO) {
+                                var imageString:String? = null
+                                if(inputProfileImage!=null){
+                                    imageString = bitmapToBase64(inputProfileImage!!)
                                 }
-                            }.addOnFailureListener{
-                                Log.i(TAG,it.toString())
-                                Toast.makeText(requireActivity(),it.toString(),Toast.LENGTH_SHORT).show()
+                                val User = User(inputName!!, inputSurname!!, inputEmail!!,imageString)
+                                userReference.getUserReference().child(it.result?.user!!.uid).setValue(User).addOnSuccessListener {
+                                    firebaseAuth.getCurrentUser()?.sendEmailVerification()?.addOnSuccessListener {
+                                        progressDialog.getInstance(requireActivity()).stop()
+                                        Toast.makeText(requireContext(),"Verify Your Email",Toast.LENGTH_SHORT).show()
+                                        findNavController().navigate(R.id.loginFragment)
+                                    }?.addOnFailureListener {
+                                        progressDialog.getInstance(requireActivity()).stop()
+                                        Log.i(TAG,it.toString())
+                                        Toast.makeText(requireContext(),it.toString(),Toast.LENGTH_SHORT).show()
+                                    }
+                                }.addOnFailureListener{
+                                    progressDialog.getInstance(requireActivity()).stop()
+                                    Log.i(TAG,it.toString())
+                                    Toast.makeText(requireActivity(),it.toString(),Toast.LENGTH_SHORT).show()
+                                }
                             }
                         }
                     }.addOnFailureListener {
-                        Log.i(TAG,it.toString())
-                        Toast.makeText(requireContext(),it.toString(),Toast.LENGTH_SHORT).show()
+                        progressDialog.getInstance(requireActivity()).stop()
+                        handleException.firebaseCommonExceptions(requireContext(),it,TAG)
                     }
+
 
                 }
 
@@ -293,9 +323,6 @@ class RegistrationFragment : Fragment() {
         if (requestCode == 101) {
             if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
                 openImagePicker()
-            } else {
-                // Handle permission denial
-                // You can show a message or take appropriate action
             }
         }
     }
@@ -309,14 +336,20 @@ class RegistrationFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 102 && resultCode == RESULT_OK) {
-            // The user has selected an image. You can get the image URI from the data intent.
-            val selectedImageUri: Uri? = data?.data
-            if (selectedImageUri != null) {
-                binding.profileImage.setPadding(0, 0, 0, 0)
-                inputProfileImage = uriToBitmap(requireActivity(),selectedImageUri)
-                inputProfileImage = utilityFunction.getCircularBitmap(inputProfileImage)
-                binding.profileImage.setImageBitmap(inputProfileImage)
+            MainScope().launch(Dispatchers.IO) {
+                // The user has selected an image. You can get the image URI from the data intent.
+                val selectedImageUri: Uri? = data?.data
+                if (selectedImageUri != null) {
+                    binding.profileImage.setPadding(0, 0, 0, 0)
+                    inputProfileImage = uriToBitmap(requireActivity(),selectedImageUri)
+                    inputProfileImage = utilityFunction.getCircularBitmap(inputProfileImage)
+                    withContext(Dispatchers.Main){
+                        binding.profileImage.setImageBitmap(inputProfileImage)
+                    }
+
+                }
             }
+
         }
     }
 

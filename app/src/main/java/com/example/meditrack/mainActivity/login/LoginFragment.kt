@@ -6,23 +6,24 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.meditrack.R
 import com.example.meditrack.dataModel.User
 import com.example.meditrack.databinding.FragmentLoginBinding
+import com.example.meditrack.exception.handleException
 import com.example.meditrack.firebase.firebaseAuth
 import com.example.meditrack.firebase.userReference
 import com.example.meditrack.homeActivity.HomeActivity
 import com.example.meditrack.regularExpression.ListPattern
 import com.example.meditrack.regularExpression.MatchPattern.Companion.validate
+import com.example.meditrack.utility.progressDialog
 import com.example.meditrack.utility.utilityFunction
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -37,13 +38,11 @@ import java.io.IOException
 
 class LoginFragment : Fragment() {
 
-    companion object {
-    }
-
     private lateinit var viewModel: LoginViewModel
     private lateinit var binding: FragmentLoginBinding
     private var inputEmail:String?=null
     private var inputPassword:String?=null
+    private val TAG="LoginFragment"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,24 +59,39 @@ class LoginFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         (activity as AppCompatActivity?)!!.supportActionBar!!.show()
+        binding.fragmentLoginEmailTextInputEditText.text!!.clear()
+        binding.fragmentLoginPasswordTextInputEditText.text!!.clear()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLoginBinding.bind(view)
 
-        binding.alreadyAccount.setOnClickListener {
-            binding.email.text!!.clear()
-            binding.password.text!!.clear()
-            binding.email.error=null
-            binding.password.error=null
+
+        binding.fragmentLoginRegisterAccountText.setOnClickListener {
+            binding.fragmentLoginEmailTextInputEditText.text!!.clear()
+            binding.fragmentLoginPasswordTextInputEditText.text!!.clear()
             findNavController().popBackStack()
             findNavController().navigate(R.id.registrationFragment)
         }
 
         binding.apply {
 
-            email.addTextChangedListener(object : TextWatcher {
+            fragmentLoginEmailTextInputEditText.addTextChangedListener(object : TextWatcher {
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    val userInput = s.toString()
+                    if(userInput=="")
+                    {
+                        fragmentLoginEmailTextInputLayout.helperText="Required"
+                    }
+                    else if (!userInput.validate(ListPattern.getEmailRegex())) {
+                        fragmentLoginEmailTextInputLayout.helperText="Invalid email format"
+                    } else {
+                        // Input is valid, clear the error
+                        fragmentLoginEmailTextInputLayout.helperText=null
+                        inputEmail=fragmentLoginEmailTextInputEditText.text.toString()
+                    }
+                }
                 override fun beforeTextChanged(
                     s: CharSequence?,
                     start: Int,
@@ -86,21 +100,23 @@ class LoginFragment : Fragment() {
                 ) {}
 
                 override fun afterTextChanged(s: Editable?) {}
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    val userInput = s.toString()
-                    if (!userInput.validate(ListPattern.getEmailRegex())) {
-                        email.error = "Invalid email format"
-
-                    } else {
-                        // Input is valid, clear the error
-                        email.error = null
-                        inputEmail=email.text.toString()
-                    }
-                }
             })
 
-            password.addTextChangedListener(object : TextWatcher {
+            fragmentLoginPasswordTextInputEditText.addTextChangedListener(object : TextWatcher {
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    val userInput = s.toString()
+                    if(userInput=="")
+                    {
+                        fragmentLoginPasswordTextInputLayout.helperText="Required"
+                    }
+                    else if (!userInput.validate(ListPattern.getPasswordRegex())) {
+                        fragmentLoginPasswordTextInputLayout.helperText = "Invalid password format"
+                    } else {
+                        // Input is valid, clear the error
+                        fragmentLoginPasswordTextInputLayout.helperText = null
+                        inputPassword=fragmentLoginPasswordTextInputEditText.text.toString()
+                    }
+                }
                 override fun afterTextChanged(s: Editable?) {}
 
                 override fun beforeTextChanged(
@@ -109,30 +125,20 @@ class LoginFragment : Fragment() {
                     count: Int,
                     after: Int
                 ) {}
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    val userInput = s.toString()
-                    if (!userInput.validate(ListPattern.getPasswordRegex())) {
-                        password.error = "Invalid password format"
-                    } else {
-                        // Input is valid, clear the error
-                        password.error = null
-                        inputPassword=password.text.toString()
-                    }
-                }
             })
 
-            login.setOnClickListener {
-                if(email.error==null && password.error==null && inputEmail!=null && inputPassword!=null)
+            fragmentLoginButton.setOnClickListener {
+                if(fragmentLoginEmailTextInputLayout.helperText==null && fragmentLoginPasswordTextInputLayout.helperText==null && inputEmail!=null && inputPassword!=null)
                 {
                     inputEmail=inputEmail!!.trim()
                     inputPassword=inputPassword!!.trim()
-
+                    progressDialog.getInstance(requireActivity()).start("Loading...")
                     firebaseAuth.getFireBaseAuth().signInWithEmailAndPassword(inputEmail!!,inputPassword!!).addOnCompleteListener {
                         if(it.isSuccessful)
                         {
                             if(!firebaseAuth.getCurrentUser()!!.isEmailVerified)
                             {
+                                progressDialog.getInstance(requireActivity()).stop()
                                 Toast.makeText(requireContext(),"Please Verify your email", Toast.LENGTH_SHORT).show()
                             }
                             else{
@@ -143,49 +149,10 @@ class LoginFragment : Fragment() {
                                         // This method is called when data is retrieved successfully
                                         // dataSnapshot contains the data for the user
                                         MainScope().launch(Dispatchers.IO) {
-                                            val userData = User.mapDataSnapshotToUser(dataSnapshot)
-
-                                            val sharedPreferences = requireActivity().getSharedPreferences("UserData", Context.MODE_PRIVATE)
-                                            val editor = sharedPreferences.edit()
-                                            editor.putString("name", userData.name)
-                                            editor.putString("surname", userData.surname)
-                                            editor.putString("email", userData.email)
-
-
-                                            if(userData.profileImage !=null)
-                                            {
-                                                editor.putBoolean("hasImage",true)
-                                                val bitmap = utilityFunction.decodeBase64ToBitmap(userData.profileImage.toString())
-
-                                                val cacheDirectory = requireActivity().cacheDir
-
-                                                val imageFileName = "profileImg.jpg"
-                                                val imageFile = File(cacheDirectory, imageFileName)
-                                                try {
-                                                    val outputStream = FileOutputStream(imageFile)
-                                                    bitmap!!.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-                                                    outputStream.flush()
-                                                    outputStream.close()
-                                                } catch (e: IOException) {
-                                                    e.printStackTrace()
-                                                }
-                                                /*MainScope().launch(Dispatchers.Main) {
-                                                    val activity = requireActivity() as HomeActivity
-                                                    val parentView = activity.myToolbarImage.parent as View
-                                                    activity.myToolbarImage.layoutParams = ViewGroup.LayoutParams(
-                                                        ViewGroup.LayoutParams.MATCH_PARENT,
-                                                        ViewGroup.LayoutParams.MATCH_PARENT
-                                                    )
-                                                    parentView.requestLayout()
-                                                    activity.myToolbarImage.setImageBitmap(bitmap)
-                                                }*/
-                                            }
-                                            else{
-                                                editor.putBoolean("hasImage",false)
-                                            }
-                                            editor.apply()
+                                            User.fetchUserData(requireContext(),dataSnapshot,TAG)
                                             withContext(Dispatchers.Main)
                                             {
+                                                progressDialog.getInstance(requireActivity()).stop()
                                                 Intent(requireActivity(), HomeActivity::class.java).apply {
                                                     startActivity(this)
                                                 }
@@ -197,6 +164,8 @@ class LoginFragment : Fragment() {
 
                                     override fun onCancelled(databaseError: DatabaseError) {
                                         // Handle errors here
+                                        progressDialog.getInstance(requireActivity()).stop()
+                                        handleException.firebaseDatabaseExceptions(requireContext(),databaseError,TAG)
                                     }
                                 })
 
@@ -204,7 +173,8 @@ class LoginFragment : Fragment() {
 
                         }
                     }.addOnFailureListener {
-                        Toast.makeText(requireContext(),it.toString(), Toast.LENGTH_SHORT).show()
+                        progressDialog.getInstance(requireActivity()).stop()
+                        handleException.firebaseCommonExceptions(requireContext(),it,TAG)
                     }
                 }
             }
@@ -212,8 +182,6 @@ class LoginFragment : Fragment() {
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        binding.email.error=null
-        binding.password.error=null
         inputEmail=null
         inputPassword=null
         super.onViewStateRestored(savedInstanceState)

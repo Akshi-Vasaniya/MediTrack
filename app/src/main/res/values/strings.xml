@@ -1,3 +1,30 @@
 <resources>
     <string name="app_name">MediTrack</string>
+    <string name="logout">LOGOUT</string>
+    <string name="full_name">%s %s</string>
+    <string name="slide_menu_image">Slide Menu Image</string>
+    <string name="top_right_shape">Top-Right Shape</string>
+    <string name="login">Login</string>
+    <string name="fragment_login_subtitle">Please sign in to continue</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="not_account_text">Don\'t have an account?</string>
+    <string name="password_format_text">Password Format Instructions:</string>
+    <string name="password_format_dis">• At least one number, upper, lower, symbol, length 8 to 16</string>
+    <string name="bottom_left_shape">Bottom-Left Shape</string>
+    <string name="registration">Registration</string>
+    <string name="fragment_registration_subtitle">Please sign up to continue</string>
+    <string name="user_profile_image">User Profile Image</string>
+    <string name="name">Name</string>
+    <string name="surname">Surname</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="register">Register</string>
+    <string name="account_login_text">Already have an account?</string>
+    <string name="slide_menu_user_profile_image">Slide Menu User Profile Image</string>
+    <string name="account_details">Account Details</string>
+    <string name="account_details_image">Account Details Image</string>
+    <string name="setting_image">Setting Image</string>
+    <string name="settings">Settings</string>
+    <string name="delete_account_image">Delete Account Image</string>
+    <string name="delete_account">Delete Account</string>
 </resources>

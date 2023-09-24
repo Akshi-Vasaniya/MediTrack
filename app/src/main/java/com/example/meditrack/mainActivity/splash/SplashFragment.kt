@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -17,6 +18,7 @@ import com.caverock.androidsvg.SVG
 import com.example.meditrack.R
 import com.example.meditrack.dataModel.User
 import com.example.meditrack.databinding.FragmentSplashBinding
+import com.example.meditrack.exception.handleException
 import com.example.meditrack.firebase.userReference
 import com.example.meditrack.homeActivity.HomeActivity
 import com.example.meditrack.utility.utilityFunction
@@ -42,6 +44,7 @@ class SplashFragment : Fragment() {
     private lateinit var viewModel: SplashViewModel
     private lateinit var binding: FragmentSplashBinding
     private lateinit var firebaseAuth: FirebaseAuth
+    private val TAG="SplashFragment"
 
     override fun onResume() {
         super.onResume()
@@ -62,7 +65,6 @@ class SplashFragment : Fragment() {
 
         viewModel = ViewModelProvider(this).get(SplashViewModel::class.java)
 
-
         return view
 
     }
@@ -78,7 +80,7 @@ class SplashFragment : Fragment() {
         binding.mediIcon.setSVG(svg)
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.delayAndNavigate(3000L)
+
             if(firebaseAuth.currentUser!=null)
             {
                 val query = userReference.getUserDataQuery()
@@ -88,47 +90,7 @@ class SplashFragment : Fragment() {
                         // This method is called when data is retrieved successfully
                         // dataSnapshot contains the data for the user
                         MainScope().launch(Dispatchers.IO) {
-                            val userData = User.mapDataSnapshotToUser(dataSnapshot)
-
-                            val sharedPreferences = requireActivity().getSharedPreferences("UserData", Context.MODE_PRIVATE)
-                            val editor = sharedPreferences.edit()
-                            editor.putString("name", userData.name)
-                            editor.putString("surname", userData.surname)
-                            editor.putString("email", userData.email)
-
-
-                            if(userData.profileImage !=null)
-                            {
-                                editor.putBoolean("hasImage",true)
-                                val bitmap = utilityFunction.decodeBase64ToBitmap(userData.profileImage.toString())
-
-                                val cacheDirectory = requireActivity().cacheDir
-
-                                val imageFileName = "profileImg.jpg"
-                                val imageFile = File(cacheDirectory, imageFileName)
-                                try {
-                                    val outputStream = FileOutputStream(imageFile)
-                                    bitmap!!.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-                                    outputStream.flush()
-                                    outputStream.close()
-                                } catch (e: IOException) {
-                                    e.printStackTrace()
-                                }
-                                /*MainScope().launch(Dispatchers.Main) {
-                                    val activity = requireActivity() as HomeActivity
-                                    val parentView = activity.myToolbarImage.parent as View
-                                    activity.myToolbarImage.layoutParams = ViewGroup.LayoutParams(
-                                        ViewGroup.LayoutParams.MATCH_PARENT,
-                                        ViewGroup.LayoutParams.MATCH_PARENT
-                                    )
-                                    parentView.requestLayout()
-                                    activity.myToolbarImage.setImageBitmap(bitmap)
-                                }*/
-                            }
-                            else{
-                                editor.putBoolean("hasImage",false)
-                            }
-                            editor.apply()
+                            User.fetchUserData(requireContext(),dataSnapshot,TAG)
                             withContext(Dispatchers.Main)
                             {
                                 Intent(requireActivity(),HomeActivity::class.java).apply {
@@ -137,16 +99,17 @@ class SplashFragment : Fragment() {
                                 requireActivity().finish()
                             }
                         }
-
                     }
 
                     override fun onCancelled(databaseError: DatabaseError) {
                         // Handle errors here
+                        handleException.firebaseDatabaseExceptions(requireContext(),databaseError,TAG)
                     }
                 })
 
             }
             else{
+                viewModel.delayAndNavigate(3000L)
                 val sharedPreferences = requireActivity().getSharedPreferences("UserData", Context.MODE_PRIVATE)
                 val editor = sharedPreferences.edit()
                 editor.clear()
