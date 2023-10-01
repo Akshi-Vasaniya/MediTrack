@@ -12,6 +12,11 @@ Say goodbye to medicine management headaches and hello to MediTrack – the app 
 
 ![image](https://github.com/Akshi-Vasaniya/MediTrack/assets/97498600/35cf32be-f602-44b1-99df-77ecc6608bca) ![image](https://github.com/Akshi-Vasaniya/MediTrack/assets/97498600/da1ec1aa-efc2-46c6-973d-b51421238137)
 
+## Roadmap
+
+* [x] Login & Registration
+* [x] User Authentication
+
 <h3 align="left">Languages and Tools:</h3>
 <p align="left"> <a href="https://developer.android.com" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/android/android-original-wordmark.svg" alt="android" width="40" height="40"/> </a> <a href="https://firebase.google.com/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/firebase/firebase-icon.svg" alt="firebase" width="40" height="40"/> </a> <a href="https://kotlinlang.org" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/kotlinlang/kotlinlang-icon.svg" alt="kotlin" width="40" height="40"/> </a> </p>
 
