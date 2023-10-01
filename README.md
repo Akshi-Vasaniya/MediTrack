@@ -9,11 +9,13 @@ Searching for medicines has never been easier. Just enter disease names or sympt
 Say goodbye to medicine management headaches and hello to MediTrack – the app that ensures you always have a well-organized and readily available supply of essential medications. Take control of your healthcare with MediTrack today.
 
 ## Screenshot
-![image](https://github.com/Akshi-Vasaniya/MediTrack/assets/97498600/ce2b11ac-d11d-4fb8-b1f0-e703b165e192) ![image](https://github.com/Akshi-Vasaniya/MediTrack/assets/97498600/0eca178d-c6c3-40c1-a75b-21457e432fed) ![image](https://github.com/Akshi-Vasaniya/MediTrack/assets/97498600/ed085b2e-e60d-4bd3-9d0e-dfb73975812c)
 
-![image](https://github.com/Akshi-Vasaniya/MediTrack/assets/97498600/2300bebb-7528-421f-a97b-14c1d3709107)
-
+![image](https://github.com/Akshi-Vasaniya/MediTrack/assets/97498600/35cf32be-f602-44b1-99df-77ecc6608bca) ![image](https://github.com/Akshi-Vasaniya/MediTrack/assets/97498600/da1ec1aa-efc2-46c6-973d-b51421238137)
 
 <h3 align="left">Languages and Tools:</h3>
 <p align="left"> <a href="https://developer.android.com" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/android/android-original-wordmark.svg" alt="android" width="40" height="40"/> </a> <a href="https://firebase.google.com/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/firebase/firebase-icon.svg" alt="firebase" width="40" height="40"/> </a> <a href="https://kotlinlang.org" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/kotlinlang/kotlinlang-icon.svg" alt="kotlin" width="40" height="40"/> </a> </p>
 
+
+## Support
+
+For support, you can email us at meditrackcpproject@gmail.com.
