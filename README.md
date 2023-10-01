@@ -9,8 +9,9 @@ Searching for medicines has never been easier. Just enter disease names or sympt
 Say goodbye to medicine management headaches and hello to MediTrack – the app that ensures you always have a well-organized and readily available supply of essential medications. Take control of your healthcare with MediTrack today.
 
 ## Screenshot
+![image](https://github.com/Akshi-Vasaniya/MediTrack/assets/97498600/ce2b11ac-d11d-4fb8-b1f0-e703b165e192) ![image](https://github.com/Akshi-Vasaniya/MediTrack/assets/97498600/0eca178d-c6c3-40c1-a75b-21457e432fed) ![image](https://github.com/Akshi-Vasaniya/MediTrack/assets/97498600/ed085b2e-e60d-4bd3-9d0e-dfb73975812c)
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![image](https://github.com/Akshi-Vasaniya/MediTrack/assets/97498600/2300bebb-7528-421f-a97b-14c1d3709107)
 
 
 <h3 align="left">Languages and Tools:</h3>
