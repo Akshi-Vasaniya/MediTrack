@@ -45,7 +45,7 @@ class CustomProgressDialog(context: Context) {
         progressBar = view.findViewById(R.id.cp_pbar)
 
         // Card Color
-        cpCardView.setCardBackgroundColor(Color.parseColor("#00000000"))
+//        cpCardView.setCardBackgroundColor(Color.parseColor("#00000000"))
 
         // Progress Bar Color
         setColorFilter(

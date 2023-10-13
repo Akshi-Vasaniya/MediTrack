@@ -58,6 +58,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/search_btn"
                     android:layout_width="@dimen/_50sdp"
                     android:layout_height="@dimen/_70sdp"
                     app:cardCornerRadius="7dp"

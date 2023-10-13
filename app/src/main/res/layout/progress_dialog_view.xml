@@ -13,11 +13,11 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_30sdp"
         app:cardCornerRadius="16dp"
-        app:cardElevation="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:cardBackgroundColor="@color/transparent">
 
 
         <androidx.constraintlayout.widget.ConstraintLayout

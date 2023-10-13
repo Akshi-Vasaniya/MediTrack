@@ -108,7 +108,7 @@
                     app:helperTextEnabled="true"
                     app:helperText="Required"
                     app:helperTextTextColor="@color/prusianblue"
-                    android:layout_marginTop="@dimen/_15sdp"
+                    android:layout_marginTop="20dp"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/fragment_login_password_TextInputEditText"
