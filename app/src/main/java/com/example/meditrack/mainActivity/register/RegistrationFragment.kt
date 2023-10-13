@@ -22,12 +22,12 @@ import androidx.navigation.fragment.findNavController
 import com.example.meditrack.R
 import com.example.meditrack.dataModel.User
 import com.example.meditrack.databinding.FragmentRegistrationBinding
-import com.example.meditrack.exception.handleException
-import com.example.meditrack.firebase.firebaseAuth
-import com.example.meditrack.firebase.userReference
+import com.example.meditrack.exception.HandleException
+import com.example.meditrack.firebase.MediTrackFirebaseAuth
+import com.example.meditrack.firebase.MediTrackUserReference
 import com.example.meditrack.regularExpression.ListPattern
 import com.example.meditrack.regularExpression.MatchPattern.Companion.validate
-import com.example.meditrack.utility.progressDialog
+import com.example.meditrack.utility.CustomProgressDialog
 import com.example.meditrack.utility.UtilityFunction
 import com.example.meditrack.utility.UtilityFunction.Companion.bitmapToBase64
 import com.example.meditrack.utility.UtilityFunction.Companion.uriToBitmap
@@ -46,7 +46,8 @@ class RegistrationFragment : Fragment() {
     private lateinit var viewModel: RegistrationViewModel
     private lateinit var binding: FragmentRegistrationBinding
     private var inputProfileImage:Bitmap?=null
-    private val TAG = "RegisterFragment"
+    private lateinit var progressDialog: CustomProgressDialog
+    private val tag = "RegisterFragment"
 
 
     override fun onCreateView(
@@ -72,7 +73,7 @@ class RegistrationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentRegistrationBinding.bind(view)
-
+        progressDialog=CustomProgressDialog(requireActivity())
 
         binding.fragmentRegistrationLoginAccountText.setOnClickListener {
             findNavController().popBackStack()
@@ -240,8 +241,8 @@ class RegistrationFragment : Fragment() {
                     viewModel.inputPassword = viewModel.inputPassword!!.trim()
                     viewModel.inputName = viewModel.inputName!!.trim().uppercase()
                     viewModel.inputSurname = viewModel.inputSurname!!.trim().uppercase()
-                    progressDialog.getInstance(requireActivity()).start("Loading...")
-                    firebaseAuth.getFireBaseAuth().createUserWithEmailAndPassword(viewModel.inputEmail!!,viewModel.inputPassword!!).addOnCompleteListener {
+                    progressDialog.start("Loading...")
+                    MediTrackFirebaseAuth.getFireBaseAuth().createUserWithEmailAndPassword(viewModel.inputEmail!!,viewModel.inputPassword!!).addOnCompleteListener {
                         if(it.isSuccessful)
                         {
                             MainScope().launch(Dispatchers.IO) {
@@ -251,33 +252,33 @@ class RegistrationFragment : Fragment() {
                                         imageString = bitmapToBase64(inputProfileImage!!)
                                     }
                                     val user = User(viewModel.inputName!!, viewModel.inputSurname!!, viewModel.inputEmail!!,imageString)
-                                    userReference.getUserReference().child(it.result?.user!!.uid).setValue(user).addOnSuccessListener {
-                                        firebaseAuth.getCurrentUser()?.sendEmailVerification()?.addOnSuccessListener {
-                                            progressDialog.getInstance(requireActivity()).stop()
+                                    MediTrackUserReference.getUserReference().child(it.result?.user!!.uid).setValue(user).addOnSuccessListener {
+                                        MediTrackFirebaseAuth.getCurrentUser()?.sendEmailVerification()?.addOnSuccessListener {
+                                            progressDialog.stop()
                                             Toast.makeText(requireContext(),"Verify Your Email",Toast.LENGTH_SHORT).show()
                                             findNavController().navigate(R.id.loginFragment)
                                         }?.addOnFailureListener {exception->
-                                            progressDialog.getInstance(requireActivity()).stop()
-                                            Log.i(TAG,exception.toString())
+                                            progressDialog.stop()
+                                            Log.i(tag,exception.toString())
                                             Toast.makeText(requireContext(),exception.toString(),Toast.LENGTH_SHORT).show()
                                         }
                                     }.addOnFailureListener{exception->
-                                        progressDialog.getInstance(requireActivity()).stop()
-                                        Log.i(TAG,exception.toString())
+                                        progressDialog.stop()
+                                        Log.i(tag,exception.toString())
                                         Toast.makeText(requireActivity(),exception.toString(),Toast.LENGTH_SHORT).show()
                                     }
                                 }
                                 catch (ex:Exception)
                                 {
-                                    Log.e(TAG,"RegistrationFragment.kt -> click event fragmentRegistrationRegisterButton -> $ex")
+                                    Log.e(tag,"RegistrationFragment.kt -> click event fragmentRegistrationRegisterButton -> $ex")
                                     Toast.makeText(requireActivity(),"Error!",Toast.LENGTH_SHORT).show()
                                 }
 
                             }
                         }
                     }.addOnFailureListener {
-                        progressDialog.getInstance(requireActivity()).stop()
-                        handleException.firebaseCommonExceptions(requireContext(),it,TAG)
+                        progressDialog.stop()
+                        HandleException.firebaseCommonExceptions(requireContext(),it,tag)
                     }
 
 
@@ -379,7 +380,7 @@ class RegistrationFragment : Fragment() {
                     }
                     catch (ex:Exception)
                     {
-                        Log.e(TAG,"RegistrationFragment.kt -> function onActivityResult() -> $ex")
+                        Log.e(tag,"RegistrationFragment.kt -> function onActivityResult() -> $ex")
                         Toast.makeText(requireActivity(),"Error! to load Image",Toast.LENGTH_LONG).show()
                     }
                 }

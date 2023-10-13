@@ -9,7 +9,7 @@ import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
 import com.google.firebase.database.DatabaseError
 
-class handleException {
+class HandleException {
     companion object{
         fun firebaseCommonExceptions(context: Context,exception: Exception,TAG:String){
             when (exception) {

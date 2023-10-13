@@ -28,7 +28,7 @@ class SplashFragment : Fragment() {
     private lateinit var viewModel: SplashViewModel
     private lateinit var binding: FragmentSplashBinding
     private lateinit var firebaseAuth: FirebaseAuth
-    private val TAG="SplashFragment"
+    private val tag="SplashFragment"
 
     override fun onResume() {
         super.onResume()

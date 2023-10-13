@@ -15,7 +15,7 @@ import com.caverock.androidsvg.SVG
 import com.example.meditrack.R
 import com.example.meditrack.dataModel.User
 import com.example.meditrack.databinding.FragmentHomeBinding
-import com.example.meditrack.firebase.userReference
+import com.example.meditrack.firebase.MediTrackUserReference
 import com.example.meditrack.mainActivity.MainActivity
 import com.example.meditrack.utility.UtilityFunction
 import com.example.meditrack.utility.UtilityFunction.Companion.getCircularBitmap
@@ -39,7 +39,7 @@ class HomeFragment : Fragment() {
     private lateinit var slideInAnimation: ValueAnimator
     private lateinit var slideOutAnimation: ValueAnimator
     private lateinit var binding:FragmentHomeBinding
-    private val TAG = "HomeFragment"
+    private val tag = "HomeFragment"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -87,7 +87,7 @@ class HomeFragment : Fragment() {
                 }
                 catch (ex:Exception)
                 {
-                    Log.e(TAG,"$ex")
+                    Log.e(tag,"$ex")
                 }
 
             }
@@ -95,7 +95,7 @@ class HomeFragment : Fragment() {
 
         binding.apply {
             MainScope().launch(Dispatchers.IO) {
-                val userQuery = userReference.getUserDataQuery()
+                val userQuery = MediTrackUserReference.getUserDataQuery()
                 userQuery.addValueEventListener(object :ValueEventListener{
                     override fun onDataChange(snapshot: DataSnapshot) {
                         snapshot.children.forEach {

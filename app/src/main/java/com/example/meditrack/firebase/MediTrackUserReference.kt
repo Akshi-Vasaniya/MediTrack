@@ -4,15 +4,15 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
 
-object userReference {
+object MediTrackUserReference {
     fun getUserReference(): DatabaseReference {
         return FirebaseDatabase.getInstance().getReference("Users")
     }
     fun getUserEmail(): String? {
-        return firebaseAuth.getCurrentUser()!!.email
+        return MediTrackFirebaseAuth.getCurrentUser()!!.email
     }
     fun getUserId(): String {
-        return firebaseAuth.getCurrentUser()!!.uid
+        return MediTrackFirebaseAuth.getCurrentUser()!!.uid
     }
 
     fun getUserDataQuery(): Query {

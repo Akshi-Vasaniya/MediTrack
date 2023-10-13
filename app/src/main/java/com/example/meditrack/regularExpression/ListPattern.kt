@@ -2,9 +2,9 @@ package com.example.meditrack.regularExpression
 
 class ListPattern {
     companion object{
-        const val emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}$"
-        const val nameRegex = "^[A-Za-z]{2,30}$"
-        const val passwordRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,16}$"
+        private const val emailRegex = "^[A-Za-z\\d._%+-]+@[A-Za-z\\d.-]+\\.[A-Za-z]{2,4}$"
+        private const val nameRegex = "^[A-Za-z]{2,30}$"
+        private const val passwordRegex = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,16}$"
 
         fun getNameRegex():Regex
         {

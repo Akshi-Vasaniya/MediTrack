@@ -15,12 +15,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.meditrack.R
 import com.example.meditrack.databinding.FragmentLoginBinding
-import com.example.meditrack.exception.handleException
-import com.example.meditrack.firebase.firebaseAuth
+import com.example.meditrack.exception.HandleException
+import com.example.meditrack.firebase.MediTrackFirebaseAuth
 import com.example.meditrack.homeActivity.HomeActivity
 import com.example.meditrack.regularExpression.ListPattern
 import com.example.meditrack.regularExpression.MatchPattern.Companion.validate
-import com.example.meditrack.utility.progressDialog
+import com.example.meditrack.utility.CustomProgressDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -30,7 +30,8 @@ class LoginFragment : Fragment() {
 
     private lateinit var viewModel: LoginViewModel
     private lateinit var binding: FragmentLoginBinding
-    private val TAG="LoginFragment"
+    private val tag="LoginFragment"
+    private lateinit var progressDialog:CustomProgressDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,7 +54,7 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLoginBinding.bind(view)
-
+        progressDialog= CustomProgressDialog(requireActivity())
 
         binding.fragmentLoginRegisterAccountText.setOnClickListener {
             binding.fragmentLoginEmailTextInputEditText.text!!.clear()
@@ -118,13 +119,13 @@ class LoginFragment : Fragment() {
                 {
                     viewModel.inputEmail=viewModel.inputEmail!!.trim()
                     viewModel.inputPassword=viewModel.inputPassword!!.trim()
-                    progressDialog.getInstance(requireActivity()).start("Loading...")
-                    firebaseAuth.getFireBaseAuth().signInWithEmailAndPassword(viewModel.inputEmail!!,viewModel.inputPassword!!).addOnCompleteListener {
+                    progressDialog.start("Loading...")
+                    MediTrackFirebaseAuth.getFireBaseAuth().signInWithEmailAndPassword(viewModel.inputEmail!!,viewModel.inputPassword!!).addOnCompleteListener {
                         if(it.isSuccessful)
                         {
-                            if(!firebaseAuth.getCurrentUser()!!.isEmailVerified)
+                            if(!MediTrackFirebaseAuth.getCurrentUser()!!.isEmailVerified)
                             {
-                                progressDialog.getInstance(requireActivity()).stop()
+                                progressDialog.stop()
                                 Toast.makeText(requireContext(),"Please Verify your email", Toast.LENGTH_SHORT).show()
                             }
                             else{
@@ -133,10 +134,10 @@ class LoginFragment : Fragment() {
                                     {
                                     }
                                 }*/
-                                if(firebaseAuth.getCurrentUser()!=null)
+                                if(MediTrackFirebaseAuth.getCurrentUser()!=null)
                                 {
                                     /*viewModel.fetchUserData()*/
-                                    progressDialog.getInstance(requireActivity()).stop()
+                                    progressDialog.stop()
                                     Intent(requireActivity(),HomeActivity::class.java).apply {
                                         startActivity(this)
                                     }
@@ -158,8 +159,8 @@ class LoginFragment : Fragment() {
 
                         }
                     }.addOnFailureListener {
-                        progressDialog.getInstance(requireActivity()).stop()
-                        handleException.firebaseCommonExceptions(requireContext(),it,TAG)
+                        progressDialog.stop()
+                        HandleException.firebaseCommonExceptions(requireContext(),it,tag)
                     }
                 }
             }

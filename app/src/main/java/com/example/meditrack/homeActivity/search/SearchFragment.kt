@@ -1,4 +1,4 @@
-package com.example.meditrack.mainActivity.search
+package com.example.meditrack.homeActivity.search
 
 import android.os.Bundle
 import android.util.Log
@@ -11,7 +11,6 @@ import com.example.meditrack.dataModel.api.ApiData
 import com.example.meditrack.dataModel.api.ApiInstance
 import com.example.meditrack.databinding.FragmentSearchBinding
 import com.example.meditrack.utility.CustomProgressDialog
-import com.example.meditrack.utility.progressDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -42,12 +41,13 @@ class SearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding=FragmentSearchBinding.bind(view)
         progressDialog=CustomProgressDialog(requireActivity())
+        binding.outputText.text = ""
         binding.apply {
             fragmentSearchButton.setOnClickListener {
                 val searchText = fragmentSearchTextTextInputEditText.text.toString()
                 MainScope().launch(Dispatchers.IO) {
                     withContext(Dispatchers.Main){
-                        progressDialog.start("Searching Please wait...")
+                        progressDialog.start("Searching...")
                     }
 
                     val response = ApiInstance.api.listDocument(searchText)
@@ -69,7 +69,6 @@ class SearchFragment : Fragment() {
 
                         override fun onFailure(call: Call<List<ApiData?>?>, t: Throwable) {
 
-                            binding.outputText.text = "error"
                             Log.i("Search", "onResponse: ${t.message}")
                             progressDialog.stop()
                         }

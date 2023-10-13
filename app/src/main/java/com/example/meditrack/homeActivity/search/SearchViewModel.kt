@@ -1,4 +1,4 @@
-package com.example.meditrack.mainActivity.search
+package com.example.meditrack.homeActivity.search
 
 import androidx.lifecycle.ViewModel
 
