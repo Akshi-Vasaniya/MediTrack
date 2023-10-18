@@ -4,315 +4,209 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".mainActivity.register.RegistrationFragment">
+    tools:context=".register.RegistrationFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        >
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/top_right_shape"
-            android:src="@drawable/shape"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="-40dp"
-            android:layout_marginEnd="-40dp"/>
-        <ImageView
-            android:id="@+id/fragment_login_top_shape"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/top_right_shape"
-            android:src="@drawable/shape2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="-10dp"
-            android:layout_marginEnd="-70dp"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/top_shape"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/_minus60sdp"
+            android:layout_marginRight="@dimen/_minus60sdp"
+            android:src="@drawable/shape"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/reg_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_27sdp"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:text="Registration"
+            android:textSize="@dimen/_37ssp"
+            android:textStyle="bold"
+            android:textColor="@color/prusianblue"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/reg_msg"/>
+        <TextView
+            android:id="@+id/reg_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:text="Please sign up to continue"
+            android:textSize="@dimen/_17ssp"
+            android:textColor="@color/lightblack"
+            app:layout_constraintTop_toBottomOf="@+id/reg_txt"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/profile_image"/>
+        <ImageView
+            android:id="@+id/profile_image"
+            android:layout_width="@dimen/_105sdp"
+            android:layout_height="@dimen/_105sdp"
+            android:layout_gravity="center"
+            android:padding="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:src="@drawable/noun_profile_1192752"
+            android:background="@drawable/circle_image"
+            app:layout_constraintTop_toBottomOf="@+id/reg_msg"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/fullname_layout"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/fullname_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            app:layout_constraintTop_toBottomOf="@+id/profile_image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/name_layout"
+                    android:layout_width="@dimen/_135sdp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_50sdp"
-                    android:layout_marginHorizontal="20dp"
-                    android:text="@string/registration"
-                    android:textSize="@dimen/_30sdp"
-                    android:fontFamily="@font/comfortaa_bold"
-                    android:textColor="@color/prusianblue"/>
-                <TextView
-                    android:layout_width="wrap_content"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_weight="1"
+                    android:layout_marginRight="@dimen/_1sdp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/name"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="start"
+                        android:hint="Enter Name"
+                        android:textColor="@color/prusianblue"
+                        android:drawableLeft="@drawable/noun_name_2776910"
+                        android:drawablePadding="@dimen/_7sdp" />
+                </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/surname_layout"
+                    android:layout_width="@dimen/_135sdp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginHorizontal="20dp"
-                    android:text="@string/fragment_registration_subtitle"
-                    android:textSize="@dimen/_10sdp"
-                    android:fontFamily="@font/comfortaa_regular"
-                    android:textColor="@color/lightblack"/>
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_weight="1">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/surname"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="end"
+                        android:hint="Enter Surname"
+                        android:textColor="@color/prusianblue"
+                        android:drawableLeft="@drawable/noun_name_2776910"
+                        android:drawablePadding="@dimen/_7sdp"/>
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
-            <LinearLayout
-                android:id="@+id/profile_image_layout"
-                android:layout_width="@dimen/_60sdp"
-                android:layout_height="@dimen/_60sdp"
-                android:layout_marginTop="@dimen/_20sdp"
-                android:layout_gravity="center"
-                android:background="@drawable/circle_image">
-                <ImageView
-                    android:id="@+id/profile_image"
-                    android:layout_width="@dimen/_60sdp"
-                    android:layout_height="@dimen/_60sdp"
-                    android:src="@drawable/noun_profile_1192752"
-                    android:layout_gravity="center"
-                    android:scaleType="fitCenter"
-                    android:paddingTop="12dp"
-                    android:contentDescription="@string/user_profile_image" />
-            </LinearLayout>
-
-            <LinearLayout
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/email_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_1sdp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:layout_constraintTop_toBottomOf="@+id/fullname_layout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/email"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginHorizontal="20dp"
-                android:paddingVertical="10dp"
-                android:paddingHorizontal="10dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/fragment_registration_name_TextInputLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_weight="1"
-                        app:helperTextEnabled="true"
-                        app:helperText="Required"
-                        app:helperTextTextColor="@color/prusianblue"
-                        >
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/fragment_registration_name_TextInputEditText"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:hint="@string/name"
-                            android:textColor="@color/prusianblue"
-                            android:drawableStart="@drawable/noun_name_2776910"
-                            android:drawablePadding="10dp"
-                            android:textSize="@dimen/_10sdp"
-                            android:padding="10dp"
-                            android:inputType="textPersonName"
-                            android:fontFamily="@font/comfortaa_regular"
+                android:layout_height="match_parent"
+                android:hint="Enter Email"
+                android:textColor="@color/prusianblue"
+                android:drawableLeft="@drawable/round_mail_24"
+                android:drawablePadding="@dimen/_7sdp"/>
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/password_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_1sdp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@color/prusianblue"
+            app:layout_constraintTop_toBottomOf="@+id/email_layout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Enter Password"
+                android:textColor="@color/prusianblue"
+                android:inputType="textPassword"
+                android:drawableStart="@drawable/round_password_24"
+                android:drawablePadding="@dimen/_7sdp" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/cnfpass_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_1sdp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@color/prusianblue"
+            app:layout_constraintTop_toBottomOf="@+id/password_layout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/confirm_password"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Enter Confirm Password"
+                android:textColor="@color/prusianblue"
+                android:inputType="textPassword"
+                android:drawableStart="@drawable/round_password_24"
+                android:drawablePadding="@dimen/_7sdp" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/register_btn"
+            android:layout_width="@dimen/_130sdp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginRight="@dimen/_25sdp"
+            android:text="Register"
+            android:textColor="@color/white"
+            app:backgroundTint="@null"
+            android:background="@drawable/button_background"
+            app:icon="@drawable/round_arrow_right_alt_24"
+            app:iconGravity="textEnd"
+            app:iconTint="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/cnfpass_layout"
+            app:layout_constraintEnd_toEndOf="parent" />
+        <TextView
+            android:id="@+id/already_account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Already have an account?"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginRight="@dimen/_30sdp"
+            android:textColor="@color/greentype"
+            app:layout_constraintTop_toBottomOf="@+id/register_btn"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-                            />
-                    </com.google.android.material.textfield.TextInputLayout>
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/fragment_registration_surname_TextInputLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_weight="1"
-                        android:layout_marginStart="5dp"
-                        app:helperTextEnabled="true"
-                        app:helperText="Required"
-                        app:helperTextTextColor="@color/prusianblue">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/fragment_registration_surname_TextInputEditText"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:hint="@string/surname"
-                            android:textColor="@color/prusianblue"
-                            android:drawableStart="@drawable/noun_name_2776910"
-                            android:drawablePadding="10dp"
-                            android:textSize="@dimen/_10sdp"
-                            android:padding="10dp"
-                            android:inputType="textPersonName"
-                            android:fontFamily="@font/comfortaa_regular"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
-
-
-                <!--            <TextView-->
-                <!--                android:layout_width="wrap_content"-->
-                <!--                android:layout_height="wrap_content"-->
-                <!--                android:text="Email:"-->
-                <!--                android:textSize="18dp"-->
-                <!--                android:textColor="@color/black"/>-->
-
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/fragment_registration_email_TextInputLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    app:helperTextEnabled="true"
-                    app:helperText="Required"
-                    app:helperTextTextColor="@color/prusianblue"
-                    android:layout_marginTop="@dimen/_3sdp">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/fragment_registration_email_TextInputEditText"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:drawableStart="@drawable/round_mail_24"
-                        android:drawablePadding="10dp"
-                        android:fontFamily="@font/comfortaa_regular"
-                        android:hint="@string/email"
-                        android:inputType="textEmailAddress"
-                        android:textColor="@color/prusianblue"
-                        android:padding="10dp"
-                        android:textSize="@dimen/_10sdp" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <!--            <TextView-->
-                <!--                android:layout_width="wrap_content"-->
-                <!--                android:layout_height="wrap_content"-->
-                <!--                android:text="Mobile No.:"-->
-                <!--                android:textSize="18dp"-->
-                <!--                android:textColor="@color/black"-->
-                <!--                android:layout_marginTop="10dp"/>-->
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/fragment_registration_password_TextInputLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:passwordToggleEnabled="true"
-                    app:passwordToggleTint="@color/prusianblue"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    app:helperTextEnabled="true"
-                    app:helperText="Required"
-                    app:helperTextTextColor="@color/prusianblue"
-                    android:layout_marginTop="@dimen/_3sdp">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/fragment_registration_password_TextInputEditText"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:hint="@string/password"
-                        android:textColor="@color/prusianblue"
-                        android:drawableStart="@drawable/round_password_24"
-                        android:drawablePadding="10dp"
-                        android:textSize="@dimen/_10sdp"
-                        android:padding="10dp"
-                        android:inputType="textPassword"
-                        android:fontFamily="@font/comfortaa_regular"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/fragment_registration_confirm_password_TextInputLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:passwordToggleEnabled="true"
-                    app:passwordToggleTint="@color/prusianblue"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    app:helperTextEnabled="true"
-                    app:helperText="Required"
-                    app:helperTextTextColor="@color/prusianblue"
-                    android:layout_marginTop="@dimen/_3sdp">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/fragment_registration_confirm_password_TextInputEditText"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:hint="@string/confirm_password"
-                        android:textColor="@color/prusianblue"
-                        android:drawableStart="@drawable/round_password_24"
-                        android:drawablePadding="10dp"
-                        android:textSize="@dimen/_10sdp"
-                        android:padding="10dp"
-                        android:inputType="textPassword"
-                        android:fontFamily="@font/comfortaa_regular"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <!--            <com.google.android.material.button.MaterialButton-->
-                <!--                android:layout_width="wrap_content"-->
-                <!--                android:layout_height="25dp"-->
-                <!--                android:paddingVertical="0dp"-->
-                <!--                android:layout_marginTop="10dp"-->
-                <!--                android:layout_gravity="end"-->
-                <!--                android:gravity="center_vertical"-->
-                <!--                android:text="Get OTP"-->
-                <!--                android:textSize="10dp"-->
-                <!--                android:textColor="@color/greentype"-->
-                <!--                app:backgroundTint="@null"-->
-                <!--                android:background="@drawable/button_outlined"-->
-                <!--                app:icon="@drawable/noun_otp_4051175"-->
-                <!--                app:iconTint="@color/greentype"-->
-                <!--                app:iconGravity="textStart"/>-->
-                <!--            <TextView-->
-                <!--                android:layout_width="wrap_content"-->
-                <!--                android:layout_height="wrap_content"-->
-                <!--                android:text="Enter OTP:"-->
-                <!--                android:textSize="18dp"-->
-                <!--                android:textColor="@color/black"-->
-                <!--                android:layout_marginTop="15dp"/>-->
-                <!--            <com.google.android.material.textfield.TextInputLayout-->
-                <!--                android:layout_width="match_parent"-->
-                <!--                android:layout_height="wrap_content"-->
-                <!--                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">-->
-                <!--                <com.google.android.material.textfield.TextInputEditText-->
-                <!--                    android:layout_width="match_parent"-->
-                <!--                    android:layout_height="match_parent"-->
-                <!--                    android:hint="Enter OTP"-->
-                <!--                    android:textColor="@color/prusianblue"-->
-                <!--                    android:drawableLeft="@drawable/round_password_24"-->
-                <!--                    android:drawablePadding="10dp"-->
-                <!--                    android:maxLines="1"-->
-                <!--                    android:singleLine="true"/>-->
-                <!--            </com.google.android.material.textfield.TextInputLayout>-->
-                <!--            <TextView-->
-                <!--                android:layout_width="wrap_content"-->
-                <!--                android:layout_height="wrap_content"-->
-                <!--                android:text="Resend OTP"-->
-                <!--                android:textColor="@color/greentype"-->
-                <!--                android:layout_marginTop="3dp"-->
-                <!--                android:layout_marginLeft="5dp"/>-->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/fragment_registration_register_button"
-                    android:layout_width="@dimen/_140sdp"
-                    android:layout_height="@dimen/_35sdp"
-                    android:layout_marginTop="10dp"
-                    android:text="@string/register"
-                    android:textColor="@color/white"
-                    app:backgroundTint="@null"
-                    android:background="@drawable/button_background"
-                    app:icon="@drawable/round_arrow_right_alt_24"
-                    app:iconGravity="textEnd"
-                    android:layout_gravity="end"
-                    android:fontFamily="@font/comfortaa_bold"
-                    app:iconTint="@color/white"/>
-                <TextView
-                    android:id="@+id/fragment_registration_login_account_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/account_login_text"
-                    android:layout_gravity="end"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:textSize="@dimen/_10sdp"
-                    android:textColor="@color/greentype"
-                    android:fontFamily="@font/comfortaa_regular"/>
-            </LinearLayout>
-        </LinearLayout>
-
-    </androidx.core.widget.NestedScrollView>
+        <ImageView
+            android:id="@+id/bottom_shape"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="@dimen/_minus60sdp"
+            android:layout_marginLeft="@dimen/_minus60sdp"
+            android:src="@drawable/shape"
+            android:rotation="180"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

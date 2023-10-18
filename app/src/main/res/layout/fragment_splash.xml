@@ -1,42 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".mainActivity.splash.SplashFragment">
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    tools:context=".splash.SplashFragment">
 
-        <com.caverock.androidsvg.SVGImageView
-            android:id="@+id/medi_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/welcome_msg"/>
+    <ImageView
+        android:id="@+id/medi_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/noun_capsule_4028001"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/_100sdp" />
 
-        <TextView
-            android:id="@+id/welcome_msg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="20dp"
-            android:fontFamily="@font/comfortaa_regular"
-            android:gravity="center"
-            android:padding="0dp"
-            android:text="@string/app_name"
-            android:textColor="#053F5C"
-            android:textSize="50sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/medi_icon" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
+    <TextView
+        android:id="@+id/welcome_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_40sdp"
+        android:gravity="center"
+        android:text="@string/app_name"
+        android:textSize="@dimen/_40sdp"
+        android:textColor="@color/prusianblue"/>
 
 </FrameLayout>

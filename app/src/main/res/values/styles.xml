@@ -3,4 +3,9 @@
     <style name="CustomOutlinedTextInputLayout" parent="">
         <item name="boxStrokeColor">@color/darkblue</item> <!-- Change this to your desired color -->
     </style>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/prusianblue</item>
+        <item name="colorPrimaryDark">@color/prusianblue</item>
+        <item name="colorAccent">@color/white</item>
+    </style>
 </resources>
