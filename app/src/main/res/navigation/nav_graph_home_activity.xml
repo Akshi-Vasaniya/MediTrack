@@ -8,15 +8,23 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.meditrack.homeActivity.home.HomeFragment"
-        android:label=""
+        android:label="@string/app_name"
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_homeFragment_to_searchFragment"
             app:destination="@id/searchFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_OCRFragment"
+            app:destination="@id/OCRFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.example.meditrack.homeActivity.search.SearchFragment"
-        android:label="fragment_search"
+        android:label="@string/app_name"
         tools:layout="@layout/fragment_search" />
+    <fragment
+        android:id="@+id/OCRFragment"
+        android:name="com.example.meditrack.homeActivity.ocr.OCRFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_o_c_r" />
 </navigation>

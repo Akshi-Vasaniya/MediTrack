@@ -20,6 +20,10 @@
             android:name=".homeActivity.HomeActivity"
             android:exported="false" />
         <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat"
+            android:exported="true" />
+        <activity
             android:name=".mainActivity.MainActivity"
             android:exported="true" >
             <intent-filter>

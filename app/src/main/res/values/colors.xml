@@ -16,6 +16,6 @@
     <color name="darkblue">#003F7D</color>
     <color name="prusianblue">#053F5C</color>
     <color name="transparent">#00000000</color>
-
+    <color name="grey">#50FFFFFF</color>
     <color name="dialogBackground">#60000000</color>
 </resources>

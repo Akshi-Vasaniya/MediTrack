@@ -21,7 +21,6 @@ class CustomProgressDialog(context: Context) {
 
     private var dialog: CustomDialog
     private var cpTitle: TextView
-    private var cpCardView: CardView
     private var progressBar: ProgressBar
 
     fun start(title: String = "") {
@@ -41,7 +40,6 @@ class CustomProgressDialog(context: Context) {
         val view = inflater.inflate(R.layout.progress_dialog_view, null)
 
         cpTitle = view.findViewById(R.id.cp_title)
-        cpCardView = view.findViewById(R.id.cp_cardview)
         progressBar = view.findViewById(R.id.cp_pbar)
 
         // Card Color

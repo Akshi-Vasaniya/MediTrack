@@ -6,56 +6,44 @@
     android:layout_height="match_parent"
     android:background="#BF000000"
     tools:ignore="Overdraw">
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cp_cardview"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cp_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/_50sdp"
+        android:paddingTop="@dimen/_20sdp"
+        android:paddingRight="@dimen/_50sdp"
+        android:paddingBottom="@dimen/_20sdp"
         android:layout_marginHorizontal="@dimen/_30sdp"
-        app:cardCornerRadius="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:cardBackgroundColor="@color/transparent">
+        app:layout_constraintTop_toTopOf="parent">
 
+        <ProgressBar
+            android:id="@+id/cp_pbar"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cp_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingLeft="@dimen/_50sdp"
-            android:paddingTop="@dimen/_20sdp"
-            android:paddingRight="@dimen/_50sdp"
-            android:paddingBottom="@dimen/_20sdp">
+        <TextView
+            android:id="@+id/cp_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginVertical="@dimen/_10sdp"
+            android:textSize="@dimen/_14sdp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cp_pbar" />
 
-            <ProgressBar
-                android:id="@+id/cp_pbar"
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_gravity="center"
-                android:layout_marginHorizontal="@dimen/_10sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/cp_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_10sdp"
-                android:layout_marginVertical="@dimen/_10sdp"
-                android:textSize="@dimen/_14sdp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cp_pbar" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

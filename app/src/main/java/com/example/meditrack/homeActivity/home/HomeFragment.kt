@@ -57,6 +57,9 @@ class HomeFragment : Fragment() {
             searchBtn.setOnClickListener {
                 findNavController().navigate(R.id.searchFragment)
             }
+            addPrescriptionCard.setOnClickListener {
+                findNavController().navigate(R.id.OCRFragment)
+            }
         }
 
         viewModel._userData.observe(viewLifecycleOwner){
