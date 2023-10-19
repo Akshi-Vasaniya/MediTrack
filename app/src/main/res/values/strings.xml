@@ -39,4 +39,10 @@
     <string name="close_dialog">Close Dialog</string>
     <string name="torch_button">Torch Button</string>
     <string name="share_text">Share Text</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">John Doe</string>
+    <string name="nav_header_subtitle">johnDoe@gmail.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
 </resources>

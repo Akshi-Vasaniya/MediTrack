@@ -62,7 +62,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        viewModel._userData.observe(viewLifecycleOwner){
+        /*viewModel._userData.observe(viewLifecycleOwner){
             MainScope().launch(Dispatchers.IO) {
                 try {
                     withContext(Dispatchers.Main)
@@ -94,7 +94,7 @@ class HomeFragment : Fragment() {
                 }
 
             }
-        }
+        }*/
 
         binding.apply {
             MainScope().launch(Dispatchers.IO) {
@@ -168,7 +168,7 @@ class HomeFragment : Fragment() {
                 }
             }
 
-            menuLayout.slidingMenu.setOnClickListener {  }
+            /*menuLayout.slidingMenu.setOnClickListener {  }
 
             menuLayout.btnLogout.setOnClickListener {
                 FirebaseAuth.getInstance().signOut()
@@ -204,12 +204,12 @@ class HomeFragment : Fragment() {
                 } else {
                     hideMenu()
                 }
-            }
+            }*/
         }
 
     }
 
-    private fun hideMenu() {
+    /*private fun hideMenu() {
         binding.apply {
             if (menuLayout.slidingMenu.visibility == View.VISIBLE) {
                 slideOutAnimation.addUpdateListener { valueAnimator ->
@@ -222,7 +222,6 @@ class HomeFragment : Fragment() {
                 slideOutAnimation.start()
             }
         }
-
-    }
+    }*/
 
 }

@@ -10,7 +10,9 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.text.util.Linkify
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.Camera
@@ -33,7 +35,7 @@ import com.theartofdev.edmodo.cropper.CropImageView
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class OCRFragment : Fragment() {
+class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallback {
 
     companion object {
         fun newInstance() = OCRFragment()
@@ -156,21 +158,7 @@ class OCRFragment : Fragment() {
     }
 
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>, grantResults:
-        IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (allPermissionsGranted()) {
-                startCamera()
-            } else {
-                showToast(
-                    getString(R.string.permission_denied_msg)
-                )
-            }
-        }
-    }
+
 
 
     private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -191,6 +179,7 @@ class OCRFragment : Fragment() {
 
 
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         // handle result of CropImageActivity
@@ -248,7 +237,10 @@ class OCRFragment : Fragment() {
             getString(R.string.no_text_found)
         }
 
-        Linkify.addLinks(binding.textInImage, Linkify.ALL)
+        Linkify.addLinks(
+            binding.textInImage,
+            Linkify.WEB_URLS or Linkify.EMAIL_ADDRESSES or Linkify.PHONE_NUMBERS
+        )
 
     }
 
@@ -317,6 +309,21 @@ class OCRFragment : Fragment() {
         ActivityCompat.requestPermissions(
             requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
         )
+    }
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<String>, grantResults:
+        IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_CODE_PERMISSIONS) {
+            if (allPermissionsGranted()) {
+                startCamera()
+            } else {
+                showToast(
+                    getString(R.string.permission_denied_msg)
+                )
+            }
+        }
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
