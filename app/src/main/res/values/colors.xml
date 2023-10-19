@@ -6,16 +6,5 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
-    <color name="lightblack">#83000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="lightgreen">#DCEDF9</color>
-    <color name="red">#FF0000</color>
-    <color name="orange">#F84D09</color>
-    <color name="yellowtype">#FCEE21</color>
-    <color name="greentype">#009245</color>
-    <color name="darkblue">#003F7D</color>
-    <color name="prusianblue">#053F5C</color>
-    <color name="transparent">#00000000</color>
-    <color name="grey">#50FFFFFF</color>
-    <color name="dialogBackground">#60000000</color>
 </resources>
