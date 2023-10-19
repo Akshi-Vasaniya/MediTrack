@@ -1,5 +1,6 @@
 package com.example.meditrack.homeActivity
 
+import android.content.Intent
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -20,7 +21,9 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.meditrack.R
 import com.example.meditrack.databinding.ActivityHomeBinding
+import com.example.meditrack.mainActivity.MainActivity
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var navController: NavController
@@ -129,6 +132,14 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             R.id.nav_privacyPolicy -> {
                 Toast.makeText(this, "Clicked Privacy Policy", Toast.LENGTH_SHORT).show()
+            }
+
+            R.id.nav_sign_out->{
+                FirebaseAuth.getInstance().signOut()
+                Intent(this, MainActivity::class.java).apply {
+                    startActivity(this)
+                }
+                this.finish()
             }
         }
     }
