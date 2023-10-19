@@ -34,6 +34,10 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     /*val myToolbarImage: ImageView
         get() = findViewById(R.id.toolbar_profile_image)*/
 
+    fun getToolbarMenuLayout(): ConstraintLayout {
+        return findViewById(R.id.fragment_home_toolbar_menu_layout)
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -110,13 +114,13 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 Toast.makeText(this, "Clicked Home", Toast.LENGTH_SHORT).show()
             }
 
-            R.id.nav_photos -> {
-                Toast.makeText(this, "Clicked Photos", Toast.LENGTH_SHORT).show()
-            }
-
-            R.id.nav_movies -> {
-                Toast.makeText(this, "Clicked Movies", Toast.LENGTH_SHORT).show()
-            }
+//            R.id.nav_photos -> {
+//                Toast.makeText(this, "Clicked Photos", Toast.LENGTH_SHORT).show()
+//            }
+//
+//            R.id.nav_movies -> {
+//                Toast.makeText(this, "Clicked Movies", Toast.LENGTH_SHORT).show()
+//            }
 
             R.id.nav_notifications -> {
                 Toast.makeText(this, "Clicked Notifications", Toast.LENGTH_SHORT).show()

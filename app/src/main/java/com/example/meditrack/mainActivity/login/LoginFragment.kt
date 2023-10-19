@@ -65,6 +65,10 @@ class LoginFragment : Fragment() {
 
         binding.apply {
 
+            fragmentLoginForgotPassword.setOnClickListener {
+
+            }
+
             fragmentLoginEmailTextInputEditText.addTextChangedListener(object : TextWatcher {
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
 

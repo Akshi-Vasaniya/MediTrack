@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingVertical="@dimen/_5sdp">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/medicine_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Medicine Name"
+                    android:textSize="@dimen/_12sdp"
+                    android:fontFamily="@font/comfortaa_bold"
+                    android:textColor="@color/prusianblue"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/added_time_txt"
+                        android:layout_width="51dp"
+                        android:layout_height="wrap_content"
+                        android:text="Added at:"
+                        android:textSize="@dimen/_8sdp"
+                        android:fontFamily="@font/comfortaa_bold"
+                        android:layout_weight="1"/>
+                    <TextView
+                        android:id="@+id/added_date"
+                        android:layout_width="55dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_weight="1"
+                        android:text="dd/mm/yy"
+                        android:textSize="@dimen/_8sdp"
+                        android:fontFamily="@font/comfortaa_bold" />
+                    <TextView
+                        android:id="@+id/dash_sign"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="3dp"
+                        android:layout_weight="1"
+                        android:text="--"
+                        android:textSize="@dimen/_8sdp"
+                        android:fontFamily="@font/comfortaa_bold" />
+                    <TextView
+                        android:id="@+id/added_time"
+                        android:layout_width="35dp"
+                        android:layout_height="wrap_content"
+                        android:text="hh:mm"
+                        android:textSize="@dimen/_8sdp"
+                        android:fontFamily="@font/comfortaa_bold"
+                        android:layout_weight="1"/>
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/expiry_date_txt"
+                    android:layout_width="65dp"
+                    android:layout_height="wrap_content"
+                    android:text="Expiry Date:"
+                    android:textSize="@dimen/_8sdp"
+                    android:fontFamily="@font/comfortaa_bold"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:id="@+id/expiry_date"
+                    android:layout_width="55dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/comfortaa_bold"
+                    android:text="dd/mm/yy"
+                    android:textSize="@dimen/_8sdp" />
+                <TextView
+                    android:id="@+id/or_sign"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="3dp"
+                    android:layout_weight="1"
+                    android:text="|"
+                    android:textSize="@dimen/_8sdp"
+                    android:fontFamily="@font/comfortaa_bold" />
+                <TextView
+                    android:id="@+id/expiry_remain_time_txt"
+                    android:layout_width="55dp"
+                    android:layout_height="wrap_content"
+                    android:text="Expires In:"
+                    android:textSize="@dimen/_8sdp"
+                    android:fontFamily="@font/comfortaa_bold"
+                    android:layout_weight="1"/>
+                <TextView
+                    android:id="@+id/expiry_remain_time"
+                    android:layout_width="41dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:layout_weight="1"
+                    android:text="20 days"
+                    android:textSize="@dimen/_8sdp"
+                    android:fontFamily="@font/comfortaa_bold" />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1">
+            <ImageView
+                android:id="@+id/edit_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/round_edit_24"
+                app:tint="@color/cyanlight"
+                android:layout_weight="1"/>
+            <ImageView
+                android:id="@+id/delete_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/round_delete_24"
+                app:tint="@color/coffeetype" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,7 @@
 package com.example.meditrack.homeActivity.home
 
 import android.animation.ValueAnimator
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +17,7 @@ import com.example.meditrack.R
 import com.example.meditrack.dataModel.User
 import com.example.meditrack.databinding.FragmentHomeBinding
 import com.example.meditrack.firebase.MediTrackUserReference
+import com.example.meditrack.homeActivity.HomeActivity
 import com.example.meditrack.mainActivity.MainActivity
 import com.example.meditrack.utility.UtilityFunction
 import com.example.meditrack.utility.UtilityFunction.Companion.getCircularBitmap
@@ -39,12 +41,18 @@ class HomeFragment : Fragment() {
     private lateinit var slideInAnimation: ValueAnimator
     private lateinit var slideOutAnimation: ValueAnimator
     private lateinit var binding:FragmentHomeBinding
+//    private lateinit var homeActivity: HomeActivity
     private val tag = "HomeFragment"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+//        if (context is HomeActivity) {
+//            homeActivity = context as HomeActivity
+//        } else {
+//            throw IllegalStateException("Parent activity must be HomeActivity")
+//        }
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
@@ -53,12 +61,20 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentHomeBinding.bind(view)
 
+//        homeActivity.getToolbarMenuLayout().visibility = View.VISIBLE
+
         binding.apply {
-            searchBtn.setOnClickListener {
+            suggestionMedicineCard.setOnClickListener {
                 findNavController().navigate(R.id.searchFragment)
             }
-            addPrescriptionCard.setOnClickListener {
-                findNavController().navigate(R.id.OCRFragment)
+            addMedicineCard.setOnClickListener {
+                findNavController().navigate(R.id.addMedicineFragment)
+            }
+//            addPrescriptionCard.setOnClickListener {
+//                findNavController().navigate(R.id.OCRFragment)
+//            }
+            checkMedicineStockCard.setOnClickListener {
+                findNavController().navigate(R.id.medicineStockFragment)
             }
         }
 
@@ -109,7 +125,7 @@ class HomeFragment : Fragment() {
                                 it.child("profileImage").value.toString()))
                         }
 
-                        Log.i("Name Updated: ", "${viewModel._userData.value!!.name}")
+//                        Log.i("Name Updated: ", "${viewModel._userData.value!!.name}")
                     }
 
                     override fun onCancelled(error: DatabaseError) {

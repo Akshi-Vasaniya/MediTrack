@@ -123,6 +123,19 @@
                         android:inputType="textPassword"
                         android:fontFamily="@font/comfortaa_regular"/>
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/fragment_login_forgot_password"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/forgot_password_text"
+                    android:layout_gravity="start"
+                    android:textSize="12dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="10dp"
+                    android:textColor="@color/greentype"
+                    android:fontFamily="@font/comfortaa_regular"/>
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/fragment_login_button"
                     android:layout_width="@dimen/_135sdp"

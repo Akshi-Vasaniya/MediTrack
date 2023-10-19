@@ -58,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/search_btn"
+                    android:id="@+id/addMedicineCard"
                     android:layout_width="@dimen/_50sdp"
                     android:layout_height="@dimen/_70sdp"
                     app:cardCornerRadius="7dp"
@@ -184,6 +184,7 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </com.google.android.material.card.MaterialCardView>
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/suggestionMedicineCard"
                     android:layout_width="@dimen/_50sdp"
                     android:layout_height="@dimen/_70sdp"
                     app:cardCornerRadius="7dp"
@@ -229,6 +230,7 @@
                 android:orientation="horizontal">
 
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/checkMedicineStockCard"
                     android:layout_width="@dimen/_50sdp"
                     android:layout_height="@dimen/_70sdp"
                     app:cardCornerRadius="7dp"

@@ -16,6 +16,12 @@
         <action
             android:id="@+id/action_homeFragment_to_OCRFragment"
             app:destination="@id/OCRFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_addMedicineFragment2"
+            app:destination="@id/addMedicineFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_medicineStockFragment"
+            app:destination="@id/medicineStockFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -27,4 +33,14 @@
         android:name="com.example.meditrack.homeActivity.ocr.OCRFragment"
         android:label="@string/app_name"
         tools:layout="@layout/fragment_o_c_r" />
+    <fragment
+        android:id="@+id/addMedicineFragment"
+        android:name="com.example.meditrack.homeActivity.medicine.addMedicine.AddMedicineFragment"
+        android:label="fragment_add_medicine"
+        tools:layout="@layout/fragment_add_medicine" />
+    <fragment
+        android:id="@+id/medicineStockFragment"
+        android:name="com.example.meditrack.homeActivity.medicine.medicineStock.MedicineStockFragment"
+        android:label="fragment_medicine_stock"
+        tools:layout="@layout/fragment_medicine_stock" />
 </navigation>

@@ -8,14 +8,14 @@
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home"
             android:title="Home" />
-        <item
-            android:id="@+id/nav_photos"
-            android:icon="@drawable/ic_picture"
-            android:title="Photos" />
-        <item
-            android:id="@+id/nav_movies"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Movies" />
+<!--        <item-->
+<!--            android:id="@+id/nav_photos"-->
+<!--            android:icon="@drawable/ic_picture"-->
+<!--            android:title="Photos" />-->
+<!--        <item-->
+<!--            android:id="@+id/nav_movies"-->
+<!--            android:icon="@drawable/ic_menu_slideshow"-->
+<!--            android:title="Movies" />-->
         <item
             android:id="@+id/nav_notifications"
             android:icon="@drawable/ic_notifications"
