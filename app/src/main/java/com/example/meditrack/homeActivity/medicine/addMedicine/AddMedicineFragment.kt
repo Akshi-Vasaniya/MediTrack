@@ -31,7 +31,8 @@ class AddMedicineFragment : Fragment() {
     private lateinit var viewModel: AddMedicineViewModel
     private lateinit var binding: ActivityHomeBinding
     private lateinit var addMedicineBinding: FragmentAddMedicineBinding
-    private lateinit var datepickerEditText: TextInputEditText
+    private lateinit var expiryDatePicker: TextInputEditText
+    private lateinit var startDatePicker: TextInputEditText
     private val calendar = Calendar.getInstance()
     /*private lateinit var homeActivity: HomeActivity*/
     private val REQUEST_IMAGE_CAPTURE = 1
@@ -52,10 +53,14 @@ class AddMedicineFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_add_medicine, container, false)
 
-        datepickerEditText = view.findViewById(R.id.fragment_medicine_expirydate_TextInputEditText)
+        expiryDatePicker = view.findViewById(R.id.fragment_medicine_expirydate_TextInputEditText)
+        startDatePicker = view.findViewById(R.id.fragment_medicine_startdate_TextInputEditText)
 
-        datepickerEditText.setOnClickListener {
-            showDatePickerDialog(view)
+        startDatePicker.setOnClickListener {
+            startDatePickerDialog(view)
+        }
+        expiryDatePicker.setOnClickListener {
+            expiryDatePickerDialog(view)
         }
 
         return view
@@ -79,7 +84,7 @@ class AddMedicineFragment : Fragment() {
         // TODO: Use the ViewModel
     }
 
-    fun showDatePickerDialog(view: View) {
+    fun expiryDatePickerDialog(view: View) {
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
@@ -89,7 +94,29 @@ class AddMedicineFragment : Fragment() {
             { _, selectedYear, selectedMonth, selectedDay ->
                 // Handle the selected date here
                 val selectedDate = "$selectedDay/${selectedMonth}/${selectedYear}"
-                datepickerEditText.setText(selectedDate)
+                expiryDatePicker.setText(selectedDate)
+            },
+            year,
+            month,
+            day
+        )
+
+        // Optional: Set a minimum date if needed
+        // datePickerDialog.datePicker.minDate = System.currentTimeMillis()
+
+        datePickerDialog.show()
+    }
+    fun startDatePickerDialog(view: View) {
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = android.app.DatePickerDialog(
+            requireContext(),
+            { _, selectedYear, selectedMonth, selectedDay ->
+                // Handle the selected date here
+                val selectedDate = "$selectedDay/${selectedMonth}/${selectedYear}"
+                startDatePicker.setText(selectedDate)
             },
             year,
             month,

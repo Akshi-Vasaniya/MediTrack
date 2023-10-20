@@ -108,11 +108,32 @@
                             android:id="@+id/fragment_medicine_name_TextInputEditText"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:drawableStart="@drawable/round_mail_24"
+                            android:drawableStart="@drawable/medicine_11_svgrepo_com"
                             android:drawablePadding="10dp"
                             android:fontFamily="@font/comfortaa_regular"
                             android:hint="@string/medicinename"
                             android:inputType="textEmailAddress"
+                            android:textColor="@color/prusianblue"
+                            android:padding="10dp"
+                            android:textSize="@dimen/_10sdp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/fragment_dosage_info_TextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        app:helperTextEnabled="true"
+                        app:helperText="Required"
+                        app:helperTextTextColor="@color/prusianblue">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/fragment_dosage_info_TextInputEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:drawableStart="@drawable/dropper_dosage_svgrepo_com"
+                            android:drawablePadding="10dp"
+                            android:fontFamily="@font/comfortaa_regular"
+                            android:hint="@string/dosageinfo"
+                            android:inputType="text"
                             android:textColor="@color/prusianblue"
                             android:padding="10dp"
                             android:textSize="@dimen/_10sdp" />
@@ -127,31 +148,66 @@
                     <!--                android:textColor="@color/black"/>-->
 
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/fragment_medicine_expirydate_TextInputLayout"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        app:helperTextEnabled="true"
-                        app:helperText="Required"
-                        app:helperTextTextColor="@color/prusianblue"
-                        android:layout_marginTop="@dimen/_3sdp">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/fragment_medicine_expirydate_TextInputEditText"
+                        android:orientation="horizontal"
+                        android:weightSum="2"
+                        android:baselineAligned="false">
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/fragment_medicine_startdate_TextInputLayout"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:drawableStart="@drawable/round_date_range_24"
-                            android:drawablePadding="10dp"
-                            android:fontFamily="@font/comfortaa_regular"
-                            android:hint="@string/medicineexpirydate"
-                            android:inputType="none"
-                            android:focusable="false"
-                            android:clickable="true"
-                            android:textColor="@color/prusianblue"
-                            android:padding="10dp"
-                            android:textSize="@dimen/_10sdp" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:layout_height="wrap_content"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            app:helperTextEnabled="true"
+                            app:helperText="Required"
+                            app:helperTextTextColor="@color/prusianblue"
+                            android:layout_marginTop="@dimen/_3sdp"
+                            android:layout_weight="1">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/fragment_medicine_startdate_TextInputEditText"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:drawableStart="@drawable/round_date_range_24"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/comfortaa_regular"
+                                android:hint="@string/medicinestartdate"
+                                android:inputType="none"
+                                android:focusable="false"
+                                android:clickable="true"
+                                android:textColor="@color/prusianblue"
+                                android:padding="10dp"
+                                android:textSize="@dimen/_10sdp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/fragment_medicine_expirydate_TextInputLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            app:helperTextEnabled="true"
+                            app:helperText="Required"
+                            app:helperTextTextColor="@color/prusianblue"
+                            android:layout_marginTop="@dimen/_3sdp"
+                            android:layout_weight="1">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/fragment_medicine_expirydate_TextInputEditText"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:drawableStart="@drawable/round_date_range_24"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/comfortaa_regular"
+                                android:hint="@string/medicineexpirydate"
+                                android:inputType="none"
+                                android:focusable="false"
+                                android:clickable="true"
+                                android:textColor="@color/prusianblue"
+                                android:padding="10dp"
+                                android:textSize="@dimen/_10sdp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
 
                     <!--            <TextView-->
                     <!--                android:layout_width="wrap_content"-->
@@ -160,6 +216,126 @@
                     <!--                android:textSize="18dp"-->
                     <!--                android:textColor="@color/black"-->
                     <!--                android:layout_marginTop="10dp"/>-->
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/fragment_frequency_TextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        app:helperTextEnabled="true"
+                        app:helperText="Required"
+                        app:helperTextTextColor="@color/prusianblue"
+                        android:layout_marginTop="@dimen/_3sdp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/fragment_frequency_TextInputEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:hint="@string/frequency"
+                            android:textColor="@color/prusianblue"
+                            android:drawableStart="@drawable/medicine_icon"
+                            android:drawableTint="@color/prusianblue"
+                            android:drawablePadding="10dp"
+                            android:textSize="@dimen/_10sdp"
+                            android:padding="10dp"
+                            android:inputType="text"
+                            android:fontFamily="@font/comfortaa_regular"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/fragment_administration_time_TextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        app:helperTextEnabled="true"
+                        app:helperText="Required"
+                        app:helperTextTextColor="@color/prusianblue"
+                        android:layout_marginTop="@dimen/_3sdp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/fragment_administration_time_TextInputEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:hint="@string/administrationtime"
+                            android:textColor="@color/prusianblue"
+                            android:drawableStart="@drawable/round_access_time_24"
+                            android:drawableTint="@color/prusianblue"
+                            android:drawablePadding="10dp"
+                            android:textSize="@dimen/_10sdp"
+                            android:padding="10dp"
+                            android:inputType="text"
+                            android:fontFamily="@font/comfortaa_regular"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/fragment_special_instruction_TextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        app:helperTextEnabled="true"
+                        app:helperText="Required"
+                        app:helperTextTextColor="@color/prusianblue"
+                        android:layout_marginTop="@dimen/_3sdp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/fragment_special_instruction_TextInputEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:hint="@string/specialinstruction"
+                            android:textColor="@color/prusianblue"
+                            android:drawableStart="@drawable/medicine_icon"
+                            android:drawableTint="@color/prusianblue"
+                            android:drawablePadding="10dp"
+                            android:textSize="@dimen/_10sdp"
+                            android:padding="10dp"
+                            android:inputType="text"
+                            android:fontFamily="@font/comfortaa_regular"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/fragment_doctor_info_TextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        app:helperTextEnabled="true"
+                        app:helperText="Required"
+                        app:helperTextTextColor="@color/prusianblue"
+                        android:layout_marginTop="@dimen/_3sdp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/fragment_doctor_info_TextInputEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:hint="@string/doctorinfo"
+                            android:textColor="@color/prusianblue"
+                            android:drawableStart="@drawable/doctor_svgrepo_com"
+                            android:drawableTint="@color/prusianblue"
+                            android:drawablePadding="10dp"
+                            android:textSize="@dimen/_10sdp"
+                            android:padding="10dp"
+                            android:inputType="text"
+                            android:fontFamily="@font/comfortaa_regular"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/fragment_notes_or_comments_TextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        app:helperTextEnabled="true"
+                        app:helperText="Required"
+                        app:helperTextTextColor="@color/prusianblue"
+                        android:layout_marginTop="@dimen/_3sdp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/fragment_notes_or_comments_TextInputEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:hint="@string/notesorcomments"
+                            android:textColor="@color/prusianblue"
+                            android:drawableStart="@drawable/round_notes_24"
+                            android:drawableTint="@color/prusianblue"
+                            android:drawablePadding="10dp"
+                            android:textSize="@dimen/_10sdp"
+                            android:padding="10dp"
+                            android:inputType="text"
+                            android:fontFamily="@font/comfortaa_regular"/>
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/fragment_registration_password_TextInputLayout"
@@ -182,31 +358,6 @@
                             android:textSize="@dimen/_10sdp"
                             android:padding="10dp"
                             android:inputType="numberDecimal"
-                            android:fontFamily="@font/comfortaa_regular"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/fragment_registration_confirm_password_TextInputLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        app:helperTextEnabled="true"
-                        app:helperText="Required"
-                        app:helperTextTextColor="@color/prusianblue"
-                        android:layout_marginTop="@dimen/_3sdp">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/fragment_medicine_purpose_password_TextInputEditText"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:hint="@string/medicinepurpose"
-                            android:textColor="@color/prusianblue"
-                            android:drawableStart="@drawable/virus_patient"
-                            android:drawablePadding="10dp"
-                            android:textSize="@dimen/_10sdp"
-                            android:padding="10dp"
-                            android:inputType="text"
                             android:fontFamily="@font/comfortaa_regular"/>
                     </com.google.android.material.textfield.TextInputLayout>
 

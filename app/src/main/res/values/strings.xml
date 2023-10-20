@@ -7,10 +7,17 @@
     <string name="login">Login</string>
     <string name="fragment_login_subtitle">Please sign in to continue</string>
     <string name="email">Email</string>
+    <string name="medicinestartdate">Start Date</string>
     <string name="medicineexpirydate">Expiry Date</string>
     <string name="medicinename">Medicine Name</string>
+    <string name="dosageinfo">Dosage Information</string>
     <string name="password">Password</string>
     <string name="medicinequantity">Quantity of Medicine</string>
+    <string name="frequency">Frequency (e.g., daily, weekly, monthly)</string>
+    <string name="administrationtime">Time(s)/day should take medicine</string>
+    <string name="specialinstruction">Special Instructions</string>
+    <string name="doctorinfo">Doctor Information</string>
+    <string name="notesorcomments">Notes/Comments</string>
     <string name="not_account_text">Don\'t have an account?</string>
     <string name="forgot_password_text">Forgot Password?</string>
     <string name="password_format_text">Password Format Instructions:</string>
