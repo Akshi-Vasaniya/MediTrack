@@ -37,8 +37,6 @@ android {
 }
 
 dependencies {
-
-    implementation 'com.google.firebase:firebase-auth-ktx:21.0.3'
     constraints {
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0") {
             because("kotlin-stdlib-jdk7 is now a part of kotlin-stdlib")
@@ -50,7 +48,11 @@ dependencies {
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
+
+    //Material
     implementation 'com.google.android.material:material:1.9.0'
+
+    //Constraint Layout
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
@@ -58,24 +60,25 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
+    //Kotlin
+    //Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+    //Components
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
     //Navigation Component
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
 
 
-    //Kotlin coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
-
-    //kotlin components
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
-
-
     //SDP for responsive layout
     implementation 'com.intuit.sdp:sdp-android:1.1.0'
 
-    //firebase database
+    //Firebase
+    //Auth
+    implementation 'com.google.firebase:firebase-auth-ktx:21.0.3'
+    //Database
     implementation 'com.google.firebase:firebase-database:19.7.0'
 
     //SVG Load
@@ -93,10 +96,8 @@ dependencies {
     // CameraX View class
     implementation "androidx.camera:camera-view:1.0.0-alpha27"
 
-    implementation "com.airbnb.android:lottie:$lottieVersion"
-
-    // Text features
-    implementation "com.google.android.gms:play-services-mlkit-text-recognition:$mlKitVersion"
+    // Text Recognizer ML Kit
+    implementation 'com.google.android.gms:play-services-mlkit-text-recognition:16.0.0'
 
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
 

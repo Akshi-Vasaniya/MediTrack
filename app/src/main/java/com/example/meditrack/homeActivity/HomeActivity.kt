@@ -1,12 +1,12 @@
 package com.example.meditrack.homeActivity
 
 import android.content.Intent
-import android.graphics.PorterDuff
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -31,6 +31,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var binding: ActivityHomeBinding
     lateinit var drawer_layout:DrawerLayout
     lateinit var nav_view:NavigationView
+
     /*val myToolbarImage: ImageView
         get() = findViewById(R.id.toolbar_profile_image)*/
 
@@ -41,7 +42,14 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
+        binding = ActivityHomeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        val navigationView = findViewById<NavigationView>(R.id.nav_view)
+        val headerView: View = navigationView.getHeaderView(0)
+        val headerTextView: TextView = headerView.findViewById(R.id.user_name_menu_header)
+        headerTextView.text = "Your Text Here"
+
 
         setSupportActionBar(findViewById(R.id.toolbarHome))
 
@@ -71,7 +79,9 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             setOf(
                 R.id.homeFragment,
                 R.id.OCRFragment,
-                R.id.searchFragment
+                R.id.searchFragment,
+                R.id.addMedicineFragment,
+                R.id.medicineStockFragment
             )
         ).build()
 
@@ -92,11 +102,11 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    /*override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
 
         return true
-    }
+    }*/
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {

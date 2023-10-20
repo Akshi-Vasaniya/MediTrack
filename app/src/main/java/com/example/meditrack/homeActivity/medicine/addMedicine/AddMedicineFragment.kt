@@ -33,10 +33,10 @@ class AddMedicineFragment : Fragment() {
     private lateinit var addMedicineBinding: FragmentAddMedicineBinding
     private lateinit var datepickerEditText: TextInputEditText
     private val calendar = Calendar.getInstance()
-    private lateinit var homeActivity: HomeActivity
+    /*private lateinit var homeActivity: HomeActivity*/
     private val REQUEST_IMAGE_CAPTURE = 1
 
-    override fun onAttach(context: Context) {
+    /*override fun onAttach(context: Context) {
         super.onAttach(context)
         // Ensure that the parent activity is HomeActivity
         if (context is HomeActivity) {
@@ -44,7 +44,7 @@ class AddMedicineFragment : Fragment() {
         } else {
             throw IllegalStateException("Parent activity must be HomeActivity")
         }
-    }
+    }*/
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,7 +66,7 @@ class AddMedicineFragment : Fragment() {
 
         addMedicineBinding = FragmentAddMedicineBinding.bind(view)
 
-        homeActivity.getToolbarMenuLayout().visibility = View.GONE
+        /*homeActivity.getToolbarMenuLayout().visibility = View.GONE*/
 
         addMedicineBinding.medicineImage.setOnClickListener {
             findNavController().navigate(R.id.OCRFragment)

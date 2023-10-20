@@ -8,6 +8,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -21,6 +23,7 @@ import com.example.meditrack.homeActivity.HomeActivity
 import com.example.meditrack.mainActivity.MainActivity
 import com.example.meditrack.utility.UtilityFunction
 import com.example.meditrack.utility.UtilityFunction.Companion.getCircularBitmap
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -33,13 +36,9 @@ import kotlinx.coroutines.withContext
 
 class HomeFragment : Fragment() {
 
-    /*companion object {
-        fun newInstance() = HomeFragment()
-    }*/
-
     private lateinit var viewModel: HomeViewModel
-    private lateinit var slideInAnimation: ValueAnimator
-    private lateinit var slideOutAnimation: ValueAnimator
+    /*private lateinit var slideInAnimation: ValueAnimator
+    private lateinit var slideOutAnimation: ValueAnimator*/
     private lateinit var binding:FragmentHomeBinding
 //    private lateinit var homeActivity: HomeActivity
     private val tag = "HomeFragment"
@@ -54,6 +53,8 @@ class HomeFragment : Fragment() {
 //            throw IllegalStateException("Parent activity must be HomeActivity")
 //        }
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+
+
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
@@ -62,6 +63,12 @@ class HomeFragment : Fragment() {
         binding = FragmentHomeBinding.bind(view)
 
 //        homeActivity.getToolbarMenuLayout().visibility = View.VISIBLE
+
+        val navigationView = activity?.findViewById<NavigationView>(R.id.nav_view)
+        val headerView = navigationView?.getHeaderView(0)
+        val userName = headerView?.findViewById<TextView>(R.id.user_name_menu_header)
+        val userEmail = headerView?.findViewById<TextView>(R.id.user_email_menu_header)
+        val userImage = headerView?.findViewById<ImageView>(R.id.user_image_menu_header)
 
         binding.apply {
             suggestionMedicineCard.setOnClickListener {
@@ -78,29 +85,33 @@ class HomeFragment : Fragment() {
             }
         }
 
-        /*viewModel._userData.observe(viewLifecycleOwner){
+        viewModel._userData.observe(viewLifecycleOwner){
             MainScope().launch(Dispatchers.IO) {
                 try {
                     withContext(Dispatchers.Main)
                     {
-                        binding.menuLayout.usernameTxt.text=requireActivity().getString(R.string.full_name,it.name,it.surname)
-                        binding.menuLayout.profileImage.setImageBitmap(null)
+                        userName!!.text = requireActivity().getString(R.string.full_name,it.name,it.surname)
+                        userEmail!!.text = it.email
+
+                        /*binding.menuLayout.usernameTxt.text=requireActivity().getString(R.string.full_name,it.name,it.surname)
+                        binding.menuLayout.profileImage.setImageBitmap(null)*/
                     }
 
                     if(!it?.profileImage.isNullOrBlank())
                     {
-                        var bitmap = UtilityFunction.decodeBase64ToBitmap(it?.profileImage!!)
+                        val bitmap = UtilityFunction.decodeBase64ToBitmap(it?.profileImage!!)
 
-                        bitmap = getCircularBitmap(bitmap)
+                        /*bitmap = getCircularBitmap(bitmap)*/
                         withContext(Dispatchers.Main)
                         {
-                            val parentView = binding.menuLayout.profileImage.parent as View
+                            /*val parentView = binding.menuLayout.profileImage.parent as View
                             binding.menuLayout.profileImage.layoutParams = ViewGroup.LayoutParams(
                                 ViewGroup.LayoutParams.MATCH_PARENT,
                                 ViewGroup.LayoutParams.MATCH_PARENT
                             )
                             parentView.requestLayout()
-                            binding.menuLayout.profileImage.setImageBitmap(bitmap)
+                            binding.menuLayout.profileImage.setImageBitmap(bitmap)*/
+                            userImage!!.setImageBitmap(bitmap)
                         }
                     }
                 }
@@ -110,7 +121,7 @@ class HomeFragment : Fragment() {
                 }
 
             }
-        }*/
+        }
 
         binding.apply {
             MainScope().launch(Dispatchers.IO) {

@@ -60,6 +60,19 @@
             android:layout_marginHorizontal="10dp"
             app:layout_constraintTop_toBottomOf="@+id/fragment_search_text_TextInputLayout" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvCombineImage"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/outputText"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="10dp"
+            tools:listitem="@layout/search_results_itemlayout" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

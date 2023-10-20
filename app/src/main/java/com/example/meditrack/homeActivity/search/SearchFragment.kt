@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.meditrack.R
+import com.example.meditrack.adapter.MyAdapter
 import com.example.meditrack.dataModel.api.ApiData
 import com.example.meditrack.dataModel.api.ApiInstance
 import com.example.meditrack.databinding.FragmentSearchBinding
@@ -57,14 +58,9 @@ class SearchFragment : Fragment() {
                             response: Response<List<ApiData?>?>
                         ) {
                             Log.i("Search", "onResponse: ${response.body()!!}")
-                            var res = ""
-                            for (item in response.body()!!)
-                            {
-                                res += item!!.Document+"\n\n"
-                            }
+                            var res = response.body()!!
+                            binding.rvCombineImage.adapter = MyAdapter(res)
                             progressDialog.stop()
-
-                            binding.outputText.text = res
                         }
 
                         override fun onFailure(call: Call<List<ApiData?>?>, t: Throwable) {
