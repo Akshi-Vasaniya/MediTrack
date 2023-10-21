@@ -67,8 +67,8 @@
                     android:gravity="center"
                     android:orientation="vertical">
                     <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_width="@dimen/_170sdp"
+                        android:layout_height="@dimen/_170sdp">
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:id="@+id/fragment_user_profile_profile_image"
                             android:layout_width="@dimen/_160sdp"
@@ -83,8 +83,8 @@
                         <com.google.android.material.floatingactionbutton.FloatingActionButton
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/_100sdp"
-                            android:layout_marginEnd="@dimen/_95sdp"
+                            android:layout_marginTop="130dp"
+                            android:layout_marginEnd="30dp"
                             android:src="@drawable/round_photo_camera_24"
                             app:tint="@color/white"
                             app:backgroundTint="@color/cyanlight"
@@ -126,7 +126,7 @@
                             android:orientation="horizontal"
                             android:weightSum="2">
                             <FrameLayout
-                                android:layout_width="match_parent"
+                                android:layout_width="350dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:layout_marginRight="10dp">
@@ -167,7 +167,7 @@
                             </FrameLayout>
 
                             <FrameLayout
-                                android:layout_width="match_parent"
+                                android:layout_width="350dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1">
 
