@@ -14,7 +14,7 @@ class OverlayView(context: Context) : View(context) {
 //        style = Paint.Style.STROKE
 //        strokeWidth = 5f
 //    }
-    var selectedItemColor = Color.argb(102, 173, 216, 230) // Light Blue color with 60% transparency
+    var selectedItemColor = Color.argb(204, 173, 216, 230) // Light Blue color with 60% transparency
     var unselectedItemColor = Color.argb(128, 255, 255, 255) // White color with 50% transparency
     private var rectPaint: Paint = Paint().apply {
         style = Paint.Style.FILL

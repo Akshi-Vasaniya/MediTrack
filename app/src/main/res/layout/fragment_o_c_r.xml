@@ -55,7 +55,8 @@
                     android:contentDescription="@string/close_dialog"
                     android:src="@drawable/ic_close"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/title" />
+                    app:layout_constraintTop_toTopOf="@id/title"
+                    app:tint="@color/white" />
 
                 <TextView
                     android:id="@+id/title"
@@ -64,7 +65,7 @@
                     android:padding="10dp"
                     android:text="@string/text_in_image"
                     android:textAlignment="center"
-                    android:textColor="@color/purple_200"
+                    android:textColor="@color/white"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     app:layout_constraintLeft_toLeftOf="parent"
@@ -78,7 +79,8 @@
                     android:contentDescription="@string/copy_to_clipboard"
                     android:src="@drawable/ic_copy_clipboard"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/title" />
+                    app:layout_constraintTop_toTopOf="@id/title"
+                    app:tint="@color/white" />
 
                 <TextView
                     android:id="@+id/textInImage"
@@ -100,21 +102,23 @@
         android:id="@+id/torchButton"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="10dp"
         android:elevation="2dp"
         app:cardCornerRadius="10dp"
-        app:layout_constraintBottom_toBottomOf="@id/extractTextButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/extractTextButton">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:backgroundTint="@color/transparent">
 
         <ImageView
             android:id="@+id/torchImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="10dp"
-            android:background="@color/grey"
             android:contentDescription="@string/torch_button"
-            android:src="@drawable/ic_flashlight_on" />
+            android:src="@drawable/ic_flashlight_on"
+            app:tint="@color/white"
+            android:backgroundTint="@color/transparent"/>
 
     </com.google.android.material.card.MaterialCardView>
 
@@ -128,10 +132,10 @@
         android:text="Extract Text"
         android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/torchButton"
-        app:layout_constraintRight_toLeftOf="@id/share" />
+        app:layout_constraintStart_toEndOf="@id/ocr_camera"
+        app:layout_constraintEnd_toStartOf="@id/ocr_gallery"/>
 
-    <com.google.android.material.card.MaterialCardView
+    <!--<com.google.android.material.card.MaterialCardView
         android:id="@+id/share"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
@@ -141,16 +145,17 @@
         app:layout_constraintBottom_toBottomOf="@id/extractTextButton"
         app:layout_constraintEnd_toStartOf="@id/ocr_camera"
         app:layout_constraintStart_toEndOf="@id/extractTextButton"
-        app:layout_constraintTop_toTopOf="@id/extractTextButton">
+        app:layout_constraintTop_toTopOf="@id/extractTextButton"
+        android:visibility="invisible">
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:contentDescription="@string/share_text"
-            android:src="@drawable/ic_share" />
+            android:src="@drawable/ic_share"/>
 
-    </com.google.android.material.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView>-->
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/ocr_camera"
@@ -158,10 +163,12 @@
         android:layout_height="0dp"
         android:elevation="2dp"
         app:cardCornerRadius="10dp"
-        app:layout_constraintBottom_toBottomOf="@id/share"
-        app:layout_constraintEnd_toStartOf="@id/ocr_gallery"
-        app:layout_constraintStart_toEndOf="@id/share"
-        app:layout_constraintTop_toTopOf="@id/share">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/extractTextButton"
+        app:layout_constraintTop_toTopOf="@id/extractTextButton"
+        app:layout_constraintEnd_toStartOf="@id/extractTextButton"
+        android:layout_marginStart="20dp"
+        >
 
         <ImageView
             android:layout_width="match_parent"
@@ -178,10 +185,10 @@
         android:layout_height="0dp"
         android:elevation="2dp"
         app:cardCornerRadius="10dp"
-        app:layout_constraintBottom_toBottomOf="@id/ocr_camera"
+        app:layout_constraintBottom_toBottomOf="@id/extractTextButton"
+        app:layout_constraintTop_toTopOf="@id/extractTextButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/ocr_camera"
-        app:layout_constraintTop_toTopOf="@id/ocr_camera">
+        app:layout_constraintStart_toEndOf="@id/extractTextButton">
 
         <ImageView
             android:layout_width="match_parent"
@@ -208,10 +215,10 @@
         app:layout_constraintRight_toRightOf="parent"
         tools:visibility="visible" /-->
 
-    <androidx.constraintlayout.widget.Group
+    <!--<androidx.constraintlayout.widget.Group
         android:id="@+id/group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="share,extractTextButton" />
+        app:constraint_referenced_ids="share,extractTextButton" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

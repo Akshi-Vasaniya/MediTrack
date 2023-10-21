@@ -65,7 +65,6 @@ class AddMedicineFragment : Fragment() {
     private lateinit var dinnerChipGroup: ChipGroup
     private lateinit var medTypeChipGroup: ChipGroup
     private lateinit var progressDialog: CustomProgressDialog
-    private lateinit var arrow: ImageButton
     private lateinit var hiddenView: LinearLayout
     private lateinit var cardView: CardView
 
@@ -289,21 +288,14 @@ class AddMedicineFragment : Fragment() {
         binding = FragmentAddMedicineBinding.bind(view)
         progressDialog= CustomProgressDialog(requireActivity())
 
-        arrow = binding.arrowButton
         cardView = binding.additionalView
         hiddenView = binding.hiddenView
 
-        arrow.setOnClickListener {
-            if(hiddenView.visibility == View.GONE){
-                TransitionManager.beginDelayedTransition(cardView, AutoTransition())
-                hiddenView.visibility = View.VISIBLE
-                arrow.setImageResource(R.drawable.round_keyboard_arrow_up_24)
-            }
-            else{
-                TransitionManager.beginDelayedTransition(cardView, AutoTransition())
-                hiddenView.visibility = View.GONE
-                arrow.setImageResource(R.drawable.round_keyboard_arrow_down_24)
-            }
+        binding.fixedLayout.setOnClickListener {
+            showAditionalDetails()
+        }
+        binding.arrowButton.setOnClickListener {
+            showAditionalDetails()
         }
 
         /*homeActivity.getToolbarMenuLayout().visibility = View.GONE*/
@@ -492,13 +484,21 @@ class AddMedicineFragment : Fragment() {
             }
         }
 
-
-
-
-
-
     }
 
+    fun showAditionalDetails()
+    {
+        if(hiddenView.visibility == View.GONE){
+            TransitionManager.beginDelayedTransition(cardView, AutoTransition())
+            hiddenView.visibility = View.VISIBLE
+            binding.arrowButton.setImageResource(R.drawable.round_keyboard_arrow_up_24)
+        }
+        else{
+            TransitionManager.beginDelayedTransition(cardView, AutoTransition())
+            hiddenView.visibility = View.GONE
+            binding.arrowButton.setImageResource(R.drawable.round_keyboard_arrow_down_24)
+        }
+    }
 
     /*fun expiryDatePickerDialog() {
         val year = calendar.get(Calendar.YEAR)

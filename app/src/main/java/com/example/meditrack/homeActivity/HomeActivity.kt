@@ -1,13 +1,16 @@
 package com.example.meditrack.homeActivity
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -20,12 +23,23 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.caverock.androidsvg.SVG
 import com.example.meditrack.R
+import com.example.meditrack.dataModel.User
 import com.example.meditrack.databinding.ActivityHomeBinding
+import com.example.meditrack.firebase.MediTrackUserReference
 import com.example.meditrack.homeActivity.home.HomeFragment
 import com.example.meditrack.mainActivity.MainActivity
+import com.example.meditrack.utility.UtilityFunction
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var navController: NavController
@@ -34,6 +48,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var drawer_layout:DrawerLayout
     lateinit var nav_view:NavigationView
     lateinit var navHostFragment:NavHostFragment
+    private val viewModel: HomeActivityViewModel by viewModels()
 
     /*val myToolbarImage: ImageView
         get() = findViewById(R.id.toolbar_profile_image)*/
@@ -47,6 +62,12 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val navigationView = this.findViewById<NavigationView>(R.id.nav_view)
+        val headerView = navigationView?.getHeaderView(0)
+        val userName = headerView?.findViewById<TextView>(R.id.user_name_menu_header)
+        val userEmail = headerView?.findViewById<TextView>(R.id.user_email_menu_header)
+        val userImage = headerView?.findViewById<ImageView>(R.id.user_image_menu_header)
 
         /*val navigationView = findViewById<NavigationView>(R.id.nav_view)
         val headerView: View = navigationView.getHeaderView(0)
@@ -78,7 +99,75 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         this.supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         loadFragment()
+
+        MainScope().launch(Dispatchers.IO) {
+            val userQuery = MediTrackUserReference.getUserDataQuery()
+            userQuery.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    snapshot.children.forEach {
+                        viewModel.setUserData(
+                            User(
+                            it.child("name").value.toString(),
+                            it.child("surname").value.toString(),
+                            it.child("email").value.toString(),
+                            it.child("profileImage").value.toString())
+                        )
+                    }
+
+                    //Log.i("Name Updated: ", "${viewModel._userData.value!!.name}")
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+
+            })
+        }
+        viewModel._userData.observe(this){
+            MainScope().launch(Dispatchers.IO) {
+                try {
+                    withContext(Dispatchers.Main)
+                    {
+                        userName!!.text = resources.getString(R.string.full_name,it.name,it.surname)
+                        userEmail!!.text = it.email
+
+                        /*binding.menuLayout.usernameTxt.text=requireActivity().getString(R.string.full_name,it.name,it.surname)
+                        binding.menuLayout.profileImage.setImageBitmap(null)*/
+                    }
+
+                    if(!it?.profileImage.isNullOrBlank())
+                    {
+                        val bitmap = UtilityFunction.decodeBase64ToBitmap(it?.profileImage!!)
+
+                        /*bitmap = getCircularBitmap(bitmap)*/
+                        withContext(Dispatchers.Main)
+                        {
+                            /*val parentView = binding.menuLayout.profileImage.parent as View
+                            binding.menuLayout.profileImage.layoutParams = ViewGroup.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.MATCH_PARENT
+                            )
+                            parentView.requestLayout()
+                            binding.menuLayout.profileImage.setImageBitmap(bitmap)*/
+                            userImage!!.setImageBitmap(bitmap)
+                            userImage.setOnClickListener {
+                                if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+                                    drawer_layout.closeDrawer(GravityCompat.START)
+                                }
+                                navHostFragment.findNavController().navigate(R.id.userProfileFragment)
+                            }
+                        }
+                    }
+                }
+                catch (ex:Exception)
+                {
+                    Log.e("Home Activity","$ex")
+                }
+
+            }
+        }
     }
+
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }

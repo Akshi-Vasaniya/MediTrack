@@ -149,14 +149,14 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
                 }
             }
 
-            share.setOnClickListener {
+            /*share.setOnClickListener {
                 val textToCopy = textInImage.text.toString()
                 if (isTextValid(textToCopy)) {
                     shareText(textToCopy)
                 } else {
                     showToast(getString(R.string.no_text_found))
                 }
-            }
+            }*/
 
             close.setOnClickListener {
                 textInImageLayout.visibility = View.GONE
@@ -229,14 +229,14 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
                     Log.d(TAG, "TextBlock boundingbox is: " + textBlock.boundingBox)
                     Log.d(TAG, "TextBlock cornerpoint is: " + Arrays.toString(textBlock.cornerPoints))
                     for (line in textBlock.lines) {
-                        //rectList.add(Pair(line.boundingBox!!, line.text))
+                        rectList.add(Pair(line.boundingBox!!, line.text))
                         Log.d(TAG, "Line text is: " + line.text)
                         Log.d(TAG, "Line boundingbox is: " + line.boundingBox)
                         Log.d(TAG, "Line cornerpoint is: " + Arrays.toString(line.cornerPoints))
                         //Log.d(TAG, "Line confidence is: " + line.confidence)
                         //Log.d(TAG, "Line angle is: " + line.angle)
                         for (element in line.elements) {
-                            rectList.add(Pair(element.boundingBox!!, element.text))
+                            //rectList.add(Pair(element.boundingBox!!, element.text))
                             Log.d(TAG, "Element text is: " + element.text)
                             Log.d(TAG, "Element boundingbox is: " + element.boundingBox)
                             Log.d(TAG, "Element cornerpoint is: " + Arrays.toString(element.cornerPoints))
@@ -245,8 +245,8 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
                     }
                 }
                 overlayView.setBoundingRects(rectList)
-                //binding.textInImageLayout.visibility = View.VISIBLE
-                //processTextRecognitionResult(text)
+                binding.textInImageLayout.visibility = View.VISIBLE
+                processTextRecognitionResult(text)
 
             }.addOnFailureListener { e ->
                 e.printStackTrace()
@@ -309,7 +309,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
                 binding.apply {
 
                     camera.apply {
-                        torchImage.setBackgroundColor(resources.getColor(R.color.purple_200))
+//                        torchImage.setBackgroundColor(resources.getColor(R.color.purple_200))
                         if (cameraInfo.hasFlashUnit()) {
                             torchButton.setOnClickListener {
                                 cameraControl.enableTorch(cameraInfo.torchState.value == TorchState.OFF)

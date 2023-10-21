@@ -40,18 +40,18 @@ class HomeFragment : Fragment() {
     /*private lateinit var slideInAnimation: ValueAnimator
     private lateinit var slideOutAnimation: ValueAnimator*/
     private lateinit var binding:FragmentHomeBinding
-//    private lateinit var homeActivity: HomeActivity
+    //private lateinit var homeActivity: HomeActivity
     private val tag = "HomeFragment"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-//        if (context is HomeActivity) {
-//            homeActivity = context as HomeActivity
-//        } else {
-//            throw IllegalStateException("Parent activity must be HomeActivity")
-//        }
+        /*if (context is HomeActivity) {
+            homeActivity = context as HomeActivity
+        } else {
+            throw IllegalStateException("Parent activity must be HomeActivity")
+        }*/
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
 
 
@@ -62,13 +62,13 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentHomeBinding.bind(view)
 
-//        homeActivity.getToolbarMenuLayout().visibility = View.VISIBLE
+        //homeActivity.getToolbarMenuLayout().visibility = View.VISIBLE
 
-        val navigationView = activity?.findViewById<NavigationView>(R.id.nav_view)
+       /* val navigationView = activity?.findViewById<NavigationView>(R.id.nav_view)
         val headerView = navigationView?.getHeaderView(0)
         val userName = headerView?.findViewById<TextView>(R.id.user_name_menu_header)
         val userEmail = headerView?.findViewById<TextView>(R.id.user_email_menu_header)
-        val userImage = headerView?.findViewById<ImageView>(R.id.user_image_menu_header)
+        val userImage = headerView?.findViewById<ImageView>(R.id.user_image_menu_header)*/
 
 
         binding.apply {
@@ -78,15 +78,15 @@ class HomeFragment : Fragment() {
             addMedicineCard.setOnClickListener {
                 findNavController().navigate(R.id.addMedicineFragment)
             }
-//            addPrescriptionCard.setOnClickListener {
-//                findNavController().navigate(R.id.OCRFragment)
-//            }
+            /*addPrescriptionCard.setOnClickListener {
+                findNavController().navigate(R.id.OCRFragment)
+            }*/
             checkMedicineStockCard.setOnClickListener {
                 findNavController().navigate(R.id.medicineStockFragment)
             }
         }
 
-        viewModel._userData.observe(viewLifecycleOwner){
+        /*viewModel._userData.observe(viewLifecycleOwner){
             MainScope().launch(Dispatchers.IO) {
                 try {
                     withContext(Dispatchers.Main)
@@ -94,24 +94,24 @@ class HomeFragment : Fragment() {
                         userName!!.text = requireActivity().getString(R.string.full_name,it.name,it.surname)
                         userEmail!!.text = it.email
 
-                        /*binding.menuLayout.usernameTxt.text=requireActivity().getString(R.string.full_name,it.name,it.surname)
-                        binding.menuLayout.profileImage.setImageBitmap(null)*/
+                        //binding.menuLayout.usernameTxt.text=requireActivity().getString(R.string.full_name,it.name,it.surname)
+                        //binding.menuLayout.profileImage.setImageBitmap(null)
                     }
 
                     if(!it?.profileImage.isNullOrBlank())
                     {
                         val bitmap = UtilityFunction.decodeBase64ToBitmap(it?.profileImage!!)
 
-                        /*bitmap = getCircularBitmap(bitmap)*/
+                        //bitmap = getCircularBitmap(bitmap)
                         withContext(Dispatchers.Main)
                         {
-                            /*val parentView = binding.menuLayout.profileImage.parent as View
-                            binding.menuLayout.profileImage.layoutParams = ViewGroup.LayoutParams(
-                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.MATCH_PARENT
-                            )
-                            parentView.requestLayout()
-                            binding.menuLayout.profileImage.setImageBitmap(bitmap)*/
+                            //val parentView = binding.menuLayout.profileImage.parent as View
+                            //binding.menuLayout.profileImage.layoutParams = ViewGroup.LayoutParams(
+                                //ViewGroup.LayoutParams.MATCH_PARENT,
+                                //ViewGroup.LayoutParams.MATCH_PARENT
+                            //)
+                            //parentView.requestLayout()
+                            //binding.menuLayout.profileImage.setImageBitmap(bitmap)
                             userImage!!.setImageBitmap(bitmap)
                             userImage.setOnClickListener {
                                 findNavController().navigate(R.id.userProfileFragment)
@@ -125,10 +125,10 @@ class HomeFragment : Fragment() {
                 }
 
             }
-        }
+        }*/
 
         binding.apply {
-            MainScope().launch(Dispatchers.IO) {
+            /*MainScope().launch(Dispatchers.IO) {
                 val userQuery = MediTrackUserReference.getUserDataQuery()
                 userQuery.addValueEventListener(object :ValueEventListener{
                     override fun onDataChange(snapshot: DataSnapshot) {
@@ -140,7 +140,7 @@ class HomeFragment : Fragment() {
                                 it.child("profileImage").value.toString()))
                         }
 
-//                        Log.i("Name Updated: ", "${viewModel._userData.value!!.name}")
+                        //Log.i("Name Updated: ", "${viewModel._userData.value!!.name}")
                     }
 
                     override fun onCancelled(error: DatabaseError) {
@@ -148,7 +148,7 @@ class HomeFragment : Fragment() {
                     }
 
                 })
-            }
+            }*/
             MainScope().launch(Dispatchers.IO) {
                 val addMedicineSVG = SVG.getFromResource(resources, R.raw.add_medicine)
                 val addPrescriptionSVG = SVG.getFromResource(resources, R.raw.add_prescription)
