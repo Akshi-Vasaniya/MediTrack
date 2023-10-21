@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".homeActivity.userprofile.UserProfileFragment">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            >
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/top_right_shape"
+                android:src="@drawable/shape"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="-40dp"
+                android:layout_marginEnd="-40dp"/>
+            <ImageView
+                android:id="@+id/fragment_user_profile_top_shape"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/top_right_shape"
+                android:src="@drawable/shape2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="-10dp"
+                android:layout_marginEnd="-70dp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_15sdp"
+                        android:layout_marginHorizontal="20dp"
+                        android:text="@string/profile"
+                        android:textSize="@dimen/_30sdp"
+                        android:fontFamily="@font/comfortaa_bold"
+                        android:textColor="@color/prusianblue"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/profile_image_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/fragment_user_profile_profile_image"
+                            android:layout_width="@dimen/_160sdp"
+                            android:layout_height="@dimen/_160sdp"
+                            android:layout_gravity="center"
+                            android:paddingVertical="30dp"
+                            app:civ_border_width="1dp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/profilepic"
+                            app:civ_border_color="@color/cyanlight"
+                            android:elevation="15dp"/>
+                        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_100sdp"
+                            android:layout_marginEnd="@dimen/_95sdp"
+                            android:src="@drawable/round_photo_camera_24"
+                            app:tint="@color/white"
+                            app:backgroundTint="@color/cyanlight"
+                            app:fabSize="mini"
+                            android:layout_gravity="end"
+                            app:elevation="17dp"/>
+                    </FrameLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginHorizontal="10dp"
+                        android:layout_marginTop="20dp"
+                        android:paddingVertical="10dp"
+                        android:paddingHorizontal="10dp">
+
+                        <!--                    <com.google.android.material.textfield.TextInputLayout-->
+                        <!--                        android:id="@+id/fragment_user_profile_name_TextInputLayout"-->
+                        <!--                        android:layout_width="match_parent"-->
+                        <!--                        android:layout_height="wrap_content"-->
+                        <!--                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">-->
+                        <!--                        <com.google.android.material.textfield.TextInputEditText-->
+                        <!--                            android:id="@+id/fragment_registration_name_TextInputEditText"-->
+                        <!--                            android:layout_width="match_parent"-->
+                        <!--                            android:layout_height="match_parent"-->
+                        <!--                            android:hint="@string/name"-->
+                        <!--                            android:textColor="@color/prusianblue"-->
+                        <!--                            android:drawableStart="@drawable/noun_name_2776910"-->
+                        <!--                            android:drawablePadding="10dp"-->
+                        <!--                            android:textSize="@dimen/_10sdp"-->
+                        <!--                            android:padding="10dp"-->
+                        <!--                            android:inputType="textPersonName"-->
+                        <!--                            android:fontFamily="@font/comfortaa_regular" />-->
+                        <!--                    </com.google.android.material.textfield.TextInputLayout>-->
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="2">
+                            <FrameLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginRight="10dp">
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:id="@+id/fragment_user_profile_name_TextInputLayout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    style="@style/CustomOutlinedBox">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/fragment_user_profile_name_TextInputEditText"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:hint="@string/name"
+                                        android:textColor="@color/prusianblue"
+                                        android:drawableStart="@drawable/noun_name_2776910"
+                                        android:drawablePadding="5dp"
+                                        android:textSize="@dimen/_10sdp"
+                                        android:padding="10dp"
+                                        android:inputType="textPersonName"
+                                        android:fontFamily="@font/comfortaa_regular"
+                                        android:focusable="false"
+                                        android:clickable="true"
+                                        android:longClickable="false" />
+
+                                </com.google.android.material.textfield.TextInputLayout>
+
+                                <ImageButton
+                                    android:id="@+id/edit_name_button"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/round_profile_edit_24"
+                                    android:layout_marginEnd="15dp"
+                                    android:background="?attr/selectableItemBackgroundBorderless"
+                                    android:layout_gravity="end|center_vertical" />
+
+                            </FrameLayout>
+
+                            <FrameLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1">
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:id="@+id/fragment_user_profile_surname_TextInputLayout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    style="@style/CustomOutlinedBox">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/fragment_user_profile_surname_TextInputEditText"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:hint="@string/surname"
+                                        android:textColor="@color/prusianblue"
+                                        android:drawableStart="@drawable/noun_name_2776910"
+                                        android:drawablePadding="5dp"
+                                        android:textSize="@dimen/_10sdp"
+                                        android:padding="10dp"
+                                        android:inputType="textPersonName"
+                                        android:fontFamily="@font/comfortaa_regular"
+                                        android:focusable="false"
+                                        android:clickable="true"
+                                        android:longClickable="false" />
+
+                                </com.google.android.material.textfield.TextInputLayout>
+
+                                <ImageButton
+                                    android:id="@+id/edit_surname_button"
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:src="@drawable/round_profile_edit_24"
+                                    android:layout_marginEnd="10dp"
+                                    android:background="?attr/selectableItemBackgroundBorderless"
+                                    android:layout_gravity="end|center_vertical" />
+
+                            </FrameLayout>
+                        </LinearLayout>
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp">
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/fragment_user_profile_email_TextInputLayout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                style="@style/CustomOutlinedBox"
+                                android:layout_marginTop="@dimen/_3sdp">
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/fragment_user_profile_email_TextInputEditText"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:drawableStart="@drawable/round_mail_24"
+                                    android:drawablePadding="10dp"
+                                    android:fontFamily="@font/comfortaa_regular"
+                                    android:hint="@string/email"
+                                    android:inputType="textEmailAddress"
+                                    android:textColor="@color/prusianblue"
+                                    android:padding="10dp"
+                                    android:textSize="@dimen/_10sdp" />
+                            </com.google.android.material.textfield.TextInputLayout>
+                        </FrameLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+</FrameLayout>

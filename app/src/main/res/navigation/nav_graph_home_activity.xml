@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_homeFragment_to_medicineStockFragment"
             app:destination="@id/medicineStockFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_userProfileFragment"
+            app:destination="@id/userProfileFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -43,4 +46,9 @@
         android:name="com.example.meditrack.homeActivity.medicine.medicineStock.MedicineStockFragment"
         android:label="fragment_medicine_stock"
         tools:layout="@layout/fragment_medicine_stock" />
+    <fragment
+        android:id="@+id/userProfileFragment"
+        android:name="com.example.meditrack.homeActivity.userprofile.UserProfileFragment"
+        android:label="fragment_user_profile"
+        tools:layout="@layout/fragment_user_profile" />
 </navigation>

@@ -113,7 +113,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 R.id.OCRFragment,
                 R.id.searchFragment,
                 R.id.addMedicineFragment,
-                R.id.medicineStockFragment
+                R.id.medicineStockFragment,
+                R.id.userProfileFragment
             )
         ).build()
 

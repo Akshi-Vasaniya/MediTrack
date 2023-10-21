@@ -24,6 +24,7 @@
     <string name="password_format_dis">• At least one number, upper, lower, symbol, length 8 to 16</string>
     <string name="bottom_left_shape">Bottom-Left Shape</string>
     <string name="registration">Registration</string>
+    <string name="profile">Profile</string>
     <string name="addmedicine">Add Medicine</string>
     <string name="medicinelist">List of Medicines</string>
     <string name="fragment_registration_subtitle">Please sign up to continue</string>

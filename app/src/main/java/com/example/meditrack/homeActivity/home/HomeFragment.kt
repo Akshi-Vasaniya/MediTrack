@@ -113,6 +113,9 @@ class HomeFragment : Fragment() {
                             parentView.requestLayout()
                             binding.menuLayout.profileImage.setImageBitmap(bitmap)*/
                             userImage!!.setImageBitmap(bitmap)
+                            userImage.setOnClickListener {
+                                findNavController().navigate(R.id.userProfileFragment)
+                            }
                         }
                     }
                 }
