@@ -1,12 +1,18 @@
 package com.example.meditrack.homeActivity.userprofile
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.transition.AutoTransition
+import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.LinearLayout
+import androidx.cardview.widget.CardView
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.meditrack.R
+import com.example.meditrack.databinding.FragmentUserProfileBinding
 
 class UserProfileFragment : Fragment() {
 
@@ -15,12 +21,17 @@ class UserProfileFragment : Fragment() {
     }
 
     private lateinit var viewModel: UserProfileViewModel
+    private lateinit var userProfileBinding: FragmentUserProfileBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_user_profile, container, false)
+        val view = inflater.inflate(R.layout.fragment_user_profile, container, false)
+
+        userProfileBinding = FragmentUserProfileBinding.bind(view)
+
+        return view
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

@@ -3,13 +3,18 @@ package com.example.meditrack.homeActivity.medicine.addMedicine
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.transition.AutoTransition
+import android.transition.TransitionManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -60,6 +65,9 @@ class AddMedicineFragment : Fragment() {
     private lateinit var dinnerChipGroup: ChipGroup
     private lateinit var medTypeChipGroup: ChipGroup
     private lateinit var progressDialog: CustomProgressDialog
+    private lateinit var arrow: ImageButton
+    private lateinit var hiddenView: LinearLayout
+    private lateinit var cardView: CardView
 
 
     /*override fun onAttach(context: Context) {
@@ -280,6 +288,23 @@ class AddMedicineFragment : Fragment() {
 
         binding = FragmentAddMedicineBinding.bind(view)
         progressDialog= CustomProgressDialog(requireActivity())
+
+        arrow = binding.arrowButton
+        cardView = binding.additionalView
+        hiddenView = binding.hiddenView
+
+        arrow.setOnClickListener {
+            if(hiddenView.visibility == View.GONE){
+                TransitionManager.beginDelayedTransition(cardView, AutoTransition())
+                hiddenView.visibility = View.VISIBLE
+                arrow.setImageResource(R.drawable.round_keyboard_arrow_up_24)
+            }
+            else{
+                TransitionManager.beginDelayedTransition(cardView, AutoTransition())
+                hiddenView.visibility = View.GONE
+                arrow.setImageResource(R.drawable.round_keyboard_arrow_down_24)
+            }
+        }
 
         /*homeActivity.getToolbarMenuLayout().visibility = View.GONE*/
 
