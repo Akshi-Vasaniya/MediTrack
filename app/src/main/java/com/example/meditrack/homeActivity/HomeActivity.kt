@@ -22,6 +22,7 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.meditrack.R
 import com.example.meditrack.databinding.ActivityHomeBinding
+import com.example.meditrack.homeActivity.home.HomeFragment
 import com.example.meditrack.mainActivity.MainActivity
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -32,6 +33,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var binding: ActivityHomeBinding
     lateinit var drawer_layout:DrawerLayout
     lateinit var nav_view:NavigationView
+    lateinit var navHostFragment:NavHostFragment
 
     /*val myToolbarImage: ImageView
         get() = findViewById(R.id.toolbar_profile_image)*/
@@ -46,10 +48,12 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val navigationView = findViewById<NavigationView>(R.id.nav_view)
+        /*val navigationView = findViewById<NavigationView>(R.id.nav_view)
         val headerView: View = navigationView.getHeaderView(0)
         val headerTextView: TextView = headerView.findViewById(R.id.user_name_menu_header)
-        headerTextView.text = "Your Text Here"
+        headerTextView.text = "Your Text Here"*/
+
+        navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container_home) as NavHostFragment
 
 
         setSupportActionBar(findViewById(R.id.toolbarHome))
@@ -73,22 +77,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         this.supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container_home) as NavHostFragment
-
-        appBarConfiguration = AppBarConfiguration.Builder(
-            setOf(
-                R.id.homeFragment,
-                R.id.OCRFragment,
-                R.id.searchFragment,
-                R.id.addMedicineFragment,
-                R.id.medicineStockFragment
-            )
-        ).build()
-
-        navController = navHostFragment.findNavController()
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
+        loadFragment()
     }
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
@@ -116,13 +105,31 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    fun loadFragment()
+    {
+        appBarConfiguration = AppBarConfiguration.Builder(
+            setOf(
+                R.id.homeFragment,
+                R.id.OCRFragment,
+                R.id.searchFragment,
+                R.id.addMedicineFragment,
+                R.id.medicineStockFragment
+            )
+        ).build()
+
+        navController = navHostFragment.findNavController()
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
+    }
+
     fun displayScreen(id: Int){
 
         // val fragment =  when (id){
 
         when (id){
             R.id.nav_home -> {
-                Toast.makeText(this, "Clicked Home", Toast.LENGTH_SHORT).show()
+                navHostFragment.findNavController().popBackStack(R.id.homeFragment,false)
+//                Toast.makeText(this, "Clicked Home", Toast.LENGTH_SHORT).show()
                 
             }
 

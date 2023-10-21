@@ -70,6 +70,7 @@ class HomeFragment : Fragment() {
         val userEmail = headerView?.findViewById<TextView>(R.id.user_email_menu_header)
         val userImage = headerView?.findViewById<ImageView>(R.id.user_image_menu_header)
 
+
         binding.apply {
             suggestionMedicineCard.setOnClickListener {
                 findNavController().navigate(R.id.searchFragment)

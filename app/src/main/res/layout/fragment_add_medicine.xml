@@ -172,7 +172,7 @@
                                 android:drawableStart="@drawable/round_date_range_24"
                                 android:drawablePadding="10dp"
                                 android:fontFamily="@font/comfortaa_regular"
-                                android:hint="@string/medicinestartdate"
+                                android:hint="@string/medicinemfgdate"
                                 android:inputType="none"
                                 android:focusable="false"
                                 android:clickable="true"
@@ -217,31 +217,66 @@
                     <!--                android:textColor="@color/black"-->
                     <!--                android:layout_marginTop="10dp"/>-->
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/fragment_frequency_TextInputLayout"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        app:helperTextEnabled="true"
-                        app:helperText="Required"
-                        app:helperTextTextColor="@color/prusianblue"
-                        android:layout_marginTop="@dimen/_3sdp">
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/fragment_frequency_TextInputEditText"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:hint="@string/frequency"
-                            android:textColor="@color/prusianblue"
-                            android:drawableStart="@drawable/medicine_icon"
-                            android:drawableTint="@color/prusianblue"
-                            android:drawablePadding="10dp"
-                            android:textSize="@dimen/_10sdp"
-                            android:padding="10dp"
-                            android:inputType="text"
-                            android:fontFamily="@font/comfortaa_regular"/>
-                    </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp">
 
-                    <com.google.android.material.textfield.TextInputLayout
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/frequency"
+                            android:textColor="@color/prusianblue"/>
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/freqChipGroup"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:singleSelection="true"
+                            />
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="10dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/administrationtime"
+                            android:textColor="@color/prusianblue"/>
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/breakFastChipGroup"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:singleSelection="true"
+                            />
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/launchChipGroup"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:singleSelection="true"
+                            />
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/dinnerChipGroup"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:singleSelection="true"
+                            />
+
+                    </LinearLayout>
+
+
+                    <!--<com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/fragment_administration_time_TextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -263,7 +298,7 @@
                             android:padding="10dp"
                             android:inputType="text"
                             android:fontFamily="@font/comfortaa_regular"/>
-                    </com.google.android.material.textfield.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>-->
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/fragment_special_instruction_TextInputLayout"
@@ -271,7 +306,6 @@
                         android:layout_height="wrap_content"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         app:helperTextEnabled="true"
-                        app:helperText="Required"
                         app:helperTextTextColor="@color/prusianblue"
                         android:layout_marginTop="@dimen/_3sdp">
                         <com.google.android.material.textfield.TextInputEditText
@@ -295,7 +329,6 @@
                         android:layout_height="wrap_content"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         app:helperTextEnabled="true"
-                        app:helperText="Required"
                         app:helperTextTextColor="@color/prusianblue"
                         android:layout_marginTop="@dimen/_3sdp">
                         <com.google.android.material.textfield.TextInputEditText
@@ -319,7 +352,6 @@
                         android:layout_height="wrap_content"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         app:helperTextEnabled="true"
-                        app:helperText="Required"
                         app:helperTextTextColor="@color/prusianblue"
                         android:layout_marginTop="@dimen/_3sdp">
                         <com.google.android.material.textfield.TextInputEditText
@@ -360,6 +392,15 @@
                             android:inputType="numberDecimal"
                             android:fontFamily="@font/comfortaa_regular"/>
                     </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+
+
+
+
+
 
                     <!--            <com.google.android.material.button.MaterialButton-->
                     <!--                android:layout_width="wrap_content"-->

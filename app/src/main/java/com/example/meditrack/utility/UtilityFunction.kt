@@ -11,6 +11,9 @@ import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStream
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
 
 class UtilityFunction {
 
@@ -101,5 +104,34 @@ class UtilityFunction {
             }
 
         }
+
+        fun validateMedicine(mfgDate: String, expDate: String): Boolean {
+            val dateFormat = SimpleDateFormat("MM/yyyy", Locale.getDefault())
+            dateFormat.isLenient = false
+
+            try {
+                val manufacturingDate = dateFormat.parse(mfgDate)
+                val expiryDate = dateFormat.parse(expDate)
+
+                if (expiryDate.before(manufacturingDate)) {
+                    return false // Expiry date is before manufacturing date
+                }
+
+                val calManufacturing = Calendar.getInstance()
+                manufacturingDate?.let { calManufacturing.time = it }
+
+                val calExpiry = Calendar.getInstance()
+                expiryDate?.let { calExpiry.time = it }
+
+                val diff = calExpiry.get(Calendar.YEAR) - calManufacturing.get(Calendar.YEAR)
+
+                return diff in 0..5 && (diff != 5 || calExpiry.get(Calendar.MONTH) >= calManufacturing.get(Calendar.MONTH))
+
+            } catch (e: Exception) {
+                e.printStackTrace() // Handle or log the exception here
+                return false
+            }
+        }
+
     }
 }
