@@ -98,92 +98,6 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </com.google.android.material.card.MaterialCardView>
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/addPrescriptionCard"
-                    android:layout_width="@dimen/_50sdp"
-                    android:layout_height="@dimen/_70sdp"
-                    app:cardCornerRadius="7dp"
-                    app:cardElevation="15dp"
-                    android:layout_weight="1"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:layout_margin="20dp"
-                    android:focusableInTouchMode="false"
-                    android:clipToPadding="false">
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/shape_card_view">
-
-                        <com.caverock.androidsvg.SVGImageView
-                            android:id="@+id/addPrescriptionImageView"
-                            android:layout_width="@dimen/_30sdp"
-                            android:layout_height="@dimen/_30sdp"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="@dimen/_5sdp"
-                            android:layout_marginStart="@dimen/_5sdp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:fontFamily="@font/comfortaa_bold"
-                            android:text="Add\nPrescription"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/_10sdp"
-                            android:layout_marginEnd="@dimen/_10sdp"
-                            android:layout_marginBottom="@dimen/_2sdp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"/>
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="@dimen/_50sdp"
-                    android:layout_height="@dimen/_70sdp"
-                    app:cardCornerRadius="7dp"
-                    app:cardElevation="15dp"
-                    android:layout_weight="1"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:layout_margin="20dp"
-                    android:focusableInTouchMode="false"
-                    android:clipToPadding="false">
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/shape_card_view">
-
-                        <ImageView
-                            android:id="@+id/scanPrescriptionImageView"
-                            android:layout_width="@dimen/_30sdp"
-                            android:layout_height="@dimen/_30sdp"
-                            android:src="@drawable/round_document_scanner_24"
-                            android:layout_marginTop="@dimen/_5sdp"
-                            android:layout_marginStart="@dimen/_5sdp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:fontFamily="@font/comfortaa_bold"
-                            android:text="Scan\nPrescription"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/_10sdp"
-                            android:layout_marginEnd="@dimen/_10sdp"
-                            android:layout_marginBottom="@dimen/_2sdp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </com.google.android.material.card.MaterialCardView>
-                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/suggestionMedicineCard"
                     android:layout_width="@dimen/_50sdp"
                     android:layout_height="@dimen/_70sdp"
@@ -227,6 +141,93 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone">
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/addPrescriptionCard"
+                    android:layout_width="@dimen/_50sdp"
+                    android:layout_height="@dimen/_70sdp"
+                    app:cardCornerRadius="7dp"
+                    app:cardElevation="15dp"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_margin="20dp"
+                    android:focusableInTouchMode="false"
+                    android:clipToPadding="false">
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/shape_card_view">
+
+                        <com.caverock.androidsvg.SVGImageView
+                            android:id="@+id/addPrescriptionImageView"
+                            android:layout_width="@dimen/_30sdp"
+                            android:layout_height="@dimen/_30sdp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:fontFamily="@font/comfortaa_bold"
+                            android:text="Add\nPrescription"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginBottom="@dimen/_2sdp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="@dimen/_50sdp"
+                    android:layout_height="@dimen/_70sdp"
+                    app:cardCornerRadius="7dp"
+                    app:cardElevation="15dp"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_margin="20dp"
+                    android:focusableInTouchMode="false"
+                    android:clipToPadding="false">
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/shape_card_view">
+
+                        <ImageView
+                            android:id="@+id/scanPrescriptionImageView"
+                            android:layout_width="@dimen/_30sdp"
+                            android:layout_height="@dimen/_30sdp"
+                            android:src="@drawable/round_document_scanner_24"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:fontFamily="@font/comfortaa_bold"
+                            android:text="Scan\nPrescription"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginBottom="@dimen/_2sdp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <com.google.android.material.card.MaterialCardView
@@ -249,48 +250,6 @@
 
                         <com.caverock.androidsvg.SVGImageView
                             android:id="@+id/checkStockMedicinesImageView"
-                            android:layout_width="@dimen/_30sdp"
-                            android:layout_height="@dimen/_30sdp"
-                            android:layout_marginTop="@dimen/_5sdp"
-                            android:layout_marginStart="@dimen/_5sdp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:fontFamily="@font/comfortaa_bold"
-                            android:gravity="center"
-                            android:text="Check Stock\nof Medicines"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/_10sdp"
-                            android:layout_marginEnd="@dimen/_10sdp"
-                            android:layout_marginBottom="@dimen/_2sdp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="@dimen/_50sdp"
-                    android:layout_height="@dimen/_70sdp"
-                    app:cardCornerRadius="7dp"
-                    app:cardElevation="10dp"
-                    android:layout_weight="1"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:focusableInTouchMode="false"
-                    android:clipToPadding="false"
-                    android:layout_margin="20dp"
-                    android:visibility="invisible">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/shape_card_view">
-
-                        <com.caverock.androidsvg.SVGImageView
                             android:layout_width="@dimen/_30sdp"
                             android:layout_height="@dimen/_30sdp"
                             android:layout_marginTop="@dimen/_5sdp"

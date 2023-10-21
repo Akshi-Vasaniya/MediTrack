@@ -190,7 +190,7 @@ class HomeFragment : Fragment() {
                 withContext(Dispatchers.Main){
                     /*menuLayout.usernameTxt.text=requireActivity().getString(R.string.full_name,userData.name,userData.surname)*/
                     addMedicineImageView.setSVG(addMedicineSVG)
-                    addPrescriptionImageView.setSVG(addPrescriptionSVG)
+//                    addPrescriptionImageView.setSVG(addPrescriptionSVG)
                     checkStockMedicinesImageView.setSVG(checkStockMedicineSVG)
                     medicineSuggestionsImageView.setSVG(medicineSuggestionSVG)
                 }
