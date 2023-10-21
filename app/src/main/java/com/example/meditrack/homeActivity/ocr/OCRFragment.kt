@@ -6,7 +6,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
+import android.graphics.*
 import android.os.Bundle
 import android.text.util.Linkify
 import android.util.Log
@@ -15,11 +15,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.camera.core.*
 import androidx.camera.core.Camera
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.Preview
-import androidx.camera.core.TorchState
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
@@ -32,8 +31,10 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
+import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.collections.ArrayList
 
 class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -55,17 +56,23 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
     var savedBitmap: Bitmap? = null
 
     private lateinit var cameraExecutor: ExecutorService
+    private lateinit var overlayView: OverlayView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_o_c_r, container, false)
+        val view = inflater.inflate(R.layout.fragment_o_c_r, container, false)
+        overlayView = OverlayView(requireContext())
+        val frameLayout: ViewGroup = view!!.findViewById(R.id.camera_fragment_layout) // Replace with your layout id
+        frameLayout.addView(overlayView)
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentOCRBinding.bind(view)
+
         if (savedInstanceState != null) {
             val savedText = savedInstanceState.getString(SAVED_TEXT_TAG)
             binding.apply {
@@ -85,6 +92,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
             if(!allPermissionsGranted()){
                 requestPermissions()
             } else {
+                overlayView.clearOverlay()
                 binding.viewFinder.visibility=View.VISIBLE
                 binding.previewImage.visibility = View.GONE
                 binding.textInImageLayout.visibility = View.GONE
@@ -92,6 +100,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
             }
         }
         binding.ocrGallery.setOnClickListener {
+            overlayView.clearOverlay()
             binding.textInImageLayout.visibility = View.GONE
             getContent.launch("image/*")
         }
@@ -206,13 +215,39 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
     }
 
     private fun runTextRecognition(bitmap: Bitmap) {
+
         val inputImage = InputImage.fromBitmap(bitmap, 0)
 
         recognizer
             .process(inputImage)
             .addOnSuccessListener { text ->
-                binding.textInImageLayout.visibility = View.VISIBLE
-                processTextRecognitionResult(text)
+                val rectList: ArrayList<Pair<Rect, String>> = ArrayList()
+                Log.d(TAG, "Text is: " + text.text)
+                for (textBlock in text.textBlocks) {
+                    //rectList.add(Pair(textBlock.boundingBox!!, textBlock.text))
+                    Log.d(TAG, "TextBlock text is: " + textBlock.text)
+                    Log.d(TAG, "TextBlock boundingbox is: " + textBlock.boundingBox)
+                    Log.d(TAG, "TextBlock cornerpoint is: " + Arrays.toString(textBlock.cornerPoints))
+                    for (line in textBlock.lines) {
+                        //rectList.add(Pair(line.boundingBox!!, line.text))
+                        Log.d(TAG, "Line text is: " + line.text)
+                        Log.d(TAG, "Line boundingbox is: " + line.boundingBox)
+                        Log.d(TAG, "Line cornerpoint is: " + Arrays.toString(line.cornerPoints))
+                        //Log.d(TAG, "Line confidence is: " + line.confidence)
+                        //Log.d(TAG, "Line angle is: " + line.angle)
+                        for (element in line.elements) {
+                            rectList.add(Pair(element.boundingBox!!, element.text))
+                            Log.d(TAG, "Element text is: " + element.text)
+                            Log.d(TAG, "Element boundingbox is: " + element.boundingBox)
+                            Log.d(TAG, "Element cornerpoint is: " + Arrays.toString(element.cornerPoints))
+                            Log.d(TAG, "Element language is: " + element.recognizedLanguage)
+                        }
+                    }
+                }
+                overlayView.setBoundingRects(rectList)
+                //binding.textInImageLayout.visibility = View.VISIBLE
+                //processTextRecognitionResult(text)
+
             }.addOnFailureListener { e ->
                 e.printStackTrace()
                 showToast(e.localizedMessage ?: getString(R.string.error_default_msg))

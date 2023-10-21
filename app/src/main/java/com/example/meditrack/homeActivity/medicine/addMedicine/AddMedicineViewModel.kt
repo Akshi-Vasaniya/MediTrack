@@ -10,6 +10,9 @@ class AddMedicineViewModel : ViewModel() {
     // TODO: Implement the ViewModel
 
     var medName: String? = null
+    var medImage: String? = null
+    var medInstruction: String? = null
+    var medNotes: String? = null
     var dosage: Double? = null
     var medQuantity: Int? = null
     var mfgDate: String? = null

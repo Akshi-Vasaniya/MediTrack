@@ -1,7 +1,7 @@
 package com.example.meditrack.dataModel
 
 data class MedicineInfo(
-    var medImage:String="NA",
+    var medImage:String?,
     var medName:String,
     var medicineType: MedicineType,
     var dosage:Double,
@@ -9,9 +9,10 @@ data class MedicineInfo(
     var expDate:String,
     var medFreq:MedicineFrequency,
     var weekDay:MedicineWeekDay?=null,
-    var takeTime:MedicineTime,
-    var instruction:String="NA",
-    var doctorName:String="NA",
-    var notes:String="NA",
+    var takeTime:ArrayList<MedicineTime>,
+    var instruction:String?,
+    var doctorName:String?,
+    var doctorContact:String?,
+    var notes:String?,
     var totalQuantity:Int,
     var notation:String,)

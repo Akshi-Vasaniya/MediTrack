@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/camera_fragment_layout"
     tools:context=".homeActivity.ocr.OCRFragment">
+
 
     <androidx.camera.view.PreviewView
         android:id="@+id/viewFinder"

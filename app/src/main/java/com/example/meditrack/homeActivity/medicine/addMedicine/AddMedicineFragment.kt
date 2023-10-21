@@ -16,16 +16,25 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.meditrack.R
 import com.example.meditrack.dataModel.MedicineFrequency
+import com.example.meditrack.dataModel.MedicineInfo
+import com.example.meditrack.dataModel.MedicineTime
 import com.example.meditrack.databinding.FragmentAddMedicineBinding
+import com.example.meditrack.firebase.MediTrackUserReference
 import com.example.meditrack.regularExpression.ListPattern
 import com.example.meditrack.regularExpression.MatchPattern.Companion.validate
+import com.example.meditrack.utility.CustomProgressDialog
 import com.example.meditrack.utility.MonthYearPickerDialog
 import com.example.meditrack.utility.UtilityFunction
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class AddMedicineFragment : Fragment() {
@@ -50,6 +59,7 @@ class AddMedicineFragment : Fragment() {
     private lateinit var launchChipGroup: ChipGroup
     private lateinit var dinnerChipGroup: ChipGroup
     private lateinit var medTypeChipGroup: ChipGroup
+    private lateinit var progressDialog: CustomProgressDialog
 
 
     /*override fun onAttach(context: Context) {
@@ -269,6 +279,7 @@ class AddMedicineFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding = FragmentAddMedicineBinding.bind(view)
+        progressDialog= CustomProgressDialog(requireActivity())
 
         /*homeActivity.getToolbarMenuLayout().visibility = View.GONE*/
 
@@ -402,11 +413,57 @@ class AddMedicineFragment : Fragment() {
             })
 
             fragmentMedicineAddButton.setOnClickListener {
-                if(validateInput())
-                {
-                    Toast.makeText(requireActivity(),"Done",Toast.LENGTH_SHORT).show()
-                }
+                MainScope().launch(Dispatchers.IO) {
+                    if(validateInput())
+                    {
+                        withContext(Dispatchers.Main)
+                        {
+                            progressDialog.start("Loading...")
+                        }
+                        val medicineTime = ArrayList<MedicineTime>()
+                        if(viewModel.selectedbreakFastTags!=null)
+                        {
+                            medicineTime.add(viewModel.selectedbreakFastTags!!)
+                        }
+                        if(viewModel.selectedlaunchTags!=null)
+                        {
+                            medicineTime.add(viewModel.selectedlaunchTags!!)
+                        }
+                        if(viewModel.selecteddinnerTags!=null)
+                        {
+                            medicineTime.add(viewModel.selecteddinnerTags!!)
+                        }
 
+                        val medicineData = MedicineInfo(
+                            medImage = viewModel.medImage.toString(),
+                            medName = viewModel.medName!!,
+                            medicineType = viewModel.selectedMedTypeTags!!,
+                            dosage = viewModel.dosage!!,
+                            mfgDate = viewModel.mfgDate!!,
+                            expDate = viewModel.expDate!!,
+                            medFreq = viewModel.selectedfreqTags!!,
+                            weekDay = viewModel.selectedWeekDayItem,
+                            takeTime = medicineTime,
+                            instruction = viewModel.medInstruction.toString(),
+                            doctorName = viewModel.doctorName.toString(),
+                            doctorContact = viewModel.doctorContact.toString(),
+                            notes = viewModel.medNotes.toString(),
+                            totalQuantity = viewModel.medQuantity!!,
+                            notation = viewModel.selectedMedTypeTags!!.getNotation()
+                        )
+                        Toast.makeText(requireContext(),"Done",Toast.LENGTH_SHORT).show()
+                        /*db.collection("user_medicines").document(MediTrackUserReference.getUserId()).collection("medicine_data")
+                            .add(medicineData)
+                            .addOnSuccessListener { documentReference ->
+                                progressDialog.stop()
+                                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                            }
+                            .addOnFailureListener { e ->
+                                progressDialog.stop()
+                                Log.w(TAG, "Error adding document", e)
+                            }*/
+                    }
+                }
             }
         }
 
@@ -414,17 +471,7 @@ class AddMedicineFragment : Fragment() {
 
 
 
-        /*val medicineData = MedicineInfo()
 
-
-        db.collection("user_medicines").document(MediTrackUserReference.getUserId()).collection("medicine_data")
-            .add(medicineData)
-            .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
-            }*/
     }
 
 
