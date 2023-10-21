@@ -3,10 +3,14 @@ package com.example.meditrack.homeActivity.medicine.addMedicine
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -45,6 +49,7 @@ class AddMedicineFragment : Fragment() {
     private lateinit var breakFastChipGroup: ChipGroup
     private lateinit var launchChipGroup: ChipGroup
     private lateinit var dinnerChipGroup: ChipGroup
+    private lateinit var medTypeChipGroup: ChipGroup
 
 
     /*override fun onAttach(context: Context) {
@@ -72,44 +77,62 @@ class AddMedicineFragment : Fragment() {
         breakFastChipGroup = view.findViewById(R.id.breakFastChipGroup)
         launchChipGroup = view.findViewById(R.id.launchChipGroup)
         dinnerChipGroup = view.findViewById(R.id.dinnerChipGroup)
+        medTypeChipGroup = view.findViewById(R.id.medTypeChipGroup)
+
+        val autoCompleteTextView = view.findViewById<AutoCompleteTextView>(R.id.fragment_week_days_TextInputEditText)
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, viewModel.weekDayItems)
+        autoCompleteTextView.setAdapter(adapter)
+
+        autoCompleteTextView.setOnItemClickListener { _, _, position, _ ->
+            viewModel.selectedWeekDayItem = viewModel.weekDayItems[position]
+            binding.fragmentWeekDaysTextInputLayout.helperText=null
+        }
 
         for (tag in viewModel.freqTags) {
             val chip = Chip(requireContext())
-            chip.text = tag
+            chip.text = tag.name
             chip.isCheckable = true
             chip.isClickable = true
             chip.setOnCheckedChangeListener { compoundButton, isChecked ->
                 if (isChecked) {
                     val selectedChip = Chip(requireContext())
-                    selectedChip.text = tag
+                    selectedChip.text = tag.name
                     selectedChip.isCloseIconVisible = true
                     selectedChip.setOnCloseIconClickListener {
                         selectedChip.isChecked = false
                     }
-                    viewModel.selectedfreqTags= selectedChip.text as String
+                    viewModel.selectedfreqTags = tag
+                    if(viewModel.selectedfreqTags == MedicineFrequency.WEEKLY)
+                    {
+                        binding.fragmentWeekDaysTextInputLayout.visibility=View.VISIBLE
+                    }
+                    else{
+                        binding.fragmentWeekDaysTextInputLayout.visibility=View.GONE
+                    }
                 }
                 else{
                     viewModel.selectedfreqTags=null
+                    binding.fragmentWeekDaysTextInputLayout.visibility=View.GONE
                 }
-                Toast.makeText(requireContext(),"${viewModel.selectedfreqTags}",Toast.LENGTH_SHORT).show()
+                //Toast.makeText(requireContext(),"${viewModel.selectedfreqTags}",Toast.LENGTH_SHORT).show()
             }
             freqChipGroup.addView(chip)
         }
 
         for (tag in viewModel.dinnerTags) {
             val chip = Chip(requireContext())
-            chip.text = tag
+            chip.text = tag.toString()
             chip.isCheckable = true
             chip.isClickable = true
             chip.setOnCheckedChangeListener { compoundButton, isChecked ->
                 if (isChecked) {
                     val selectedChip = Chip(requireContext())
-                    selectedChip.text = tag
+                    selectedChip.text = tag.toString()
                     selectedChip.isCloseIconVisible = true
                     selectedChip.setOnCloseIconClickListener {
                         selectedChip.isChecked = false
                     }
-                    viewModel.selecteddinnerTags= selectedChip.text as String
+                    viewModel.selecteddinnerTags= tag
                 }
                 else{
                     viewModel.selecteddinnerTags=null
@@ -120,18 +143,18 @@ class AddMedicineFragment : Fragment() {
 
         for (tag in viewModel.breakFastTags) {
             val chip = Chip(requireContext())
-            chip.text = tag
+            chip.text = tag.toString()
             chip.isCheckable = true
             chip.isClickable = true
             chip.setOnCheckedChangeListener { compoundButton, isChecked ->
                 if (isChecked) {
                     val selectedChip = Chip(requireContext())
-                    selectedChip.text = tag
+                    selectedChip.text = tag.toString()
                     selectedChip.isCloseIconVisible = true
                     selectedChip.setOnCloseIconClickListener {
                         selectedChip.isChecked = false
                     }
-                    viewModel.selectedbreakFastTags= selectedChip.text as String
+                    viewModel.selectedbreakFastTags= tag
                 }
                 else{
                     viewModel.selectedbreakFastTags=null
@@ -142,24 +165,47 @@ class AddMedicineFragment : Fragment() {
 
         for (tag in viewModel.launchTags) {
             val chip = Chip(requireContext())
-            chip.text = tag
+            chip.text = tag.toString()
             chip.isCheckable = true
             chip.isClickable = true
             chip.setOnCheckedChangeListener { compoundButton, isChecked ->
                 if (isChecked) {
                     val selectedChip = Chip(requireContext())
-                    selectedChip.text = tag
+                    selectedChip.text = tag.toString()
                     selectedChip.isCloseIconVisible = true
                     selectedChip.setOnCloseIconClickListener {
                         selectedChip.isChecked = false
                     }
-                    viewModel.selectedlaunchTags= selectedChip.text as String
+                    viewModel.selectedlaunchTags= tag
                 }
                 else{
                     viewModel.selectedlaunchTags=null
                 }
             }
             launchChipGroup.addView(chip)
+        }
+
+        for (tag in viewModel.medTypeTags) {
+            val chip = Chip(requireContext())
+            chip.text = tag.name
+            chip.isCheckable = true
+            chip.isClickable = true
+            chip.setOnCheckedChangeListener { compoundButton, isChecked ->
+                if (isChecked) {
+                    val selectedChip = Chip(requireContext())
+                    selectedChip.text = tag.name
+                    selectedChip.isCloseIconVisible = true
+                    selectedChip.setOnCloseIconClickListener {
+                        selectedChip.isChecked = false
+                    }
+                    viewModel.selectedMedTypeTags= tag
+                }
+                else{
+                    viewModel.selectedMedTypeTags=null
+                }
+                //Toast.makeText(requireContext(),"${viewModel.selectedMedTypeTags}",Toast.LENGTH_SHORT).show()
+            }
+            medTypeChipGroup.addView(chip)
         }
 
 
@@ -226,28 +272,29 @@ class AddMedicineFragment : Fragment() {
 
         /*homeActivity.getToolbarMenuLayout().visibility = View.GONE*/
 
-
-
         binding.apply {
             medicineImage.setOnClickListener {
                 findNavController().navigate(R.id.OCRFragment)
             }
+
             fragmentMedicineNameTextInputEditText.addTextChangedListener(object : TextWatcher {
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
 
                     viewModel.medName = s.toString()
-                    if(viewModel.medName=="")
+                    Log.i(TAG,viewModel.medName.toString())
+                    if(viewModel.medName.toString()=="")
                     {
+                        viewModel.medName=null
                         fragmentMedicineNameTextInputLayout.helperText="Required"
                     }
-                    else if(viewModel.medName!!.validate(ListPattern.getMedNameRegex()))
+                    else if(!viewModel.medName.toString().validate(ListPattern.getMedNameRegex()))
                     {
+                        viewModel.medName=null
                         fragmentMedicineNameTextInputLayout.helperText="Invalid"
                     }
                     else {
                         // Input is valid, clear the error
                         fragmentMedicineNameTextInputLayout.helperText=null
-                        medName = fragmentMedicineNameTextInputEditText.text.toString()
                     }
                 }
                 override fun beforeTextChanged(
@@ -263,19 +310,12 @@ class AddMedicineFragment : Fragment() {
             fragmentDosageInfoTextInputEditText.addTextChangedListener(object : TextWatcher {
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
 
-                    viewModel.dosage = s.toString()
-                    if(viewModel.dosage=="")
-                    {
-                        fragmentDosageInfoTextInputLayout.helperText="Required"
-                    }
-                    else if (viewModel.dosage!!.validate(ListPattern.getDosageRegex()))
-                    {
-                        fragmentDosageInfoTextInputLayout.helperText="Include"
-                    }
-                    else {
-                        // Input is valid, clear the error
+                    try {
+                        viewModel.dosage = s.toString().toDouble()
                         fragmentDosageInfoTextInputLayout.helperText=null
-                        dosage = fragmentDosageInfoTextInputEditText.text.toString()
+                    } catch (e: NumberFormatException) {
+                        viewModel.dosage=null
+                        fragmentDosageInfoTextInputLayout.helperText="Required"
                     }
                 }
                 override fun beforeTextChanged(
@@ -288,8 +328,91 @@ class AddMedicineFragment : Fragment() {
                 override fun afterTextChanged(s: Editable?) {}
             })
 
-            viewModel.medFreq=MedicineFrequency.DAILY
+            fragmentMedicineQuantityTextInputEditText.addTextChangedListener(object :TextWatcher{
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                    try {
+                        viewModel.medQuantity = s.toString().toInt()
+                        fragmentMedicineQuantityTextInputLayout.helperText=null
+                    } catch (e: NumberFormatException) {
+                        viewModel.medQuantity=null
+                        fragmentMedicineQuantityTextInputLayout.helperText="Required"
+                    }
+                }
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {}
+
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
+            fragmentDoctorNameTextInputEditText.addTextChangedListener(object :TextWatcher{
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                    viewModel.doctorName = s.toString()
+                    if(viewModel.doctorName=="")
+                    {
+                        viewModel.doctorName=null
+                    }
+                    else if(!viewModel.doctorName!!.validate(ListPattern.getDoctorNameRegex())){
+                        viewModel.doctorName=null
+                        fragmentDoctorNameTextInputLayout.helperText="Invalid Name"
+                    }
+                    else{
+                        fragmentDoctorNameTextInputLayout.helperText=null
+                    }
+                }
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {}
+
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
+            fragmentDoctorContactTextInputEditText.addTextChangedListener(object:TextWatcher{
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                    viewModel.doctorContact = s.toString()
+                    if(viewModel.doctorContact=="")
+                    {
+                        viewModel.doctorContact=null
+                    }
+                    else if(!viewModel.doctorContact!!.validate(ListPattern.getDoctorContactRegex())){
+                        viewModel.doctorContact=null
+                        fragmentDoctorContactTextInputLayout.helperText="Invalid Name"
+                    }
+                    else{
+                        fragmentDoctorContactTextInputLayout.helperText=null
+                    }
+                }
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {}
+
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
+            fragmentMedicineAddButton.setOnClickListener {
+                if(validateInput())
+                {
+                    Toast.makeText(requireActivity(),"Done",Toast.LENGTH_SHORT).show()
+                }
+
+            }
         }
+
+
+
+
 
         /*val medicineData = MedicineInfo()
 
@@ -361,5 +484,19 @@ class AddMedicineFragment : Fragment() {
 
         datePickerDialog.show()
     }*/
+
+    fun validateInput():Boolean{
+        return binding.fragmentMedicineNameTextInputLayout.helperText==null &&
+                binding.fragmentMedicineStartdateTextInputLayout.helperText==null &&
+                binding.fragmentMedicineExpirydateTextInputLayout.helperText==null &&
+                binding.fragmentDosageInfoTextInputLayout.helperText==null &&
+                binding.fragmentMedicineQuantityTextInputLayout.helperText==null &&
+                viewModel.medName!=null &&
+                viewModel.dosage!=null &&
+                viewModel.medQuantity!=null &&
+                viewModel.selectedMedTypeTags!=null &&
+                (viewModel.selectedbreakFastTags!=null || viewModel.selectedlaunchTags!=null || viewModel.selecteddinnerTags!=null) &&
+                (viewModel.selectedfreqTags==MedicineFrequency.DAILY || (viewModel.selectedfreqTags==MedicineFrequency.WEEKLY && binding.fragmentWeekDaysTextInputLayout.helperText==null && viewModel.selectedWeekDayItem!=null))
+    }
 
 }

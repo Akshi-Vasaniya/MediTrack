@@ -13,10 +13,10 @@
     <string name="dosageinfo">Dosage Information</string>
     <string name="password">Password</string>
     <string name="medicinequantity">Quantity of Medicine</string>
-    <string name="frequency">Frequency (e.g., daily, weekly)</string>
-    <string name="administrationtime">Time(s)/day should take medicine</string>
+    <string name="frequency">Frequency (e.g., daily, weekly) *</string>
+    <string name="administrationtime">Time(s)/day should take medicine *</string>
     <string name="specialinstruction">Special Instructions</string>
-    <string name="doctorinfo">Doctor Information</string>
+    <string name="doctorinfo">Doctor Name</string>
     <string name="notesorcomments">Notes/Comments</string>
     <string name="not_account_text">Don\'t have an account?</string>
     <string name="forgot_password_text">Forgot Password?</string>
