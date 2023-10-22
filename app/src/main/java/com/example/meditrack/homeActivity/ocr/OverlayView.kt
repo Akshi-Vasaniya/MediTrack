@@ -9,11 +9,17 @@ import android.view.View
 
 class OverlayView(context: Context) : View(context) {
 
+    var overlaySelectionListener: OverlaySelectionListener? = null
+
 //    private var rectPaint: Paint = Paint().apply {
 //        color = Color.RED
 //        style = Paint.Style.STROKE
 //        strokeWidth = 5f
 //    }
+    interface OverlaySelectionListener {
+        fun onRectSelected(rect: ArrayList<Pair<Rect, String>>)
+    }
+
     var selectedItemColor = Color.argb(204, 173, 216, 230) // Light Blue color with 60% transparency
     var unselectedItemColor = Color.argb(128, 255, 255, 255) // White color with 50% transparency
     private var rectPaint: Paint = Paint().apply {
@@ -59,14 +65,14 @@ class OverlayView(context: Context) : View(context) {
             }
             canvas.drawRect(rect, rectPaint)
         }
-        selectedRects.forEach { (rect, text) ->
-            /*val x = rect.left.toFloat()
+        /*selectedRects.forEach { (rect, text) ->
+            val x = rect.left.toFloat()
             val y = rect.top.toFloat()
             rectPaint.color = Color.WHITE
             rectPaint.textSize = 40f
-            canvas.drawText(text, x, y - 10, rectPaint)*/
+            canvas.drawText(text, x, y - 10, rectPaint)
             Log.i("OverlayView", "Selected Text: $text")
-        }
+        }*/
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -81,6 +87,7 @@ class OverlayView(context: Context) : View(context) {
                     } else {
                         selectedRects.add(clickedPair)
                     }
+                    overlaySelectionListener?.onRectSelected(selectedRects)
                     invalidate()
                 }
                 return true

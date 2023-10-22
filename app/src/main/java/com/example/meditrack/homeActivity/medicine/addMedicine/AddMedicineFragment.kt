@@ -1,5 +1,7 @@
 package com.example.meditrack.homeActivity.medicine.addMedicine
 
+import android.graphics.Bitmap
+import android.graphics.Rect
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -291,6 +293,36 @@ class AddMedicineFragment : Fragment() {
         cardView = binding.additionalView
         hiddenView = binding.hiddenView
 
+        // Get the Bundle from arguments
+        val bundle = arguments
+
+        // Retrieve the bitmap from the Bundle
+        viewModel.bimapMedImage = bundle?.getParcelable<Bitmap>("bitmap")
+
+        // Retrieve the ArrayList from the Bundle
+        viewModel.selectedTextArray = bundle?.getSerializable("arrayList") as ArrayList<Pair<Rect,String>>?
+
+        if(viewModel.bimapMedImage!=null)
+        {
+            binding.medicineImage.setImageBitmap(viewModel.bimapMedImage)
+        }
+        try {
+            viewModel.medName=""
+            viewModel.selectedTextArray!!.forEach {
+                viewModel.medName += it.second
+            }
+            viewModel.medName = viewModel.medName!!.trim()
+            viewModel.medName = viewModel.medName!!.replace("\n"," ")
+            binding.fragmentMedicineNameTextInputEditText.setText(viewModel.medName)
+            binding.fragmentMedicineNameTextInputLayout.helperText=null
+        }catch (e:java.lang.NullPointerException)
+        {
+            viewModel.medName=null
+            e.printStackTrace()
+        }
+
+
+
         binding.fixedLayout.setOnClickListener {
             showAditionalDetails()
         }
@@ -315,11 +347,11 @@ class AddMedicineFragment : Fragment() {
                         viewModel.medName=null
                         fragmentMedicineNameTextInputLayout.helperText="Required"
                     }
-                    else if(!viewModel.medName.toString().validate(ListPattern.getMedNameRegex()))
+                    /*else if(!viewModel.medName.toString().validate(ListPattern.getMedNameRegex()))
                     {
                         viewModel.medName=null
                         fragmentMedicineNameTextInputLayout.helperText="Invalid"
-                    }
+                    }*/
                     else {
                         // Input is valid, clear the error
                         fragmentMedicineNameTextInputLayout.helperText=null

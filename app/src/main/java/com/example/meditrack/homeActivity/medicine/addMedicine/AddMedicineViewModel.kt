@@ -1,5 +1,7 @@
 package com.example.meditrack.homeActivity.medicine.addMedicine
 
+import android.graphics.Bitmap
+import android.graphics.Rect
 import androidx.lifecycle.ViewModel
 import com.example.meditrack.dataModel.MedicineFrequency
 import com.example.meditrack.dataModel.MedicineTime
@@ -11,6 +13,7 @@ class AddMedicineViewModel : ViewModel() {
 
     var medName: String? = null
     var medImage: String? = null
+    var bimapMedImage:Bitmap? = null
     var medInstruction: String? = null
     var medNotes: String? = null
     var dosage: Double? = null
@@ -19,6 +22,7 @@ class AddMedicineViewModel : ViewModel() {
     var expDate: String? = null
     var doctorName: String? = null
     var doctorContact: String? = null
+    var selectedTextArray:ArrayList<Pair<Rect,String>>? = null
 
     val freqTags = mutableListOf(MedicineFrequency.DAILY, MedicineFrequency.WEEKLY)
     val medTypeTags = mutableListOf(MedicineType.Tablets, MedicineType.Liquid)

@@ -133,5 +133,46 @@ class UtilityFunction {
             }
         }
 
+        // Function to find nearly similar rectangles based on height, including the highest rectangle
+        fun findNearlySimilarRectangles(
+            rectangles: ArrayList<Pair<Rect, String>>,
+            tolerancePercentage: Double
+        ): ArrayList<Pair<Rect, String>> {
+            // Find the highest-height rectangle
+            val highestRectPair = rectangles.maxByOrNull { it.first.height() }
+                ?: return ArrayList()
+
+            // Calculate tolerance based on the highest rectangle's height
+            val tolerance = highestRectPair.first.height() * tolerancePercentage
+
+            // Filter rectangles based on the tolerance
+            val similarRects = rectangles.filter { rectPair ->
+                val difference = Math.abs(rectPair.first.height() - highestRectPair.first.height())
+                difference <= tolerance
+            }.toMutableList()
+
+            // Add the highest rectangle to the list of similar rectangles
+            similarRects.add(0, highestRectPair)
+
+            return ArrayList(similarRects)
+        }
+
+        fun filterFirstSecondThirdLargestRect(rectList: List<Pair<Rect, String>>): Triple<List<Pair<Rect, String>>, List<Pair<Rect, String>>, List<Pair<Rect, String>>>? {
+            if (rectList.size < 3) return null
+
+            val sortedRects = rectList.sortedByDescending { it.first.width() * it.first.height() }
+
+            val firstLargestRect = sortedRects[0].first
+            val secondLargestRect = sortedRects[1].first
+            val thirdLargestRect = sortedRects[2].first
+
+            val firstLargestRects = sortedRects.filter { it.first.width() * it.first.height() == firstLargestRect.width() * firstLargestRect.height() }
+            val secondLargestRects = sortedRects.filter { it.first.width() * it.first.height() == secondLargestRect.width() * secondLargestRect.height() }
+            val thirdLargestRects = sortedRects.filter { it.first.width() * it.first.height() == thirdLargestRect.width() * thirdLargestRect.height() }
+
+            return Triple(firstLargestRects, secondLargestRects, thirdLargestRects)
+        }
+
+
     }
 }

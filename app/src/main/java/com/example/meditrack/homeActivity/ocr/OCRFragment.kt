@@ -23,8 +23,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.meditrack.R
 import com.example.meditrack.databinding.FragmentOCRBinding
+import com.example.meditrack.homeActivity.home.HomeViewModel
+import com.example.meditrack.homeActivity.medicine.addMedicine.AddMedicineFragment
+import com.example.meditrack.utility.UtilityFunction
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
@@ -36,7 +41,8 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.collections.ArrayList
 
-class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallback {
+class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallback,
+    OverlayView.OverlaySelectionListener {
 
     companion object {
         fun newInstance() = OCRFragment()
@@ -47,6 +53,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
     private lateinit var recognizer: TextRecognizer
     private val TAG = "Testing"
     private val SAVED_TEXT_TAG = "SavedText"
+
 
     //private val SAVED_IMAGE_BITMAP = "SavedImage"
     private val REQUEST_CODE_PERMISSIONS = 10
@@ -64,8 +71,10 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
     ): View? {
         val view = inflater.inflate(R.layout.fragment_o_c_r, container, false)
         overlayView = OverlayView(requireContext())
+        overlayView.overlaySelectionListener = this
         val frameLayout: ViewGroup = view!!.findViewById(R.id.camera_fragment_layout) // Replace with your layout id
         frameLayout.addView(overlayView)
+        viewModel = ViewModelProvider(this)[OCRViewModel::class.java]
         return view
     }
 
@@ -103,6 +112,32 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
             overlayView.clearOverlay()
             binding.textInImageLayout.visibility = View.GONE
             getContent.launch("image/*")
+        }
+
+        binding.saveMedName.setOnClickListener {
+            if(viewModel.listSelectedMedName.isEmpty())
+            {
+                Toast.makeText(requireContext(),"Please Select Medicine Name",Toast.LENGTH_SHORT).show()
+            }
+            else{
+                // Create a Bundle
+                val bundle = Bundle()
+
+                // Add the bitmap to the Bundle
+                bundle.putParcelable("bitmap", savedBitmap)
+
+                // Add the ArrayList to the Bundle
+                bundle.putSerializable("arrayList", viewModel.listSelectedMedName)
+
+                findNavController().popBackStack(R.id.addMedicineFragment,true)
+                findNavController().navigate(R.id.addMedicineFragment,bundle)
+
+                // Navigate to the receiving fragment
+                /*val transaction = parentFragmentManager.beginTransaction()
+                transaction.replace(R.id.fragment_container, fragment)
+                transaction.addToBackStack(null)
+                transaction.commit()*/
+            }
         }
     }
 
@@ -166,10 +201,6 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
 
     }
 
-
-
-
-
     private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         try {
             if(uri!=null)
@@ -221,6 +252,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
         recognizer
             .process(inputImage)
             .addOnSuccessListener { text ->
+                viewModel.listSelectedMedName = ArrayList()
                 val rectList: ArrayList<Pair<Rect, String>> = ArrayList()
                 Log.d(TAG, "Text is: " + text.text)
                 for (textBlock in text.textBlocks) {
@@ -244,9 +276,36 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
                         }
                     }
                 }
-                overlayView.setBoundingRects(rectList)
+                //var filterOutput = UtilityFunction.filterFirstSecondThirdLargestRect(rectList)
+                var filterOutput = UtilityFunction.findNearlySimilarRectangles(rectList,0.9)
+                overlayView.setBoundingRects(filterOutput)
+                /*filterOutput?.let { (firstList, secondList, thirdList) ->
+
+                    //overlayView.setBoundingRects((ArrayList(firstList)+ArrayList(secondList)+ArrayList(thirdList)) as ArrayList<Pair<Rect, String>>)
+                    //binding.textInImageLayout.visibility = View.VISIBLE
+                    //processTextRecognitionResult(text)
+
+                    // Accessing the first list of pairs
+                    *//*println("First List:")
+                    firstList.forEach { (rect, string) ->
+                        println("Rect: $rect, String: $string")
+                    }*//*
+
+                    // Accessing the second list of pairs
+                    *//*println("Second List:")
+                    secondList.forEach { (rect, string) ->
+                        println("Rect: $rect, String: $string")
+                    }*//*
+
+                    // Accessing the third list of pairs
+                    *//*println("Third List:")
+                    thirdList.forEach { (rect, string) ->
+                        println("Rect: $rect, String: $string")
+                    }*//*
+                }*/
+                /*overlayView.setBoundingRects(rectList)
                 binding.textInImageLayout.visibility = View.VISIBLE
-                processTextRecognitionResult(text)
+                processTextRecognitionResult(text)*/
 
             }.addOnFailureListener { e ->
                 e.printStackTrace()
@@ -409,6 +468,11 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
         /*if (binding.previewImage.visibility == View.VISIBLE) {
             outState.putParcelable(SAVED_IMAGE_BITMAP, binding.previewImage.drawable.toBitmap())
         }*/
+    }
+
+    override fun onRectSelected(rect: ArrayList<Pair<Rect, String>>) {
+        viewModel.listSelectedMedName=rect
+        Log.i("OCR Fragment",rect.toString())
     }
 
 }

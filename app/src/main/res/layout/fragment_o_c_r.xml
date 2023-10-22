@@ -129,10 +129,23 @@
         android:layout_marginBottom="50dp"
         android:elevation="2dp"
         android:padding="10dp"
-        android:text="Extract Text"
+        android:text="Fetch"
         android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/ocr_camera"
+        app:layout_constraintEnd_toStartOf="@id/save_med_name"/>
+
+    <Button
+        android:id="@+id/save_med_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="2dp"
+        android:padding="10dp"
+        android:text="Save"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="@id/extractTextButton"
+        app:layout_constraintTop_toTopOf="@id/extractTextButton"
+        app:layout_constraintStart_toEndOf="@id/extractTextButton"
         app:layout_constraintEnd_toStartOf="@id/ocr_gallery"/>
 
     <!--<com.google.android.material.card.MaterialCardView
@@ -188,7 +201,8 @@
         app:layout_constraintBottom_toBottomOf="@id/extractTextButton"
         app:layout_constraintTop_toTopOf="@id/extractTextButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/extractTextButton">
+        app:layout_constraintStart_toEndOf="@id/save_med_name"
+        android:visibility="invisible">
 
         <ImageView
             android:layout_width="match_parent"
