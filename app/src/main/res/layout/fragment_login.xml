@@ -125,7 +125,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
-                    android:id="@+id/fragment_login_forgot_password"
+                    android:id="@+id/fragment_forgot_password_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/forgot_password_text"

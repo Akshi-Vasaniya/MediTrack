@@ -14,6 +14,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.meditrack.R
+import com.example.meditrack.dataModel.EmailAvailabilityCallback
+import com.example.meditrack.dataModel.User
 import com.example.meditrack.databinding.FragmentLoginBinding
 import com.example.meditrack.exception.HandleException
 import com.example.meditrack.firebase.MediTrackFirebaseAuth
@@ -21,6 +23,7 @@ import com.example.meditrack.homeActivity.HomeActivity
 import com.example.meditrack.regularExpression.ListPattern
 import com.example.meditrack.regularExpression.MatchPattern.Companion.validate
 import com.example.meditrack.utility.CustomProgressDialog
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -64,10 +67,6 @@ class LoginFragment : Fragment() {
         }
 
         binding.apply {
-
-            fragmentLoginForgotPassword.setOnClickListener {
-
-            }
 
             fragmentLoginEmailTextInputEditText.addTextChangedListener(object : TextWatcher {
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -117,6 +116,40 @@ class LoginFragment : Fragment() {
                     after: Int
                 ) {}
             })
+
+            fragmentForgotPasswordTextview.setOnClickListener {
+                if(fragmentLoginEmailTextInputLayout.helperText==null && viewModel.inputEmail!=null){
+                    viewModel.inputEmail = viewModel.inputEmail!!.trim()
+                    progressDialog.start("Loading...")
+                    User.isEmailAvailable(viewModel.inputEmail!!, object : EmailAvailabilityCallback{
+                        override fun onResult(isAvailable: Boolean) {
+                            if(isAvailable){
+                                progressDialog.stop()
+//                                val snackbar = Snackbar.make(view, "Email is exist", Snackbar.LENGTH_LONG)
+//                                snackbar.show()
+                                MediTrackFirebaseAuth.getFireBaseAuth().setLanguageCode("en")
+                                MediTrackFirebaseAuth.getFireBaseAuth().sendPasswordResetEmail(viewModel.inputEmail!!).addOnCompleteListener {
+                                    progressDialog.stop()
+                                    val snackbar = Snackbar.make(view, "Reset Password email has been sent successfully", Snackbar.LENGTH_LONG)
+                                    snackbar.show()
+                                }.addOnFailureListener {
+                                    progressDialog.stop()
+                                    HandleException.firebaseCommonExceptions(requireContext(), it, tag)
+                                }
+                            }
+                            else{
+                                progressDialog.stop()
+                                val snackbar = Snackbar.make(view, "Email not found! Please Register first", Snackbar.LENGTH_LONG)
+                                snackbar.show()
+                            }
+                        }
+                    })
+                }
+                else{
+                    val snackbar = Snackbar.make(view, "Please enter the email first", Snackbar.LENGTH_LONG)
+                    snackbar.show()
+                }
+            }
 
             fragmentLoginButton.setOnClickListener {
                 if(fragmentLoginEmailTextInputLayout.helperText==null && fragmentLoginPasswordTextInputLayout.helperText==null && viewModel.inputEmail!=null && viewModel.inputPassword!=null)
