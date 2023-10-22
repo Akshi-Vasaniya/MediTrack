@@ -5,12 +5,10 @@ import android.graphics.*
 import android.net.Uri
 import android.util.Base64
 import android.util.Log
+import androidx.core.content.FileProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.ByteArrayOutputStream
-import java.io.FileNotFoundException
-import java.io.IOException
-import java.io.InputStream
+import java.io.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -174,5 +172,31 @@ class UtilityFunction {
         }
 
 
+        // Function to convert Bitmap to Uri
+        fun bitmapToUri(context: Context, bitmap: Bitmap): Uri? {
+            // Get the context's cache directory
+            val cachePath = File(context.cacheDir, "images")
+            cachePath.mkdirs()
+
+            // Create a temporary file
+            val file = File(cachePath, "${UUID.randomUUID()}.jpg")
+            try {
+                // Compress the bitmap and write it to the temporary file
+                val stream = FileOutputStream(file)
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream)
+                stream.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+
+            // Return the FileProvider Uri for the temporary file
+            return try {
+                val contentUri = FileProvider.getUriForFile(context, "com.example.fileprovider", file)
+                contentUri
+            } catch (e: IllegalArgumentException) {
+                e.printStackTrace()
+                null
+            }
+        }
     }
 }

@@ -18,7 +18,7 @@ import com.example.meditrack.dataModel.EmailAvailabilityCallback
 import com.example.meditrack.dataModel.User
 import com.example.meditrack.databinding.FragmentLoginBinding
 import com.example.meditrack.exception.HandleException
-import com.example.meditrack.firebase.MediTrackFirebaseAuth
+import com.example.meditrack.firebase.fBase
 import com.example.meditrack.homeActivity.HomeActivity
 import com.example.meditrack.regularExpression.ListPattern
 import com.example.meditrack.regularExpression.MatchPattern.Companion.validate
@@ -127,8 +127,8 @@ class LoginFragment : Fragment() {
                                 progressDialog.stop()
 //                                val snackbar = Snackbar.make(view, "Email is exist", Snackbar.LENGTH_LONG)
 //                                snackbar.show()
-                                MediTrackFirebaseAuth.getFireBaseAuth().setLanguageCode("en")
-                                MediTrackFirebaseAuth.getFireBaseAuth().sendPasswordResetEmail(viewModel.inputEmail!!).addOnCompleteListener {
+                                fBase.getFireBaseAuth().setLanguageCode("en")
+                                fBase.getFireBaseAuth().sendPasswordResetEmail(viewModel.inputEmail!!).addOnCompleteListener {
                                     progressDialog.stop()
                                     val snackbar = Snackbar.make(view, "Reset Password email has been sent successfully", Snackbar.LENGTH_LONG)
                                     snackbar.show()
@@ -157,10 +157,10 @@ class LoginFragment : Fragment() {
                     viewModel.inputEmail=viewModel.inputEmail!!.trim()
                     viewModel.inputPassword=viewModel.inputPassword!!.trim()
                     progressDialog.start("Loading...")
-                    MediTrackFirebaseAuth.getFireBaseAuth().signInWithEmailAndPassword(viewModel.inputEmail!!,viewModel.inputPassword!!).addOnCompleteListener {
+                    fBase.getFireBaseAuth().signInWithEmailAndPassword(viewModel.inputEmail!!,viewModel.inputPassword!!).addOnCompleteListener {
                         if(it.isSuccessful)
                         {
-                            if(!MediTrackFirebaseAuth.getCurrentUser()!!.isEmailVerified)
+                            if(!fBase.getCurrentUser()!!.isEmailVerified)
                             {
                                 progressDialog.stop()
                                 Toast.makeText(requireContext(),"Please Verify your email", Toast.LENGTH_SHORT).show()
@@ -171,7 +171,7 @@ class LoginFragment : Fragment() {
                                     {
                                     }
                                 }*/
-                                if(MediTrackFirebaseAuth.getCurrentUser()!=null)
+                                if(fBase.getCurrentUser()!=null)
                                 {
                                     /*viewModel.fetchUserData()*/
                                     progressDialog.stop()

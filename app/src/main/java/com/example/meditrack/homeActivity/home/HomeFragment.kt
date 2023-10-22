@@ -1,33 +1,15 @@
 package com.example.meditrack.homeActivity.home
 
-import android.animation.ValueAnimator
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.caverock.androidsvg.SVG
 import com.example.meditrack.R
-import com.example.meditrack.dataModel.User
 import com.example.meditrack.databinding.FragmentHomeBinding
-import com.example.meditrack.firebase.MediTrackUserReference
-import com.example.meditrack.homeActivity.HomeActivity
-import com.example.meditrack.mainActivity.MainActivity
-import com.example.meditrack.utility.UtilityFunction
-import com.example.meditrack.utility.UtilityFunction.Companion.getCircularBitmap
-import com.google.android.material.navigation.NavigationView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -85,6 +67,18 @@ class HomeFragment : Fragment() {
                 findNavController().navigate(R.id.medicineStockFragment)
             }
         }
+
+        /*isUserEmailAvailable("anhowdontcare@gmail.com", object : EmailAvailabilityCallback {
+            override fun onResult(isAvailable: Boolean) {
+                // Use the isAvailable value here
+                if (isAvailable) {
+                    Log.i("isUsernameAvailable","True")
+                } else {
+                    Log.i("isUsernameAvailable","False")
+                }
+            }
+        })*/
+
 
         /*viewModel._userData.observe(viewLifecycleOwner){
             MainScope().launch(Dispatchers.IO) {
@@ -255,4 +249,24 @@ class HomeFragment : Fragment() {
         }
     }*/
 
+    // Callback interface to return the result
+    /*interface EmailAvailabilityCallback {
+        fun onResult(isAvailable: Boolean)
+    }*/
+
+    /*fun isUserEmailAvailable(email: String, callback: EmailAvailabilityCallback) {
+        val usersRef = MediTrackUserReference.getUserReference()
+
+        usersRef.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(object :
+            ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val isAvailable = dataSnapshot.childrenCount == 0L
+                callback.onResult(!isAvailable)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                callback.onResult(true)
+            }
+        })
+    }*/
 }

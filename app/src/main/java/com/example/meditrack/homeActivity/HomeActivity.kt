@@ -1,12 +1,9 @@
 package com.example.meditrack.homeActivity
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -17,18 +14,15 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
-import com.caverock.androidsvg.SVG
 import com.example.meditrack.R
 import com.example.meditrack.dataModel.User
 import com.example.meditrack.databinding.ActivityHomeBinding
-import com.example.meditrack.firebase.MediTrackUserReference
-import com.example.meditrack.homeActivity.home.HomeFragment
+import com.example.meditrack.firebase.fBase
 import com.example.meditrack.mainActivity.MainActivity
 import com.example.meditrack.utility.UtilityFunction
 import com.google.android.material.navigation.NavigationView
@@ -101,7 +95,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         loadFragment()
 
         MainScope().launch(Dispatchers.IO) {
-            val userQuery = MediTrackUserReference.getUserDataQuery()
+            val userQuery = fBase.getUserDataQuery()
             userQuery.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     snapshot.children.forEach {

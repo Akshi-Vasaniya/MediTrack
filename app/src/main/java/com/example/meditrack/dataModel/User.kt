@@ -1,8 +1,6 @@
 package com.example.meditrack.dataModel
 
-import android.content.Context
-import com.example.meditrack.exception.HandleException
-import com.example.meditrack.firebase.MediTrackUserReference
+import com.example.meditrack.firebase.fBase
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -31,7 +29,7 @@ data class User(var name:String?=null, var surname:String?=null, var email:Strin
         }*/
 
         fun isEmailAvailable(email: String, callback: EmailAvailabilityCallback){
-            val userRefForEmail = MediTrackUserReference.getUserReference()
+            val userRefForEmail = fBase.getUserReference()
 
             userRefForEmail.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(object :
             ValueEventListener{

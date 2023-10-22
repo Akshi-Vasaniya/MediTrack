@@ -2,6 +2,7 @@ package com.example.meditrack.homeActivity.medicine.addMedicine
 
 import android.graphics.Bitmap
 import android.graphics.Rect
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,11 +14,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.cardview.widget.CardView
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -26,16 +25,19 @@ import com.example.meditrack.dataModel.MedicineFrequency
 import com.example.meditrack.dataModel.MedicineInfo
 import com.example.meditrack.dataModel.MedicineTime
 import com.example.meditrack.databinding.FragmentAddMedicineBinding
-import com.example.meditrack.firebase.MediTrackUserReference
+import com.example.meditrack.firebase.fBase
 import com.example.meditrack.regularExpression.ListPattern
 import com.example.meditrack.regularExpression.MatchPattern.Companion.validate
 import com.example.meditrack.utility.CustomProgressDialog
 import com.example.meditrack.utility.MonthYearPickerDialog
 import com.example.meditrack.utility.UtilityFunction
+import com.example.meditrack.utility.UtilityFunction.Companion.bitmapToUri
+import com.google.android.gms.tasks.Task
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -55,7 +57,7 @@ class AddMedicineFragment : Fragment() {
     private lateinit var expiryDatePicker: TextInputEditText
     private lateinit var startDatePicker: TextInputEditText
     private val calendar = Calendar.getInstance()
-    private val db = FirebaseFirestore.getInstance()
+    private val db = fBase.getFireStoreInstance()
     private val TAG = "AddMedicineFragment"
     /*private lateinit var homeActivity: HomeActivity*/
     private val REQUEST_IMAGE_CAPTURE = 1
@@ -483,24 +485,56 @@ class AddMedicineFragment : Fragment() {
                             medicineTime.add(viewModel.selecteddinnerTags!!)
                         }
 
-                        val medicineData = MedicineInfo(
-                            medImage = viewModel.medImage.toString(),
-                            medName = viewModel.medName!!,
-                            medicineType = viewModel.selectedMedTypeTags!!,
-                            dosage = viewModel.dosage!!,
-                            mfgDate = viewModel.mfgDate!!,
-                            expDate = viewModel.expDate!!,
-                            medFreq = viewModel.selectedfreqTags!!,
-                            weekDay = viewModel.selectedWeekDayItem,
-                            takeTime = medicineTime,
-                            instruction = viewModel.medInstruction.toString(),
-                            doctorName = viewModel.doctorName.toString(),
-                            doctorContact = viewModel.doctorContact.toString(),
-                            notes = viewModel.medNotes.toString(),
-                            totalQuantity = viewModel.medQuantity!!,
-                            notation = viewModel.selectedMedTypeTags!!.getNotation()
-                        )
-                        Toast.makeText(requireContext(),"Done",Toast.LENGTH_SHORT).show()
+                        val imageUri = bitmapToUri(requireContext(),viewModel.bimapMedImage!!)
+                        if(imageUri!=null)
+                        {
+                            uploadImageToFirebaseStorage(imageUri, object : UploadCallback {
+                                override fun onUploadSuccess(downloadUrl: String) {
+                                    val medicineData = MedicineInfo(
+                                        medImage = downloadUrl,
+                                        medName = viewModel.medName!!,
+                                        medicineType = viewModel.selectedMedTypeTags!!,
+                                        dosage = viewModel.dosage!!,
+                                        mfgDate = viewModel.mfgDate!!,
+                                        expDate = viewModel.expDate!!,
+                                        medFreq = viewModel.selectedfreqTags!!,
+                                        weekDay = viewModel.selectedWeekDayItem,
+                                        takeTime = medicineTime,
+                                        instruction = viewModel.medInstruction.toString(),
+                                        doctorName = viewModel.doctorName.toString(),
+                                        doctorContact = viewModel.doctorContact.toString(),
+                                        notes = viewModel.medNotes.toString(),
+                                        totalQuantity = viewModel.medQuantity!!,
+                                        notation = viewModel.selectedMedTypeTags!!.getNotation()
+                                    )
+                                    db.collection("user_medicines").document(fBase.getUserId()).collection("medicine_data")
+                                        .add(medicineData)
+                                        .addOnSuccessListener { documentReference ->
+                                            progressDialog.stop()
+                                            Toast.makeText(requireContext(),"Done",Toast.LENGTH_SHORT).show()
+                                            Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                                        }
+                                        .addOnFailureListener { e ->
+                                            progressDialog.stop()
+                                            Toast.makeText(requireContext(),"addOnFailureListener: Error",Toast.LENGTH_SHORT).show()
+                                            Log.w(TAG, "Error adding document", e)
+                                        }
+                                }
+
+                                override fun onUploadFailure(exception: Exception) {
+                                    progressDialog.stop()
+                                    Toast.makeText(requireContext(),"onUploadFailure: Error",Toast.LENGTH_SHORT).show()
+                                }
+                            })
+                        }
+                        else{
+                            withContext(Dispatchers.Main)
+                            {
+                                progressDialog.stop()
+                                Toast.makeText(requireContext(),"imageUri is NULL",Toast.LENGTH_SHORT).show()
+                            }
+                        }
+
                         /*db.collection("user_medicines").document(MediTrackUserReference.getUserId()).collection("medicine_data")
                             .add(medicineData)
                             .addOnSuccessListener { documentReference ->
@@ -529,6 +563,37 @@ class AddMedicineFragment : Fragment() {
             TransitionManager.beginDelayedTransition(cardView, AutoTransition())
             hiddenView.visibility = View.GONE
             binding.arrowButton.setImageResource(R.drawable.round_keyboard_arrow_down_24)
+        }
+    }
+
+
+    // Callback interface for upload result
+    interface UploadCallback {
+        fun onUploadSuccess(downloadUrl: String)
+        fun onUploadFailure(exception: Exception)
+    }
+
+    // Function to upload an image to Firebase Storage and provide the result via callback
+    fun uploadImageToFirebaseStorage(imageUri: Uri, callback: UploadCallback) {
+        val storageRef = fBase.getStorageReference()
+        val imagesRef = storageRef.child("images/${UUID.randomUUID()}")
+        val uploadTask = imagesRef.putFile(imageUri)
+
+        uploadTask.continueWithTask { task ->
+            if (!task.isSuccessful) {
+                task.exception?.let {
+                    throw it
+                }
+            }
+            imagesRef.downloadUrl
+        }.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val downloadUri = task.result
+                downloadUri?.let { callback.onUploadSuccess(it.toString()) }
+            } else {
+                // Handle failures
+                task.exception?.let { callback.onUploadFailure(it) }
+            }
         }
     }
 

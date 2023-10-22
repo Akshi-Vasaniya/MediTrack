@@ -23,8 +23,7 @@ import com.example.meditrack.R
 import com.example.meditrack.dataModel.User
 import com.example.meditrack.databinding.FragmentRegistrationBinding
 import com.example.meditrack.exception.HandleException
-import com.example.meditrack.firebase.MediTrackFirebaseAuth
-import com.example.meditrack.firebase.MediTrackUserReference
+import com.example.meditrack.firebase.fBase
 import com.example.meditrack.regularExpression.ListPattern
 import com.example.meditrack.regularExpression.MatchPattern.Companion.validate
 import com.example.meditrack.utility.CustomProgressDialog
@@ -242,7 +241,7 @@ class RegistrationFragment : Fragment() {
                     viewModel.inputName = viewModel.inputName!!.trim().uppercase()
                     viewModel.inputSurname = viewModel.inputSurname!!.trim().uppercase()
                     progressDialog.start("Loading...")
-                    MediTrackFirebaseAuth.getFireBaseAuth().createUserWithEmailAndPassword(viewModel.inputEmail!!,viewModel.inputPassword!!).addOnCompleteListener {
+                    fBase.getFireBaseAuth().createUserWithEmailAndPassword(viewModel.inputEmail!!,viewModel.inputPassword!!).addOnCompleteListener {
                         if(it.isSuccessful)
                         {
                             MainScope().launch(Dispatchers.IO) {
@@ -252,8 +251,8 @@ class RegistrationFragment : Fragment() {
                                         imageString = bitmapToBase64(inputProfileImage!!)
                                     }
                                     val user = User(viewModel.inputName!!, viewModel.inputSurname!!, viewModel.inputEmail!!,imageString)
-                                    MediTrackUserReference.getUserReference().child(it.result?.user!!.uid).setValue(user).addOnSuccessListener {
-                                        MediTrackFirebaseAuth.getCurrentUser()?.sendEmailVerification()?.addOnSuccessListener {
+                                    fBase.getUserReference().child(it.result?.user!!.uid).setValue(user).addOnSuccessListener {
+                                        fBase.getCurrentUser()?.sendEmailVerification()?.addOnSuccessListener {
                                             progressDialog.stop()
                                             Toast.makeText(requireContext(),"Verify Your Email",Toast.LENGTH_SHORT).show()
                                             findNavController().navigate(R.id.loginFragment)
