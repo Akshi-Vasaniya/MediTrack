@@ -15,7 +15,7 @@ object ApiInstance {
     val api: ApiInterface by lazy{
         Retrofit
             .Builder()
-            .baseUrl("https://meditrackcpproject-3f0956db-b449-4328-a5ba-e52a1fa5d377.socketxp.com")
+            .baseUrl("https://meditrackcpproject-8ee22365-80c5-4115-8559-13963d3f2ec0.socketxp.com")
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()

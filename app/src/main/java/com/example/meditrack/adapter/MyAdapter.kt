@@ -15,6 +15,7 @@ class MyAdapter(private var itemsList: List<ApiData?>) : RecyclerView.Adapter<My
 
         val itemName : TextView = itemView.findViewById(R.id.itemName)
         val itemScore : TextView = itemView.findViewById(R.id.itemScore)
+        val itemDesc : TextView = itemView.findViewById(R.id.itemDesc)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -24,7 +25,8 @@ class MyAdapter(private var itemsList: List<ApiData?>) : RecyclerView.Adapter<My
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        holder.itemName.text = itemsList[position]!!.Document
+        holder.itemName.text = itemsList[position]!!.Name.toUpperCase()
+        holder.itemDesc.text = itemsList[position]!!.Document
         holder.itemScore.text = itemsList[position]!!.Score.toString()
 
     }

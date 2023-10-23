@@ -57,10 +57,16 @@ class SearchFragment : Fragment() {
                             call: Call<List<ApiData?>?>,
                             response: Response<List<ApiData?>?>
                         ) {
-                            Log.i("Search", "onResponse: ${response.body()!!}")
-                            var res = response.body()!!
-                            binding.rvCombineImage.adapter = MyAdapter(res)
-                            progressDialog.stop()
+                            try {
+                                Log.i("Search", "onResponse: ${response.body()!!}")
+                                var res = response.body()!!
+                                binding.rvCombineImage.adapter = MyAdapter(res)
+                                progressDialog.stop()
+                            }
+                            catch (ex:Exception)
+                            {
+                                progressDialog.stop()
+                            }
                         }
 
                         override fun onFailure(call: Call<List<ApiData?>?>, t: Throwable) {

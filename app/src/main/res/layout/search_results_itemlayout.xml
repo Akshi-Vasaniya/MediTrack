@@ -11,17 +11,36 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/mainLayout1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp">
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/itemNameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="#D2C76A"
+            android:padding="10dp">
+            <TextView
+                android:id="@+id/itemName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="Text Name"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/itemName"
+            android:id="@+id/itemDesc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:text="Text Name"
+            android:text="Text Desc"
             android:textSize="11sp"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/itemNameLayout"
+            android:padding="5dp"/>
 
         <TextView
             android:id="@+id/itemScore"
@@ -31,7 +50,10 @@
             android:layout_marginTop="10dp"
             android:text="Text Score"
             android:textSize="11sp"
-            app:layout_constraintTop_toBottomOf="@id/itemName" />
+            app:layout_constraintTop_toBottomOf="@id/itemDesc"
+            android:paddingTop="5dp"
+            android:paddingHorizontal="5dp"
+            android:paddingBottom="10dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
