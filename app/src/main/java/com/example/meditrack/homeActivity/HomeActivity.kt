@@ -197,7 +197,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 R.id.searchFragment,
                 R.id.addMedicineFragment,
                 R.id.medicineStockFragment,
-                R.id.userProfileFragment
+                R.id.userProfileFragment,
+                R.id.aboutUsFragment
             )
         ).build()
 
@@ -234,7 +235,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             R.id.nav_aboutUs -> {
-                Toast.makeText(this, "Clicked About Us", Toast.LENGTH_SHORT).show()
+                navHostFragment.findNavController().navigate(R.id.aboutUsFragment)
+                //Toast.makeText(this, "Clicked About Us", Toast.LENGTH_SHORT).show()
             }
 
             R.id.nav_privacyPolicy -> {
