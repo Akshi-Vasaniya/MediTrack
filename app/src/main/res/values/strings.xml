@@ -10,7 +10,7 @@
     <string name="medicinemfgdate">Mfg. Date</string>
     <string name="medicineexpirydate">Exp. Date</string>
     <string name="medicinename">Medicine Name</string>
-    <string name="dosageinfo">Dosage Information</string>
+    <string name="dosageinfo">Dosage</string>
     <string name="password">Password</string>
     <string name="medicinequantity">Quantity of Medicine</string>
     <string name="frequency">Frequency (e.g., daily, weekly) *</string>

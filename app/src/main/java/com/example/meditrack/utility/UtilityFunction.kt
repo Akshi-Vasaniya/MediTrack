@@ -183,7 +183,7 @@ class UtilityFunction {
             try {
                 // Compress the bitmap and write it to the temporary file
                 val stream = FileOutputStream(file)
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream)
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream)
                 stream.close()
             } catch (e: IOException) {
                 e.printStackTrace()

@@ -319,6 +319,13 @@
                             app:singleSelection="true"
                             />
 
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/medicineTimeofDayType2ChipGroup"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            />
+
                     </LinearLayout>
 
 

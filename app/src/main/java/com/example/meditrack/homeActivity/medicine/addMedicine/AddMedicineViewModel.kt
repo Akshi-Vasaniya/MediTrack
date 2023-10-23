@@ -3,10 +3,7 @@ package com.example.meditrack.homeActivity.medicine.addMedicine
 import android.graphics.Bitmap
 import android.graphics.Rect
 import androidx.lifecycle.ViewModel
-import com.example.meditrack.dataModel.MedicineFrequency
-import com.example.meditrack.dataModel.MedicineTime
-import com.example.meditrack.dataModel.MedicineType
-import com.example.meditrack.dataModel.MedicineWeekDay
+import com.example.meditrack.dataModel.*
 
 class AddMedicineViewModel : ViewModel() {
     // TODO: Implement the ViewModel
@@ -24,25 +21,25 @@ class AddMedicineViewModel : ViewModel() {
     var doctorContact: String? = null
     var selectedTextArray:ArrayList<Pair<Rect,String>>? = null
 
-    val freqTags = mutableListOf(MedicineFrequency.DAILY, MedicineFrequency.WEEKLY)
-    val medTypeTags = mutableListOf(MedicineType.Tablets, MedicineType.Liquid)
-    val breakFastTags = mutableListOf(
-        MedicineTime.BEFORE_BREAKFAST,
-        MedicineTime.AFTER_BREAKFAST,)
-    val launchTags = mutableListOf(
-        MedicineTime.BEFORE_LUNCH,
-        MedicineTime.AFTER_LUNCH,)
-    val dinnerTags = mutableListOf(
-        MedicineTime.BEFORE_DINNER,
-        MedicineTime.AFTER_DINNER,)
+    val freqTags = MedicineFrequency.values()
+    val medTypeTags = MedicineType.values()
+    val medicineTimeOfDayType2 = MedicineTimeOfDayType2.values()
+    val breakFastTags = arrayOf(
+        MedicineTimeOfDayType1.BEFORE_BREAKFAST,
+        MedicineTimeOfDayType1.AFTER_BREAKFAST,)
+    val launchTags = arrayOf(
+        MedicineTimeOfDayType1.BEFORE_LUNCH,
+        MedicineTimeOfDayType1.AFTER_LUNCH,)
+    val dinnerTags = arrayOf(
+        MedicineTimeOfDayType1.BEFORE_DINNER,
+        MedicineTimeOfDayType1.AFTER_DINNER,)
 
     var selectedfreqTags: MedicineFrequency? = null
-    var selectedbreakFastTags: MedicineTime? = null
-    var selectedlaunchTags: MedicineTime? = null
-    var selecteddinnerTags: MedicineTime? = null
+    var selectedMedicineTimeOfDayType1: ArrayList<MedicineTimeOfDayType1> = ArrayList()
+    var selectedMedicineTimeOfDayType2: ArrayList<MedicineTimeOfDayType2> = ArrayList()
     var selectedMedTypeTags: MedicineType? = null
 
-    val weekDayItems = arrayOf(MedicineWeekDay.Sunday,MedicineWeekDay.Monday,MedicineWeekDay.Tuesday,MedicineWeekDay.Wednesday,MedicineWeekDay.Thursday,MedicineWeekDay.Friday,MedicineWeekDay.Saturday)
+    val weekDayItems = MedicineWeekDay.values()
     var selectedWeekDayItem: MedicineWeekDay? = null
 
 }

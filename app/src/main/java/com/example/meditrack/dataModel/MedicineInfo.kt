@@ -9,10 +9,9 @@ data class MedicineInfo(
     var expDate:String,
     var medFreq:MedicineFrequency,
     var weekDay:MedicineWeekDay?=null,
-    var takeTime:ArrayList<MedicineTime>,
+    var takeTime:ArrayList<String>,
     var instruction:String?,
     var doctorName:String?,
     var doctorContact:String?,
     var notes:String?,
-    var totalQuantity:Int,
-    var notation:String,)
+    var totalQuantity:Int)
