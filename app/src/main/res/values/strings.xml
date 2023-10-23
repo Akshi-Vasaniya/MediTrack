@@ -65,4 +65,16 @@
     <string name="nav_header_subtitle">johnDoe@gmail.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+
+
+    <string name="Topical_Dec">These are creams, lotions or ointments applied directly onto the skin. They come in tubs, bottles or tubes depending on the type of medicine. The active part of the medicine is mixed with another substance, making it easy to apply to the skin.</string>
+    <string name="Drops_Dec">These are often used where the active part of the medicine works best if it reaches the affected area directly. They tend to be used for eye, ear or nose.</string>
+    <string name="Inhaler_Dec">The active part of the medicine is released under pressure directly into the lungs. Young children may need to use a ‘spacer’ device to take the medicine properly. Inhalers can be difficult to use at first so your pharmacist will show you how to use them.</string>
+    <string name="Injection_Dec">There are different types of injection, in how and where they\'re injected. Subcutaneous or SC injections are given just under the surface of the skin. Intramuscular or IM injections are given into a muscle. Intrathecal injections are given into the fluid around the spinal cord. Intravenous or IV injections are given into a vein. Some injections can be given at home but most are given at your doctor’s surgery or in hospital.</string>
+    <string name="Implants_or_Patches_Dec">These medicines are absorbed through the skin, such as nicotine patches for help in giving up smoking, or contraceptive implants.</string>
+    <string name="Tablets_Dec">The active ingredient is combined with another substance and pressed into a round or oval solid shape. There are different types of tablet. Soluble or dispersible tablets can safely be dissolved in water.</string>
+    <string name="Capsules_Dec">The active part of the medicine is contained inside a plastic shell that dissolves slowly in the stomach. You can take some capsules apart and mix the contents with your child’s favourite food. Others need to be swallowed whole, so the medicine isn’t absorbed until the stomach acid breaks down the capsule shell.</string>
+    <string name="Liquid_Dec">The active part of the medicine is combined with a liquid to make it easier to take or better absorbed. A liquid may also be called a ‘mixture’, ‘solution’ or ‘syrup’. Many common liquids are now available without any added colouring or sugar.</string>
+
+
 </resources>

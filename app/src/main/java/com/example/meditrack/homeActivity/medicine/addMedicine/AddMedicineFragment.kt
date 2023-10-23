@@ -1,7 +1,10 @@
 package com.example.meditrack.homeActivity.medicine.addMedicine
 
+import android.app.Dialog
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -12,15 +15,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.LinearLayout
-import android.widget.Toast
+import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.meditrack.R
+import com.example.meditrack.adapter.MedicineAdapter
 import com.example.meditrack.dataModel.MedicineFrequency
 import com.example.meditrack.dataModel.MedicineInfo
 import com.example.meditrack.dataModel.MedicineTimeOfDayType2
@@ -683,8 +686,34 @@ class AddMedicineFragment : Fragment() {
                     }
                 }
             }
-        }
 
+            val dialog = Dialog(requireContext())
+            dialog.setContentView(R.layout.medicine_type_info_dialog_layout)
+
+            val closeButton = dialog.findViewById<ImageButton>(R.id.closeButton)
+            closeButton.setOnClickListener { dialog.dismiss() }
+
+            val recyclerView = dialog.findViewById<RecyclerView>(R.id.recyclerView)
+
+            val medicineDataList = mutableListOf<Pair<String, String>>()
+            val medicineTypes = MedicineType.values()
+            for (type in medicineTypes) {
+                val name = type.name.replace("_", " ")
+                val description = type.getDescription(requireContext())
+                medicineDataList.add(Pair(name, description))
+            }
+
+            val adapter = MedicineAdapter(medicineDataList)
+            recyclerView.layoutManager = LinearLayoutManager(requireContext())
+            recyclerView.adapter = adapter
+
+            // Add animation
+            dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
+
+            medTypeInfo.setOnClickListener {
+                dialog.show()
+            }
+        }
     }
 
     fun showAditionalDetails()
