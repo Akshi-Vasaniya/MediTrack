@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.meditrack.R
 
-class MedicineAdapter(private val dataList: List<Pair<String, String>>) : RecyclerView.Adapter<MedicineAdapter.ViewHolder>() {
+class MedicineTypeItemAdapter(private val dataList: List<Pair<String, String>>) : RecyclerView.Adapter<MedicineTypeItemAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.medicine_type_info_item, parent, false)

@@ -2,9 +2,7 @@ package com.example.meditrack.homeActivity.medicine.addMedicine
 
 import android.app.Dialog
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.graphics.Rect
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -23,14 +21,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.meditrack.R
-import com.example.meditrack.adapter.MedicineAdapter
-import com.example.meditrack.dataModel.*
+import com.example.meditrack.adapter.MedicineTypeItemAdapter
+import com.example.meditrack.dataModel.dataClasses.MedicineData
+import com.example.meditrack.dataModel.enumClasses.medicine.MedicineFrequency
+import com.example.meditrack.dataModel.enumClasses.medicine.MedicineType
 import com.example.meditrack.databinding.FragmentAddMedicineBinding
 import com.example.meditrack.firebase.fBase
 import com.example.meditrack.regularExpression.ListPattern
 import com.example.meditrack.regularExpression.MatchPattern.Companion.validate
-import com.example.meditrack.utility.CustomProgressDialog
-import com.example.meditrack.utility.MonthYearPickerDialog
+import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
+import com.example.meditrack.utility.ownDialogs.MonthYearPickerDialog
 import com.example.meditrack.utility.UtilityFunction
 import com.example.meditrack.utility.UtilityFunction.Companion.bitmapToUri
 import com.google.android.material.chip.Chip
@@ -72,7 +72,7 @@ class AddMedicineFragment : Fragment() {
     private lateinit var hiddenView: LinearLayout
     private lateinit var weekDaysChipGroupLayout: LinearLayout
     private lateinit var cardView: CardView
-    private var medicineData: MedicineInfo?=null
+    private var medicineData: MedicineData?=null
 
 
     /*override fun onAttach(context: Context) {
@@ -275,7 +275,7 @@ class AddMedicineFragment : Fragment() {
                     selectedChip.setOnCloseIconClickListener {
                         selectedChip.isChecked = false
                     }
-                    if(tag==MedicineType.Topical || tag == MedicineType.Drops)
+                    if(tag== MedicineType.Topical || tag == MedicineType.Drops)
                     {
                         binding.medicineTimeofDayType2ChipGroup.visibility=View.VISIBLE
                         binding.breakFastChipGroup.visibility=View.GONE
@@ -659,7 +659,7 @@ class AddMedicineFragment : Fragment() {
                         uploadImageToFirebaseStorage(imageUri, object : UploadCallback {
                             override fun onUploadSuccess(downloadUrl: String) {
                                 try {
-                                    medicineData = MedicineInfo(
+                                    medicineData = MedicineData(
                                         medImage = downloadUrl,
                                         medName = viewModel.medName!!,
                                         medicineType = viewModel.selectedMedTypeTags!!,
@@ -738,7 +738,7 @@ class AddMedicineFragment : Fragment() {
                 medicineDataList.add(Pair(name, description))
             }
 
-            val adapter = MedicineAdapter(medicineDataList)
+            val adapter = MedicineTypeItemAdapter(medicineDataList)
             recyclerView.layoutManager = LinearLayoutManager(requireContext())
             recyclerView.adapter = adapter
 
@@ -863,13 +863,13 @@ class AddMedicineFragment : Fragment() {
                 viewModel.dosage!=null &&
                 viewModel.medQuantity!=null &&
                 viewModel.selectedMedTypeTags!=null &&
-                (((viewModel.selectedMedTypeTags==MedicineType.Drops || viewModel.selectedMedTypeTags==MedicineType.Topical)
+                (((viewModel.selectedMedTypeTags== MedicineType.Drops || viewModel.selectedMedTypeTags== MedicineType.Topical)
                         && viewModel.selectedMedicineTimeOfDayType2.isNotEmpty())
                         ||
-                ((viewModel.selectedMedTypeTags!=MedicineType.Drops && viewModel.selectedMedTypeTags!=MedicineType.Topical)
+                ((viewModel.selectedMedTypeTags!= MedicineType.Drops && viewModel.selectedMedTypeTags!= MedicineType.Topical)
                         && viewModel.selectedMedicineTimeOfDayType1.isNotEmpty()))
                 &&
-                (viewModel.selectedfreqTags==MedicineFrequency.DAILY || (viewModel.selectedfreqTags==MedicineFrequency.WEEKLY && viewModel.selectedWeekDayItem.isNotEmpty()))
+                (viewModel.selectedfreqTags== MedicineFrequency.DAILY || (viewModel.selectedfreqTags== MedicineFrequency.WEEKLY && viewModel.selectedWeekDayItem.isNotEmpty()))
     }
 
 }

@@ -3,7 +3,7 @@ package com.example.meditrack.homeActivity.medicine.addMedicine
 import android.graphics.Bitmap
 import android.graphics.Rect
 import androidx.lifecycle.ViewModel
-import com.example.meditrack.dataModel.*
+import com.example.meditrack.dataModel.enumClasses.medicine.*
 
 class AddMedicineViewModel : ViewModel() {
     // TODO: Implement the ViewModel

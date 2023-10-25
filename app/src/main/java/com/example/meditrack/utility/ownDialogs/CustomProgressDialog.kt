@@ -1,4 +1,4 @@
-package com.example.meditrack.utility
+package com.example.meditrack.utility.ownDialogs
 
 import android.annotation.SuppressLint
 import android.app.Dialog
@@ -12,7 +12,6 @@ import android.os.Build
 import android.view.LayoutInflater
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
 import com.example.meditrack.R
 

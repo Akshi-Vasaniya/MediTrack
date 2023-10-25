@@ -20,7 +20,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.meditrack.R
-import com.example.meditrack.dataModel.User
+import com.example.meditrack.dataModel.dataClasses.UserData
 import com.example.meditrack.databinding.ActivityHomeBinding
 import com.example.meditrack.firebase.fBase
 import com.example.meditrack.mainActivity.MainActivity
@@ -100,7 +100,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 override fun onDataChange(snapshot: DataSnapshot) {
                     snapshot.children.forEach {
                         viewModel.setUserData(
-                            User(
+                            UserData(
                             it.child("name").value.toString(),
                             it.child("surname").value.toString(),
                             it.child("email").value.toString(),

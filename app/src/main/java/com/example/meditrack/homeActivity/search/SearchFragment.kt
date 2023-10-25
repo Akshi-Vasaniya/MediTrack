@@ -7,11 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.meditrack.R
-import com.example.meditrack.adapter.MyAdapter
-import com.example.meditrack.dataModel.api.ApiData
+import com.example.meditrack.adapter.SearchItemAdapter
+import com.example.meditrack.dataModel.dataClasses.SearchItemData
 import com.example.meditrack.dataModel.api.ApiInstance
 import com.example.meditrack.databinding.FragmentSearchBinding
-import com.example.meditrack.utility.CustomProgressDialog
+import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -29,7 +29,7 @@ class SearchFragment : Fragment() {
 
     private lateinit var viewModel: SearchViewModel
     private lateinit var binding:FragmentSearchBinding
-    private lateinit var progressDialog:CustomProgressDialog
+    private lateinit var progressDialog: CustomProgressDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,7 +41,7 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding=FragmentSearchBinding.bind(view)
-        progressDialog=CustomProgressDialog(requireActivity())
+        progressDialog= CustomProgressDialog(requireActivity())
         binding.outputText.text = ""
         binding.apply {
             fragmentSearchButton.setOnClickListener {
@@ -52,15 +52,15 @@ class SearchFragment : Fragment() {
                     }
 
                     val response = ApiInstance.api.listDocument(searchText)
-                    response!!.enqueue(object : Callback<List<ApiData?>?> {
+                    response!!.enqueue(object : Callback<List<SearchItemData?>?> {
                         override fun onResponse(
-                            call: Call<List<ApiData?>?>,
-                            response: Response<List<ApiData?>?>
+                            call: Call<List<SearchItemData?>?>,
+                            response: Response<List<SearchItemData?>?>
                         ) {
                             try {
                                 Log.i("Search", "onResponse: ${response.body()!!}")
                                 var res = response.body()!!
-                                binding.rvCombineImage.adapter = MyAdapter(res)
+                                binding.rvCombineImage.adapter = SearchItemAdapter(res)
                                 progressDialog.stop()
                             }
                             catch (ex:Exception)
@@ -69,7 +69,7 @@ class SearchFragment : Fragment() {
                             }
                         }
 
-                        override fun onFailure(call: Call<List<ApiData?>?>, t: Throwable) {
+                        override fun onFailure(call: Call<List<SearchItemData?>?>, t: Throwable) {
 
                             Log.i("Search", "onResponse: ${t.message}")
                             progressDialog.stop()

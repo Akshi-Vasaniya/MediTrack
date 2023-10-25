@@ -20,13 +20,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.meditrack.R
-import com.example.meditrack.dataModel.User
+import com.example.meditrack.dataModel.dataClasses.UserData
 import com.example.meditrack.databinding.FragmentRegistrationBinding
 import com.example.meditrack.exception.HandleException
 import com.example.meditrack.firebase.fBase
 import com.example.meditrack.regularExpression.ListPattern
 import com.example.meditrack.regularExpression.MatchPattern.Companion.validate
-import com.example.meditrack.utility.CustomProgressDialog
+import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.example.meditrack.utility.UtilityFunction
 import com.example.meditrack.utility.UtilityFunction.Companion.bitmapToBase64
 import com.example.meditrack.utility.UtilityFunction.Companion.uriToBitmap
@@ -72,7 +72,7 @@ class RegistrationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentRegistrationBinding.bind(view)
-        progressDialog=CustomProgressDialog(requireActivity())
+        progressDialog= CustomProgressDialog(requireActivity())
 
         binding.fragmentRegistrationLoginAccountText.setOnClickListener {
             findNavController().popBackStack()
@@ -250,7 +250,7 @@ class RegistrationFragment : Fragment() {
                                     if(inputProfileImage!=null){
                                         imageString = bitmapToBase64(inputProfileImage!!)
                                     }
-                                    val user = User(viewModel.inputName!!, viewModel.inputSurname!!, viewModel.inputEmail!!,imageString)
+                                    val user = UserData(viewModel.inputName!!, viewModel.inputSurname!!, viewModel.inputEmail!!,imageString)
                                     fBase.getUserReference().child(it.result?.user!!.uid).setValue(user).addOnSuccessListener {
                                         fBase.getCurrentUser()?.sendEmailVerification()?.addOnSuccessListener {
                                             progressDialog.stop()

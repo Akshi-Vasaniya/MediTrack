@@ -1,4 +1,4 @@
-package com.example.meditrack.utility
+package com.example.meditrack.utility.ownDialogs
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog.OnDateSetListener

@@ -7,10 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.meditrack.R
+import com.example.meditrack.adapter.MedicineStockItemAdapter
 import com.example.meditrack.dataModel.ItemsViewModel
-import com.example.meditrack.databinding.FragmentAddMedicineBinding
 import com.example.meditrack.databinding.FragmentMedicineStockBinding
 
 class MedicineStockFragment : Fragment() {
@@ -44,7 +43,7 @@ class MedicineStockFragment : Fragment() {
             data.add(ItemsViewModel("Paracetamol", "02/10/2023"))
         }
 
-        val adapter = CustomAdapter(data)
+        val adapter = MedicineStockItemAdapter(data)
         recyclerView.adapter = adapter
     }
 

@@ -1,11 +1,12 @@
-package com.example.meditrack.dataModel
+package com.example.meditrack.dataModel.dataClasses
 
+import com.example.meditrack.dataModel.EmailAvailabilityCallback
 import com.example.meditrack.firebase.fBase
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 
-data class User(var name:String?=null, var surname:String?=null, var email:String?=null, var profileImage:String?=null){
+data class UserData(var name:String?=null, var surname:String?=null, var email:String?=null, var profileImage:String?=null){
     companion object{
 
         /*fun isUsernameAvailable(context: Context,TAG:String,username: String, callback: (Boolean) -> Unit) {

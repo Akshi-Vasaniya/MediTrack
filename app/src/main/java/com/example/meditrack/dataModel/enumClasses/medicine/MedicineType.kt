@@ -1,4 +1,4 @@
-package com.example.meditrack.dataModel
+package com.example.meditrack.dataModel.enumClasses.medicine
 
 import android.content.Context
 import com.example.meditrack.R

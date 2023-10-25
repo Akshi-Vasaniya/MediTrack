@@ -108,7 +108,7 @@
                             android:id="@+id/fragment_medicine_name_TextInputEditText"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:drawableStart="@drawable/medicine_11_svgrepo_com"
+                            android:drawableStart="@drawable/ic_capulase"
                             android:drawablePadding="10dp"
                             android:fontFamily="@font/comfortaa_regular"
                             android:hint="@string/medicinename"
@@ -286,7 +286,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Week Day"
+                            android:text="Week Day *"
                             android:textColor="@color/prusianblue"/>
                         <com.google.android.material.chip.ChipGroup
                             android:id="@+id/weekDaysChipGroup"
@@ -444,7 +444,7 @@
                                             android:layout_height="match_parent"
                                             android:hint="@string/specialinstruction"
                                             android:textColor="@color/prusianblue"
-                                            android:drawableStart="@drawable/medicine_icon"
+                                            android:drawableStart="@drawable/ic_add_medicine"
                                             android:drawableTint="@color/prusianblue"
                                             android:drawablePadding="10dp"
                                             android:textSize="@dimen/_10sdp"
@@ -546,7 +546,7 @@
                             android:layout_height="match_parent"
                             android:hint="@string/medicinequantity"
                             android:textColor="@color/prusianblue"
-                            android:drawableStart="@drawable/medicine_icon"
+                            android:drawableStart="@drawable/ic_add_medicine"
                             android:drawableTint="@color/prusianblue"
                             android:drawablePadding="10dp"
                             android:textSize="@dimen/_10sdp"

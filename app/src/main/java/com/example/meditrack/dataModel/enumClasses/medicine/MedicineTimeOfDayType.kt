@@ -1,4 +1,4 @@
-package com.example.meditrack.dataModel
+package com.example.meditrack.dataModel.enumClasses.medicine
 
 enum class MedicineTimeOfDayType1(val description: String) {
     BEFORE_BREAKFAST("Before Breakfast"),

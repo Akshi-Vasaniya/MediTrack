@@ -15,14 +15,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.meditrack.R
 import com.example.meditrack.dataModel.EmailAvailabilityCallback
-import com.example.meditrack.dataModel.User
+import com.example.meditrack.dataModel.dataClasses.UserData
 import com.example.meditrack.databinding.FragmentLoginBinding
 import com.example.meditrack.exception.HandleException
 import com.example.meditrack.firebase.fBase
 import com.example.meditrack.homeActivity.HomeActivity
 import com.example.meditrack.regularExpression.ListPattern
 import com.example.meditrack.regularExpression.MatchPattern.Companion.validate
-import com.example.meditrack.utility.CustomProgressDialog
+import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -34,7 +34,7 @@ class LoginFragment : Fragment() {
     private lateinit var viewModel: LoginViewModel
     private lateinit var binding: FragmentLoginBinding
     private val tag="LoginFragment"
-    private lateinit var progressDialog:CustomProgressDialog
+    private lateinit var progressDialog: CustomProgressDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -121,7 +121,7 @@ class LoginFragment : Fragment() {
                 if(fragmentLoginEmailTextInputLayout.helperText==null && viewModel.inputEmail!=null){
                     viewModel.inputEmail = viewModel.inputEmail!!.trim()
                     progressDialog.start("Loading...")
-                    User.isEmailAvailable(viewModel.inputEmail!!, object : EmailAvailabilityCallback{
+                    UserData.isEmailAvailable(viewModel.inputEmail!!, object : EmailAvailabilityCallback{
                         override fun onResult(isAvailable: Boolean) {
                             if(isAvailable){
                                 progressDialog.stop()
