@@ -24,10 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.meditrack.R
 import com.example.meditrack.adapter.MedicineAdapter
-import com.example.meditrack.dataModel.MedicineFrequency
-import com.example.meditrack.dataModel.MedicineInfo
-import com.example.meditrack.dataModel.MedicineTimeOfDayType2
-import com.example.meditrack.dataModel.MedicineType
+import com.example.meditrack.dataModel.*
 import com.example.meditrack.databinding.FragmentAddMedicineBinding
 import com.example.meditrack.firebase.fBase
 import com.example.meditrack.regularExpression.ListPattern
@@ -69,10 +66,13 @@ class AddMedicineFragment : Fragment() {
     private lateinit var launchChipGroup: ChipGroup
     private lateinit var dinnerChipGroup: ChipGroup
     private lateinit var medTypeChipGroup: ChipGroup
+    private lateinit var weekDaysChipGroup: ChipGroup
     private lateinit var medicineTimeofDayType2ChipGroup: ChipGroup
     private lateinit var progressDialog: CustomProgressDialog
     private lateinit var hiddenView: LinearLayout
+    private lateinit var weekDaysChipGroupLayout: LinearLayout
     private lateinit var cardView: CardView
+    private var medicineData: MedicineInfo?=null
 
 
     /*override fun onAttach(context: Context) {
@@ -101,16 +101,48 @@ class AddMedicineFragment : Fragment() {
         launchChipGroup = view.findViewById(R.id.launchChipGroup)
         dinnerChipGroup = view.findViewById(R.id.dinnerChipGroup)
         medTypeChipGroup = view.findViewById(R.id.medTypeChipGroup)
+        weekDaysChipGroup = view.findViewById(R.id.weekDaysChipGroup)
+        weekDaysChipGroupLayout = view.findViewById(R.id.weekDaysChipGroupLayout)
         medicineTimeofDayType2ChipGroup = view.findViewById(R.id.medicineTimeofDayType2ChipGroup)
 
-        val autoCompleteTextView = view.findViewById<AutoCompleteTextView>(R.id.fragment_week_days_TextInputEditText)
+        /*val autoCompleteTextView = view.findViewById<AutoCompleteTextView>(R.id.fragment_week_days_TextInputEditText)
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, viewModel.weekDayItems)
         autoCompleteTextView.setAdapter(adapter)
 
         autoCompleteTextView.setOnItemClickListener { _, _, position, _ ->
             viewModel.selectedWeekDayItem = viewModel.weekDayItems[position]
             binding.fragmentWeekDaysTextInputLayout.helperText=null
+        }*/
+
+
+        for (tag in viewModel.weekDayItems) {
+            val chip = Chip(requireContext())
+            chip.text = tag.name
+            chip.isCheckable = true
+            chip.isClickable = true
+            chip.setOnCheckedChangeListener { compoundButton, isChecked ->
+                if (isChecked) {
+                    val selectedChip = Chip(requireContext())
+                    selectedChip.text = tag.name
+                    selectedChip.isCloseIconVisible = true
+                    selectedChip.setOnCloseIconClickListener {
+                        selectedChip.isChecked = false
+                    }
+                    viewModel.selectedWeekDayItem.add(tag)
+                }
+                else{
+                    try{
+                        viewModel.selectedWeekDayItem.remove(tag)
+                    }
+                    catch (ex:Exception)
+                    {
+                        Log.e("ADDMedicine","${ex.message}")
+                    }
+                }
+            }
+            weekDaysChipGroup.addView(chip)
         }
+
 
         for (tag in viewModel.freqTags) {
             val chip = Chip(requireContext())
@@ -128,15 +160,18 @@ class AddMedicineFragment : Fragment() {
                     viewModel.selectedfreqTags = tag
                     if(viewModel.selectedfreqTags == MedicineFrequency.WEEKLY)
                     {
-                        binding.fragmentWeekDaysTextInputLayout.visibility=View.VISIBLE
+                        weekDaysChipGroupLayout.visibility = View.VISIBLE
+                        //binding.fragmentWeekDaysTextInputLayout.visibility=View.VISIBLE
                     }
                     else{
-                        binding.fragmentWeekDaysTextInputLayout.visibility=View.GONE
+                        weekDaysChipGroupLayout.visibility = View.GONE
+                        //binding.fragmentWeekDaysTextInputLayout.visibility=View.GONE
                     }
                 }
                 else{
                     viewModel.selectedfreqTags=null
-                    binding.fragmentWeekDaysTextInputLayout.visibility=View.GONE
+                    weekDaysChipGroupLayout.visibility = View.GONE
+                    //binding.fragmentWeekDaysTextInputLayout.visibility=View.GONE
                 }
                 //Toast.makeText(requireContext(),"${viewModel.selectedfreqTags}",Toast.LENGTH_SHORT).show()
             }
@@ -571,7 +606,8 @@ class AddMedicineFragment : Fragment() {
                         Log.i("MedicineData","Medicine Exp. Date : ${viewModel.expDate}")
                         Log.i("MedicineData", "Medicine Frequency : ${viewModel.selectedfreqTags!!.name}")
 
-                        val medicineTime = ArrayList<String>()
+                        val medicineTime: Any?
+
                         if(viewModel.selectedMedicineTimeOfDayType1.isEmpty())
                         {
                             if(viewModel.selectedMedicineTimeOfDayType2.isEmpty())
@@ -579,19 +615,18 @@ class AddMedicineFragment : Fragment() {
                                 Toast.makeText(requireContext(),"Please select medicine time",Toast.LENGTH_SHORT).show()
                                 return@launch
                             }
+                            medicineTime = viewModel.selectedMedicineTimeOfDayType2
                             viewModel.selectedMedicineTimeOfDayType2.forEach {
                                 Log.i("MedicineData", "Medicine Time of Day Type 2 : ${it.description}")
-                                medicineTime.add(it.description)
                             }
                         }else{
+                            medicineTime = viewModel.selectedMedicineTimeOfDayType1
                             viewModel.selectedMedicineTimeOfDayType1.forEach {
                                 Log.i("MedicineData", "Medicine Time of Day Type 1 : ${it.description}")
-                                medicineTime.add(it.description)
                             }
                         }
-                        if(viewModel.selectedWeekDayItem!=null)
-                        {
-                            Log.i("MedicineData", "Medicine Week Day : ${viewModel.selectedWeekDayItem!!.name}")
+                        viewModel.weekDayItems.forEach {
+                            Log.i("MedicineData", "Medicine Week Day : ${it.name}")
                         }
                         Log.i("MedicineData","Medicine Doctor Name : ${viewModel.doctorName}")
                         Log.i("MedicineData","Medicine Doctor Contact : ${viewModel.doctorContact}")
@@ -624,7 +659,7 @@ class AddMedicineFragment : Fragment() {
                         uploadImageToFirebaseStorage(imageUri, object : UploadCallback {
                             override fun onUploadSuccess(downloadUrl: String) {
                                 try {
-                                    val medicineData = MedicineInfo(
+                                    medicineData = MedicineInfo(
                                         medImage = downloadUrl,
                                         medName = viewModel.medName!!,
                                         medicineType = viewModel.selectedMedTypeTags!!,
@@ -641,7 +676,7 @@ class AddMedicineFragment : Fragment() {
                                         totalQuantity = viewModel.medQuantity!!
                                     )
                                     db.collection("user_medicines").document(fBase.getUserId()).collection("medicine_data")
-                                        .add(medicineData)
+                                        .add(medicineData!!)
                                         .addOnSuccessListener { documentReference ->
                                             try {
                                                 progressDialog.stop()
@@ -834,7 +869,7 @@ class AddMedicineFragment : Fragment() {
                 ((viewModel.selectedMedTypeTags!=MedicineType.Drops && viewModel.selectedMedTypeTags!=MedicineType.Topical)
                         && viewModel.selectedMedicineTimeOfDayType1.isNotEmpty()))
                 &&
-                (viewModel.selectedfreqTags==MedicineFrequency.DAILY || (viewModel.selectedfreqTags==MedicineFrequency.WEEKLY && binding.fragmentWeekDaysTextInputLayout.helperText==null && viewModel.selectedWeekDayItem!=null))
+                (viewModel.selectedfreqTags==MedicineFrequency.DAILY || (viewModel.selectedfreqTags==MedicineFrequency.WEEKLY && viewModel.selectedWeekDayItem.isNotEmpty()))
     }
 
 }

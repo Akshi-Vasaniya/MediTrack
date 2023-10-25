@@ -40,6 +40,6 @@ class AddMedicineViewModel : ViewModel() {
     var selectedMedTypeTags: MedicineType? = null
 
     val weekDayItems = MedicineWeekDay.values()
-    var selectedWeekDayItem: MedicineWeekDay? = null
+    var selectedWeekDayItem: MutableList<MedicineWeekDay> = ArrayList()
 
 }

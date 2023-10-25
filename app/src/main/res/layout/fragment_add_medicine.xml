@@ -277,15 +277,33 @@
 
                     </LinearLayout>
 
-                    <com.google.android.material.textfield.TextInputLayout
+                    <LinearLayout
+                        android:id="@+id/weekDaysChipGroupLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Week Day"
+                            android:textColor="@color/prusianblue"/>
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/weekDaysChipGroup"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            />
+                    </LinearLayout>
+
+                    <!--<com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/fragment_week_days_TextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         app:helperTextEnabled="true"
                         app:helperText="Required"
-                        app:helperTextTextColor="@color/prusianblue"
-                        android:visibility="gone">
+                        android:visibility="gone"
+                        app:helperTextTextColor="@color/prusianblue">
                         <AutoCompleteTextView
                             android:id="@+id/fragment_week_days_TextInputEditText"
                             android:layout_width="match_parent"
@@ -299,7 +317,7 @@
                             android:padding="10dp"
                             android:textSize="@dimen/_10sdp"
                             />
-                    </com.google.android.material.textfield.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>-->
 
                     <LinearLayout
                         android:layout_width="match_parent"
