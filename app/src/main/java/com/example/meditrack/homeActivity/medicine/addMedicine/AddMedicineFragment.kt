@@ -24,6 +24,8 @@ import com.example.meditrack.R
 import com.example.meditrack.adapter.MedicineTypeItemAdapter
 import com.example.meditrack.dataModel.dataClasses.MedicineData
 import com.example.meditrack.dataModel.enumClasses.medicine.MedicineFrequency
+import com.example.meditrack.dataModel.enumClasses.medicine.MedicineTimeOfDayType1
+import com.example.meditrack.dataModel.enumClasses.medicine.MedicineTimeOfDayType2
 import com.example.meditrack.dataModel.enumClasses.medicine.MedicineType
 import com.example.meditrack.databinding.FragmentAddMedicineBinding
 import com.example.meditrack.firebase.fBase
@@ -42,6 +44,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.collections.ArrayList
+import com.example.meditrack.homeActivity.medicine.addMedicine.AddMedicineFragment
+import com.example.meditrack.homeActivity.reminder.notification.MedicineReminderDialog
 
 
 class AddMedicineFragment : Fragment() {
@@ -675,13 +679,34 @@ class AddMedicineFragment : Fragment() {
                                         notes = viewModel.medNotes.toString(),
                                         totalQuantity = viewModel.medQuantity!!
                                     )
+                                    Log.i(TAG, "onUploadSuccess: ${medicineData!!.medName}")
+                                    Log.i(TAG, "onUploadSuccess: ${medicineData!!.medicineType}")
+                                    Log.i(TAG, "onUploadSuccess: ${medicineData!!.medFreq}")
+                                    Log.i(TAG, "onUploadSuccess: ${medicineData!!.weekDay}")
+                                    Log.i(TAG, "onUploadSuccess: ${medicineData!!.takeTime}")
+                                    Log.i(TAG, "onUploadSuccess: ${medicineData!!.notes}")
+                                    Log.i(TAG, "onUploadSuccess: ${medicineData!!.totalQuantity}")
+                                    val dialog = MedicineReminderDialog()
                                     db.collection("user_medicines").document(fBase.getUserId()).collection("medicine_data")
                                         .add(medicineData!!)
                                         .addOnSuccessListener { documentReference ->
                                             try {
                                                 progressDialog.stop()
-                                                Toast.makeText(requireContext(),"Done",Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(requireContext(),"Medicine and Reminder Successfully Added",Toast.LENGTH_SHORT).show()
                                                 Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+
+                                                // Medicine Taking Reminder
+                                                for(item in medicineData!!.takeTime as ArrayList<MedicineTimeOfDayType1>)
+                                                {
+                                                    var hour = item.time.split(":")
+                                                    Log.i(TAG, "onUploadSuccess: ${hour[0]}")
+                                                    if(medicineData!!.medFreq == MedicineFrequency.DAILY) {
+                                                        dialog.scheduleNotifications(medicineData!!.medName, mutableListOf(0, 1, 2, 3, 4, 5, 6),  hour[0].toInt(), 0)
+                                                    }else{
+                                                        dialog.scheduleNotifications(medicineData!!.medName, medicineData!!.weekDay as MutableList<Int>,  hour[0].toInt(), 0)
+                                                    }
+                                                }
+                                                
                                             }
                                             catch (ex:Exception)
                                             {
@@ -866,8 +891,8 @@ class AddMedicineFragment : Fragment() {
                 (((viewModel.selectedMedTypeTags== MedicineType.Drops || viewModel.selectedMedTypeTags== MedicineType.Topical)
                         && viewModel.selectedMedicineTimeOfDayType2.isNotEmpty())
                         ||
-                ((viewModel.selectedMedTypeTags!= MedicineType.Drops && viewModel.selectedMedTypeTags!= MedicineType.Topical)
-                        && viewModel.selectedMedicineTimeOfDayType1.isNotEmpty()))
+                        ((viewModel.selectedMedTypeTags!= MedicineType.Drops && viewModel.selectedMedTypeTags!= MedicineType.Topical)
+                                && viewModel.selectedMedicineTimeOfDayType1.isNotEmpty()))
                 &&
                 (viewModel.selectedfreqTags== MedicineFrequency.DAILY || (viewModel.selectedfreqTags== MedicineFrequency.WEEKLY && viewModel.selectedWeekDayItem.isNotEmpty()))
     }

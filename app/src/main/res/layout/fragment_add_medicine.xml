@@ -265,7 +265,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/frequency"
-                            android:textColor="@color/prusianblue"/>
+                            android:textColor="@color/prusianblue" />
 
                         <com.google.android.material.chip.ChipGroup
                             android:id="@+id/freqChipGroup"
@@ -304,20 +304,24 @@
                         app:helperText="Required"
                         android:visibility="gone"
                         app:helperTextTextColor="@color/prusianblue">
-                        <AutoCompleteTextView
-                            android:id="@+id/fragment_week_days_TextInputEditText"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:drawableStart="@drawable/round_date_range_24"
-                            android:drawablePadding="10dp"
-                            android:fontFamily="@font/comfortaa_regular"
-                            android:hint="Select Day"
-                            android:inputType="none"
-                            android:textColor="@color/prusianblue"
-                            android:padding="10dp"
-                            android:textSize="@dimen/_10sdp"
-                            />
-                    </com.google.android.material.textfield.TextInputLayout>-->
+                            <AutoCompleteTextView-->
+<!--                            android:id="@+id/fragment_week_days_TextInputEditText"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:drawableStart="@drawable/round_date_range_24"-->
+<!--                            android:drawablePadding="10dp"-->
+<!--                            android:fontFamily="@font/comfortaa_regular"-->
+<!--                            android:hint="Select Day"-->
+<!--                            android:inputType="none"-->
+<!--                            android:textColor="@color/prusianblue"-->
+<!--                            android:padding="10dp"-->
+<!--                            android:textSize="@dimen/_10sdp"-->
+<!--                            />-->
+<!--                        <com.google.android.material.chip.ChipInputLayout-->
+<!--                            android:id="@+id/fragment_week_days_TextInputEditText"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content" />-->
+<!--                    </com.google.android.material.textfield.TextInputLayout>&ndash;&gt;-->
 
                     <LinearLayout
                         android:layout_width="match_parent"

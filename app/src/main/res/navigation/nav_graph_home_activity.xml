@@ -23,6 +23,12 @@
             android:id="@+id/action_homeFragment_to_medicineStockFragment"
             app:destination="@id/medicineStockFragment" />
         <action
+            android:id="@+id/action_homeFragment_to_scanPrescriptionFragment"
+            app:destination="@id/scanPrescriptionFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_notificationFragment"
+            app:destination="@id/notificationFragment" />
+        <action
             android:id="@+id/action_homeFragment_to_userProfileFragment"
             app:destination="@id/userProfileFragment" />
         <action
@@ -49,6 +55,16 @@
         android:name="com.example.meditrack.homeActivity.medicine.medicineStock.MedicineStockFragment"
         android:label="fragment_medicine_stock"
         tools:layout="@layout/fragment_medicine_stock" />
+    <fragment
+        android:id="@+id/scanPrescriptionFragment"
+        android:name="com.example.meditrack.homeActivity.prescription.scan_prescription.ScanPrescriptionFragment"
+        android:label="fragment_scan_prescription"
+        tools:layout="@layout/fragment_scan_prescription" />
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.example.meditrack.homeActivity.reminder.notification.NotificationFragment"
+        android:label="fragment_notification"
+        tools:layout="@layout/fragment_notification" />
     <fragment
         android:id="@+id/userProfileFragment"
         android:name="com.example.meditrack.homeActivity.userprofile.UserProfileFragment"

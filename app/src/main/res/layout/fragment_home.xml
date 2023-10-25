@@ -185,6 +185,7 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </com.google.android.material.card.MaterialCardView>
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/scanPrescriptionCard"
                     android:layout_width="@dimen/_50sdp"
                     android:layout_height="@dimen/_70sdp"
                     app:cardCornerRadius="7dp"

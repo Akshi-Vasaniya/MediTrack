@@ -23,7 +23,7 @@ class HomeFragment : Fragment() {
     private lateinit var slideOutAnimation: ValueAnimator*/
     private lateinit var binding:FragmentHomeBinding
     //private lateinit var homeActivity: HomeActivity
-    private val tag = "HomeFragment"
+    private val homeTag = "HomeFragment"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,6 +63,9 @@ class HomeFragment : Fragment() {
             /*addPrescriptionCard.setOnClickListener {
                 findNavController().navigate(R.id.OCRFragment)
             }*/
+            scanPrescriptionCard.setOnClickListener {
+                findNavController().navigate(R.id.scanPrescriptionFragment)
+            }
             checkMedicineStockCard.setOnClickListener {
                 findNavController().navigate(R.id.medicineStockFragment)
             }
@@ -115,7 +118,7 @@ class HomeFragment : Fragment() {
                 }
                 catch (ex:Exception)
                 {
-                    Log.e(tag,"$ex")
+                    Log.e(homeTag,"$ex")
                 }
 
             }

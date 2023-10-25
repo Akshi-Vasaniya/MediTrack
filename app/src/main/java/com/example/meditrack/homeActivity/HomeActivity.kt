@@ -1,6 +1,9 @@
 package com.example.meditrack.homeActivity
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -94,6 +97,16 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         loadFragment()
 
+        // Creating Channel to show notification
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "1",
+                "Medicine Reminder",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            val notificationManager = getSystemService(NotificationManager::class.java)
+            notificationManager.createNotificationChannel(channel)
+        }
         MainScope().launch(Dispatchers.IO) {
             val userQuery = fBase.getUserDataQuery()
             userQuery.addValueEventListener(object : ValueEventListener {
@@ -101,10 +114,10 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     snapshot.children.forEach {
                         viewModel.setUserData(
                             UserData(
-                            it.child("name").value.toString(),
-                            it.child("surname").value.toString(),
-                            it.child("email").value.toString(),
-                            it.child("profileImage").value.toString())
+                                it.child("name").value.toString(),
+                                it.child("surname").value.toString(),
+                                it.child("email").value.toString(),
+                                it.child("profileImage").value.toString())
                         )
                     }
 
@@ -160,7 +173,9 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
         }
+
     }
+
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
@@ -215,7 +230,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_home -> {
                 navHostFragment.findNavController().popBackStack(R.id.homeFragment,false)
 //                Toast.makeText(this, "Clicked Home", Toast.LENGTH_SHORT).show()
-                
+
             }
 
 //            R.id.nav_photos -> {
@@ -227,7 +242,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //            }
 
             R.id.nav_notifications -> {
-                Toast.makeText(this, "Clicked Notifications", Toast.LENGTH_SHORT).show()
+                navController.navigate(R.id.notificationFragment)
             }
 
             R.id.nav_settings -> {
