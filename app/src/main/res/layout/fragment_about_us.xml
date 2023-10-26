@@ -24,9 +24,9 @@
                 android:layout_marginBottom="16dp"/>
 
             <TextView
+                android:id="@+id/projectDetailsTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/about_project_details"
                 android:textSize="14sp"
                 android:lineSpacingExtra="8dp"
                 android:layout_marginBottom="32dp"/>

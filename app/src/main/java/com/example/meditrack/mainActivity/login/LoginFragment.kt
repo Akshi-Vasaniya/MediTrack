@@ -183,10 +183,10 @@ class LoginFragment : Fragment() {
                                 else{
                                     MainScope().launch(Dispatchers.Main)
                                     {
-                                        val sharedPreferences = requireActivity().getSharedPreferences("UserData", Context.MODE_PRIVATE)
-                                        val editor = sharedPreferences.edit()
-                                        editor.clear()
-                                        editor.apply()
+                                        //val sharedPreferences = requireActivity().getSharedPreferences("UserData", Context.MODE_PRIVATE)
+                                        //val editor = sharedPreferences.edit()
+                                        //editor.clear()
+                                        //editor.apply()
                                         findNavController().popBackStack()
                                         findNavController().navigate(R.id.loginFragment)
                                     }
