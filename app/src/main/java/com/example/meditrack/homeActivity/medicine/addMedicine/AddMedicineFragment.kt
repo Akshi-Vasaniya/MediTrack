@@ -56,25 +56,13 @@ class AddMedicineFragment : Fragment() {
 
     private lateinit var viewModel: AddMedicineViewModel
     private lateinit var binding: FragmentAddMedicineBinding
-    private lateinit var expiryDatePicker: TextInputEditText
-    private lateinit var startDatePicker: TextInputEditText
     private val calendar = Calendar.getInstance()
     private val db = fBase.getFireStoreInstance()
     private val TAG = "AddMedicineFragment"
     /*private lateinit var homeActivity: HomeActivity*/
     private val REQUEST_IMAGE_CAPTURE = 1
-    private lateinit var medName:String
-    private lateinit var dosage:String
-    private lateinit var freqChipGroup: ChipGroup
-    private lateinit var breakFastChipGroup: ChipGroup
-    private lateinit var launchChipGroup: ChipGroup
-    private lateinit var dinnerChipGroup: ChipGroup
-    private lateinit var medTypeChipGroup: ChipGroup
-    private lateinit var weekDaysChipGroup: ChipGroup
-    private lateinit var medicineTimeofDayType2ChipGroup: ChipGroup
     private lateinit var progressDialog: CustomProgressDialog
     private lateinit var hiddenView: LinearLayout
-    private lateinit var weekDaysChipGroupLayout: LinearLayout
     private lateinit var cardView: CardView
     private var medicineData: MedicineData?=null
 
@@ -93,21 +81,10 @@ class AddMedicineFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_add_medicine, container, false)
+        //val view = inflater.inflate(R.layout.fragment_add_medicine, container, false)
+        binding = FragmentAddMedicineBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(this)[AddMedicineViewModel::class.java]
 
-        expiryDatePicker = view.findViewById(R.id.fragment_medicine_expirydate_TextInputEditText)
-        startDatePicker = view.findViewById(R.id.fragment_medicine_startdate_TextInputEditText)
-
-
-        freqChipGroup = view.findViewById(R.id.freqChipGroup)
-        breakFastChipGroup = view.findViewById(R.id.breakFastChipGroup)
-        launchChipGroup = view.findViewById(R.id.launchChipGroup)
-        dinnerChipGroup = view.findViewById(R.id.dinnerChipGroup)
-        medTypeChipGroup = view.findViewById(R.id.medTypeChipGroup)
-        weekDaysChipGroup = view.findViewById(R.id.weekDaysChipGroup)
-        weekDaysChipGroupLayout = view.findViewById(R.id.weekDaysChipGroupLayout)
-        medicineTimeofDayType2ChipGroup = view.findViewById(R.id.medicineTimeofDayType2ChipGroup)
 
         /*val autoCompleteTextView = view.findViewById<AutoCompleteTextView>(R.id.fragment_week_days_TextInputEditText)
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, viewModel.weekDayItems)
@@ -118,274 +95,277 @@ class AddMedicineFragment : Fragment() {
             binding.fragmentWeekDaysTextInputLayout.helperText=null
         }*/
 
-
-        for (tag in viewModel.weekDayItems) {
-            val chip = Chip(requireContext())
-            chip.text = tag.name
-            chip.isCheckable = true
-            chip.isClickable = true
-            chip.setOnCheckedChangeListener { compoundButton, isChecked ->
-                if (isChecked) {
-                    val selectedChip = Chip(requireContext())
-                    selectedChip.text = tag.name
-                    selectedChip.isCloseIconVisible = true
-                    selectedChip.setOnCloseIconClickListener {
-                        selectedChip.isChecked = false
-                    }
-                    viewModel.selectedWeekDayItem.add(tag)
-                }
-                else{
-                    try{
-                        viewModel.selectedWeekDayItem.remove(tag)
-                    }
-                    catch (ex:Exception)
-                    {
-                        Log.e("ADDMedicine","${ex.message}")
-                    }
-                }
-            }
-            weekDaysChipGroup.addView(chip)
-        }
-
-
-        for (tag in viewModel.freqTags) {
-            val chip = Chip(requireContext())
-            chip.text = tag.name
-            chip.isCheckable = true
-            chip.isClickable = true
-            chip.setOnCheckedChangeListener { compoundButton, isChecked ->
-                if (isChecked) {
-                    val selectedChip = Chip(requireContext())
-                    selectedChip.text = tag.name
-                    selectedChip.isCloseIconVisible = true
-                    selectedChip.setOnCloseIconClickListener {
-                        selectedChip.isChecked = false
-                    }
-                    viewModel.selectedfreqTags = tag
-                    if(viewModel.selectedfreqTags == MedicineFrequency.WEEKLY)
-                    {
-                        weekDaysChipGroupLayout.visibility = View.VISIBLE
-                        //binding.fragmentWeekDaysTextInputLayout.visibility=View.VISIBLE
+        binding.apply {
+            for (tag in viewModel.weekDayItems) {
+                val chip = Chip(requireContext())
+                chip.text = tag.name
+                chip.isCheckable = true
+                chip.isClickable = true
+                chip.setOnCheckedChangeListener { compoundButton, isChecked ->
+                    if (isChecked) {
+                        val selectedChip = Chip(requireContext())
+                        selectedChip.text = tag.name
+                        selectedChip.isCloseIconVisible = true
+                        selectedChip.setOnCloseIconClickListener {
+                            selectedChip.isChecked = false
+                        }
+                        viewModel.selectedWeekDayItem.add(tag)
                     }
                     else{
+                        try{
+                            viewModel.selectedWeekDayItem.remove(tag)
+                        }
+                        catch (ex:Exception)
+                        {
+                            Log.e("ADDMedicine","${ex.message}")
+                        }
+                    }
+                }
+                weekDaysChipGroup.addView(chip)
+            }
+
+            for (tag in viewModel.freqTags) {
+                val chip = Chip(requireContext())
+                chip.text = tag.name
+                chip.isCheckable = true
+                chip.isClickable = true
+                chip.setOnCheckedChangeListener { compoundButton, isChecked ->
+                    if (isChecked) {
+                        val selectedChip = Chip(requireContext())
+                        selectedChip.text = tag.name
+                        selectedChip.isCloseIconVisible = true
+                        selectedChip.setOnCloseIconClickListener {
+                            selectedChip.isChecked = false
+                        }
+                        viewModel.selectedfreqTags = tag
+                        if(viewModel.selectedfreqTags == MedicineFrequency.WEEKLY)
+                        {
+                            weekDaysChipGroupLayout.visibility = View.VISIBLE
+                            //binding.fragmentWeekDaysTextInputLayout.visibility=View.VISIBLE
+                        }
+                        else{
+                            weekDaysChipGroupLayout.visibility = View.GONE
+                            //binding.fragmentWeekDaysTextInputLayout.visibility=View.GONE
+                        }
+                    }
+                    else{
+                        viewModel.selectedfreqTags=null
                         weekDaysChipGroupLayout.visibility = View.GONE
                         //binding.fragmentWeekDaysTextInputLayout.visibility=View.GONE
                     }
+                    //Toast.makeText(requireContext(),"${viewModel.selectedfreqTags}",Toast.LENGTH_SHORT).show()
                 }
-                else{
-                    viewModel.selectedfreqTags=null
-                    weekDaysChipGroupLayout.visibility = View.GONE
-                    //binding.fragmentWeekDaysTextInputLayout.visibility=View.GONE
-                }
-                //Toast.makeText(requireContext(),"${viewModel.selectedfreqTags}",Toast.LENGTH_SHORT).show()
+                freqChipGroup.addView(chip)
             }
-            freqChipGroup.addView(chip)
-        }
 
-        for (tag in viewModel.dinnerTags) {
-            val chip = Chip(requireContext())
-            chip.text = tag.description
-            chip.isCheckable = true
-            chip.isClickable = true
-            chip.setOnCheckedChangeListener { compoundButton, isChecked ->
-                if (isChecked) {
-                    val selectedChip = Chip(requireContext())
-                    selectedChip.text = tag.description
-                    selectedChip.isCloseIconVisible = true
-                    selectedChip.setOnCloseIconClickListener {
-                        selectedChip.isChecked = false
-                    }
-                    viewModel.selectedMedicineTimeOfDayType1.add(tag)
-                }
-                else{
-                    try{
-                        viewModel.selectedMedicineTimeOfDayType1.remove(tag)
-                    }
-                    catch (ex:Exception)
-                    {
-                        Log.e("ADDMedicine","${ex.message}")
-                    }
-                }
-            }
-            dinnerChipGroup.addView(chip)
-        }
-
-        for (tag in viewModel.breakFastTags) {
-            val chip = Chip(requireContext())
-            chip.text = tag.description
-            chip.isCheckable = true
-            chip.isClickable = true
-            chip.setOnCheckedChangeListener { compoundButton, isChecked ->
-                if (isChecked) {
-                    val selectedChip = Chip(requireContext())
-                    selectedChip.text = tag.description
-                    selectedChip.isCloseIconVisible = true
-                    selectedChip.setOnCloseIconClickListener {
-                        selectedChip.isChecked = false
-                    }
-                    viewModel.selectedMedicineTimeOfDayType1.add(tag)
-                }
-                else{
-                    try{
-                        viewModel.selectedMedicineTimeOfDayType1.remove(tag)
-                    }
-                    catch (ex:Exception)
-                    {
-                        Log.e("ADDMedicine","${ex.message}")
-                    }
-                }
-            }
-            breakFastChipGroup.addView(chip)
-        }
-
-        for (tag in viewModel.launchTags) {
-            val chip = Chip(requireContext())
-            chip.text = tag.description
-            chip.isCheckable = true
-            chip.isClickable = true
-            chip.setOnCheckedChangeListener { compoundButton, isChecked ->
-                if (isChecked) {
-                    val selectedChip = Chip(requireContext())
-                    selectedChip.text = tag.description
-                    selectedChip.isCloseIconVisible = true
-                    selectedChip.setOnCloseIconClickListener {
-                        selectedChip.isChecked = false
-                    }
-                    viewModel.selectedMedicineTimeOfDayType1.add(tag)
-                }
-                else{
-                    try{
-                        viewModel.selectedMedicineTimeOfDayType1.remove(tag)
-                    }
-                    catch (ex:Exception)
-                    {
-                        Log.e("ADDMedicine","${ex.message}")
-                    }
-                }
-            }
-            launchChipGroup.addView(chip)
-        }
-
-        for (tag in viewModel.medTypeTags) {
-            val chip = Chip(requireContext())
-            chip.text = tag.name
-            chip.isCheckable = true
-            chip.isClickable = true
-            chip.setOnCheckedChangeListener { compoundButton, isChecked ->
-                if (isChecked) {
-                    val selectedChip = Chip(requireContext())
-                    selectedChip.text = tag.name
-                    selectedChip.isCloseIconVisible = true
-                    selectedChip.setOnCloseIconClickListener {
-                        selectedChip.isChecked = false
-                    }
-                    if(tag== MedicineType.Topical || tag == MedicineType.Drops)
-                    {
-                        binding.medicineTimeofDayType2ChipGroup.visibility=View.VISIBLE
-                        binding.breakFastChipGroup.visibility=View.GONE
-                        binding.launchChipGroup.visibility=View.GONE
-                        binding.dinnerChipGroup.visibility=View.GONE
+            for (tag in viewModel.dinnerTags) {
+                val chip = Chip(requireContext())
+                chip.text = tag.description
+                chip.isCheckable = true
+                chip.isClickable = true
+                chip.setOnCheckedChangeListener { compoundButton, isChecked ->
+                    if (isChecked) {
+                        val selectedChip = Chip(requireContext())
+                        selectedChip.text = tag.description
+                        selectedChip.isCloseIconVisible = true
+                        selectedChip.setOnCloseIconClickListener {
+                            selectedChip.isChecked = false
+                        }
+                        viewModel.selectedMedicineTimeOfDayType1.add(tag)
                     }
                     else{
-                        binding.medicineTimeofDayType2ChipGroup.visibility=View.GONE
-                        binding.breakFastChipGroup.visibility=View.VISIBLE
-                        binding.launchChipGroup.visibility=View.VISIBLE
-                        binding.dinnerChipGroup.visibility=View.VISIBLE
-                    }
-                    viewModel.selectedMedTypeTags = tag
-                }
-                else{
-                    viewModel.selectedMedTypeTags=null
-                }
-                //Toast.makeText(requireContext(),"${viewModel.selectedMedTypeTags}",Toast.LENGTH_SHORT).show()
-            }
-            medTypeChipGroup.addView(chip)
-        }
-
-        for (tag in viewModel.medicineTimeOfDayType2) {
-            val chip = Chip(requireContext())
-            chip.text = tag.description
-            chip.isCheckable = true
-            chip.isClickable = true
-            chip.setOnCheckedChangeListener { compoundButton, isChecked ->
-                if (isChecked) {
-                    val selectedChip = Chip(requireContext())
-                    selectedChip.text = tag.description
-                    selectedChip.isCloseIconVisible = true
-                    selectedChip.setOnCloseIconClickListener {
-                        selectedChip.isChecked = false
-                    }
-
-                    viewModel.selectedMedicineTimeOfDayType2.add(tag)
-                }
-                else{
-                    try{
-                        viewModel.selectedMedicineTimeOfDayType2.remove(tag)
-                    }
-                    catch (ex:Exception)
-                    {
-                        Log.e("ADDMedicine","${ex.message}")
-                    }
-                }
-            }
-            medicineTimeofDayType2ChipGroup.addView(chip)
-        }
-
-
-        startDatePicker.setOnClickListener {
-            MonthYearPickerDialog().also {
-                it.setListener { _, year, month, _ ->
-                    viewModel.mfgDate="${month}/${year}"
-                    if(viewModel.expDate!=null)
-                    {
-                        if(UtilityFunction.validateMedicine(viewModel.mfgDate!!,viewModel.expDate!!))
+                        try{
+                            viewModel.selectedMedicineTimeOfDayType1.remove(tag)
+                        }
+                        catch (ex:Exception)
                         {
-                            startDatePicker.setText(viewModel.mfgDate)
+                            Log.e("ADDMedicine","${ex.message}")
+                        }
+                    }
+                }
+                dinnerChipGroup.addView(chip)
+            }
+
+            for (tag in viewModel.breakFastTags) {
+                val chip = Chip(requireContext())
+                chip.text = tag.description
+                chip.isCheckable = true
+                chip.isClickable = true
+                chip.setOnCheckedChangeListener { compoundButton, isChecked ->
+                    if (isChecked) {
+                        val selectedChip = Chip(requireContext())
+                        selectedChip.text = tag.description
+                        selectedChip.isCloseIconVisible = true
+                        selectedChip.setOnCloseIconClickListener {
+                            selectedChip.isChecked = false
+                        }
+                        viewModel.selectedMedicineTimeOfDayType1.add(tag)
+                    }
+                    else{
+                        try{
+                            viewModel.selectedMedicineTimeOfDayType1.remove(tag)
+                        }
+                        catch (ex:Exception)
+                        {
+                            Log.e("ADDMedicine","${ex.message}")
+                        }
+                    }
+                }
+                breakFastChipGroup.addView(chip)
+            }
+
+            for (tag in viewModel.launchTags) {
+                val chip = Chip(requireContext())
+                chip.text = tag.description
+                chip.isCheckable = true
+                chip.isClickable = true
+                chip.setOnCheckedChangeListener { compoundButton, isChecked ->
+                    if (isChecked) {
+                        val selectedChip = Chip(requireContext())
+                        selectedChip.text = tag.description
+                        selectedChip.isCloseIconVisible = true
+                        selectedChip.setOnCloseIconClickListener {
+                            selectedChip.isChecked = false
+                        }
+                        viewModel.selectedMedicineTimeOfDayType1.add(tag)
+                    }
+                    else{
+                        try{
+                            viewModel.selectedMedicineTimeOfDayType1.remove(tag)
+                        }
+                        catch (ex:Exception)
+                        {
+                            Log.e("ADDMedicine","${ex.message}")
+                        }
+                    }
+                }
+                launchChipGroup.addView(chip)
+            }
+
+            for (tag in viewModel.medTypeTags) {
+                val chip = Chip(requireContext())
+                chip.text = tag.name
+                chip.isCheckable = true
+                chip.isClickable = true
+                chip.setOnCheckedChangeListener { compoundButton, isChecked ->
+                    if (isChecked) {
+                        val selectedChip = Chip(requireContext())
+                        selectedChip.text = tag.name
+                        selectedChip.isCloseIconVisible = true
+                        selectedChip.setOnCloseIconClickListener {
+                            selectedChip.isChecked = false
+                        }
+                        if(tag== MedicineType.Topical || tag == MedicineType.Drops)
+                        {
+                            binding.medicineTimeofDayType2ChipGroup.visibility=View.VISIBLE
+                            binding.breakFastChipGroup.visibility=View.GONE
+                            binding.launchChipGroup.visibility=View.GONE
+                            binding.dinnerChipGroup.visibility=View.GONE
+                        }
+                        else{
+                            binding.medicineTimeofDayType2ChipGroup.visibility=View.GONE
+                            binding.breakFastChipGroup.visibility=View.VISIBLE
+                            binding.launchChipGroup.visibility=View.VISIBLE
+                            binding.dinnerChipGroup.visibility=View.VISIBLE
+                        }
+                        viewModel.selectedMedTypeTags = tag
+                    }
+                    else{
+                        viewModel.selectedMedTypeTags=null
+                    }
+                    //Toast.makeText(requireContext(),"${viewModel.selectedMedTypeTags}",Toast.LENGTH_SHORT).show()
+                }
+                medTypeChipGroup.addView(chip)
+            }
+
+            for (tag in viewModel.medicineTimeOfDayType2) {
+                val chip = Chip(requireContext())
+                chip.text = tag.description
+                chip.isCheckable = true
+                chip.isClickable = true
+                chip.setOnCheckedChangeListener { compoundButton, isChecked ->
+                    if (isChecked) {
+                        val selectedChip = Chip(requireContext())
+                        selectedChip.text = tag.description
+                        selectedChip.isCloseIconVisible = true
+                        selectedChip.setOnCloseIconClickListener {
+                            selectedChip.isChecked = false
+                        }
+
+                        viewModel.selectedMedicineTimeOfDayType2.add(tag)
+                    }
+                    else{
+                        try{
+                            viewModel.selectedMedicineTimeOfDayType2.remove(tag)
+                        }
+                        catch (ex:Exception)
+                        {
+                            Log.e("ADDMedicine","${ex.message}")
+                        }
+                    }
+                }
+                medicineTimeofDayType2ChipGroup.addView(chip)
+            }
+
+
+            fragmentMedicineStartdateTextInputEditText.setOnClickListener {
+                MonthYearPickerDialog().also {
+                    it.setListener { _, year, month, _ ->
+                        viewModel.mfgDate="${month}/${year}"
+                        if(viewModel.expDate!=null)
+                        {
+                            if(UtilityFunction.validateMedicine(viewModel.mfgDate!!,viewModel.expDate!!))
+                            {
+                                fragmentMedicineStartdateTextInputEditText.setText(viewModel.mfgDate)
+                                binding.fragmentMedicineStartdateTextInputLayout.helperText=null
+                            }
+                            else{
+                                viewModel.mfgDate=null
+                                fragmentMedicineStartdateTextInputEditText.setText("")
+                                binding.fragmentMedicineStartdateTextInputLayout.helperText="Invalid"
+                            }
+                        }
+                        else{
+                            fragmentMedicineStartdateTextInputEditText.setText(viewModel.mfgDate)
                             binding.fragmentMedicineStartdateTextInputLayout.helperText=null
                         }
-                        else{
-                            viewModel.mfgDate=null
-                            startDatePicker.setText("")
-                            binding.fragmentMedicineStartdateTextInputLayout.helperText="Invalid"
-                        }
                     }
-                    else{
-                        startDatePicker.setText(viewModel.mfgDate)
-                        binding.fragmentMedicineStartdateTextInputLayout.helperText=null
-                    }
+                    it.show(requireFragmentManager(), "MonthYearPickerDialog")
                 }
-                it.show(requireFragmentManager(), "MonthYearPickerDialog")
+                //mfgDatePicker()
             }
-            //mfgDatePicker()
-        }
-        expiryDatePicker.setOnClickListener {
-            MonthYearPickerDialog().also {
-                it.setListener { _, year, month, _ ->
-                    viewModel.expDate = "${month}/${year}"
-                    if(viewModel.mfgDate!=null)
-                    {
-                        if(UtilityFunction.validateMedicine(viewModel.mfgDate!!,viewModel.expDate!!))
+            fragmentMedicineExpirydateTextInputEditText.setOnClickListener {
+                MonthYearPickerDialog().also {
+                    it.setListener { _, year, month, _ ->
+                        viewModel.expDate = "${month}/${year}"
+                        if(viewModel.mfgDate!=null)
                         {
-                            expiryDatePicker.setText(viewModel.expDate)
+                            if(UtilityFunction.validateMedicine(viewModel.mfgDate!!,viewModel.expDate!!))
+                            {
+                                fragmentMedicineExpirydateTextInputEditText.setText(viewModel.expDate)
+                                binding.fragmentMedicineExpirydateTextInputLayout.helperText=null
+                            }
+                            else{
+                                viewModel.expDate=null
+                                fragmentMedicineExpirydateTextInputEditText.setText("")
+                                binding.fragmentMedicineExpirydateTextInputLayout.helperText="Invalid"
+                            }
+                        }
+                        else{
+                            fragmentMedicineExpirydateTextInputEditText.setText(viewModel.expDate)
                             binding.fragmentMedicineExpirydateTextInputLayout.helperText=null
                         }
-                        else{
-                            viewModel.expDate=null
-                            expiryDatePicker.setText("")
-                            binding.fragmentMedicineExpirydateTextInputLayout.helperText="Invalid"
-                        }
                     }
-                    else{
-                        expiryDatePicker.setText(viewModel.expDate)
-                        binding.fragmentMedicineExpirydateTextInputLayout.helperText=null
-                    }
+                    it.show(requireFragmentManager(), "MonthYearPickerDialog")
                 }
-                it.show(requireFragmentManager(), "MonthYearPickerDialog")
+                /*expiryDatePickerDialog()*/
             }
-            /*expiryDatePickerDialog()*/
         }
 
-        return view
+
+
+
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
