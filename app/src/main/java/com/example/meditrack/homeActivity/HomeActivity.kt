@@ -66,6 +66,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val userEmail = headerView?.findViewById<TextView>(R.id.user_email_menu_header)
         val userImage = headerView?.findViewById<ImageView>(R.id.user_image_menu_header)
 
+
+
         /*val navigationView = findViewById<NavigationView>(R.id.nav_view)
         val headerView: View = navigationView.getHeaderView(0)
         val headerTextView: TextView = headerView.findViewById(R.id.user_name_menu_header)
@@ -74,6 +76,12 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container_home) as NavHostFragment
 
 
+        headerView!!.setOnClickListener {
+            if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+                drawer_layout.closeDrawer(GravityCompat.START)
+            }
+            navHostFragment.findNavController().navigate(R.id.userProfileFragment)
+        }
         setSupportActionBar(findViewById(R.id.toolbarHome))
 
         drawer_layout = findViewById(R.id.drawer_layout)
@@ -157,12 +165,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             parentView.requestLayout()
                             binding.menuLayout.profileImage.setImageBitmap(bitmap)*/
                             userImage!!.setImageBitmap(bitmap)
-                            userImage.setOnClickListener {
-                                if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-                                    drawer_layout.closeDrawer(GravityCompat.START)
-                                }
-                                navHostFragment.findNavController().navigate(R.id.userProfileFragment)
-                            }
                         }
                     }
                 }

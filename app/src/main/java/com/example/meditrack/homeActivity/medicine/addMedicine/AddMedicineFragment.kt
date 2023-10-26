@@ -46,6 +46,8 @@ import java.util.*
 import kotlin.collections.ArrayList
 import com.example.meditrack.homeActivity.medicine.addMedicine.AddMedicineFragment
 import com.example.meditrack.homeActivity.reminder.notification.MedicineReminderDialog
+import com.example.meditrack.utility.UtilityFunction.Companion.getCurrentDate
+import com.example.meditrack.utility.UtilityFunction.Companion.getCurrentTime
 
 
 class AddMedicineFragment : Fragment() {
@@ -657,7 +659,9 @@ class AddMedicineFragment : Fragment() {
                                         doctorName = viewModel.doctorName.toString(),
                                         doctorContact = viewModel.doctorContact.toString(),
                                         notes = viewModel.medNotes.toString(),
-                                        totalQuantity = viewModel.medQuantity!!
+                                        totalQuantity = viewModel.medQuantity!!,
+                                        getCurrentDate(),
+                                        getCurrentTime()
                                     )
                                     Log.i(TAG, "onUploadSuccess: ${medicineData!!.medName}")
                                     Log.i(TAG, "onUploadSuccess: ${medicineData!!.medicineType}")
