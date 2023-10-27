@@ -29,13 +29,13 @@ class ReminderReceiver : BroadcastReceiver() {
 
     }
 
-    private fun vibrateDevice(context: Context?) {
-        Log.i("TAG", "vibrateDevice: 2")
-        val vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-
-        // Vibrate for 1000 milliseconds (1 second)
-        vibrator.vibrate(1000)
-    }
+//    private fun vibrateDevice(context: Context?) {
+//        Log.i("TAG", "vibrateDevice: 2")
+//        val vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+//
+//        // Vibrate for 1000 milliseconds (1 second)
+//        vibrator.vibrate(1000)
+//    }
 
     private fun showNotification(context: Context?, title: String, content: String) {
         Log.i("TAG", "showNotification: 3")

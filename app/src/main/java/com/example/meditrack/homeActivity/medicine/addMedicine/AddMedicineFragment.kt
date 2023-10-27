@@ -661,7 +661,6 @@ class AddMedicineFragment : Fragment() {
                                         notes = viewModel.medNotes.toString(),
                                         totalQuantity = viewModel.medQuantity!!,
                                         mediDeleted = "No",
-                                        totalQuantity = viewModel.medQuantity!!,
                                         getCurrentDate(),
                                         getCurrentTime()
                                     )
