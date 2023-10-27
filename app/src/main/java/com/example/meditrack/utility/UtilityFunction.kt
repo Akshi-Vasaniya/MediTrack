@@ -36,6 +36,18 @@ class UtilityFunction {
                 bitmap
             }
         }
+
+        // Function to get the current date in dd/MM/yyyy format
+        fun getCurrentDate(): String {
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            return sdf.format(Date())
+        }
+
+        // Function to get the current time in hh:mm a format
+        fun getCurrentTime(): String {
+            val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
+            return sdf.format(Date())
+        }
         suspend fun getCircularBitmap(srcBitmap: Bitmap?): Bitmap {
             return withContext(Dispatchers.IO) {
                 try {
@@ -71,7 +83,7 @@ class UtilityFunction {
             return withContext(Dispatchers.IO){
                 try {
                     val byteArrayOutputStream = ByteArrayOutputStream()
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream)
                     val byteArray = byteArrayOutputStream.toByteArray()
                     Base64.encodeToString(byteArray, Base64.DEFAULT)
                 }

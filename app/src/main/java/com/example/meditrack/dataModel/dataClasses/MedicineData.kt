@@ -19,4 +19,7 @@ data class MedicineData(
     var doctorContact:String?,
     var notes:String?,
     var totalQuantity:Int,
-    var mediDeleted: String)
+    var mediDeleted: String,
+    var totalQuantity:Int,
+    var createdDate:String,
+    var createdTime:String)
