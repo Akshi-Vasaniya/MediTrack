@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.meditrack.R
@@ -36,8 +37,34 @@ class MedicineStockItemAdapter(private val context: Context, private val mList: 
     }
 
     // Holds the views for adding it to image and text
-    class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
+    inner class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
         val medicineName: TextView = itemView.findViewById(R.id.medicine_name)
         val expiryDate: TextView = itemView.findViewById(R.id.expiry_date)
+        val deleteIcon: ImageView = itemView.findViewById(R.id.delete_btn)
+
+        init {
+            deleteIcon.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val item = mList[position]
+                    itemClickListener?.onItemClick(item.medicine_id)
+                }
+            }
+        }
     }
+
+    // Delete Medicine
+    // Interface to handle item click events
+    interface OnItemClickListener {
+        fun onItemClick(medicineId: String)
+    }
+
+    // Click listener for items
+    private var itemClickListener: OnItemClickListener? = null
+
+    // Function to set the click listener from outside the adapter
+    fun setOnItemClickListener(listener: OnItemClickListener) {
+        itemClickListener = listener
+    }
+
 }
