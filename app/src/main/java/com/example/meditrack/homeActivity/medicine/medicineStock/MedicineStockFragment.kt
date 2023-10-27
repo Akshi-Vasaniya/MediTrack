@@ -41,11 +41,6 @@ class MedicineStockFragment : Fragment() {
 
         binding.apply {
             medicineListView.layoutManager = LinearLayoutManager(requireContext())
-//            val data = ArrayList<ItemsViewModel>()
-//            for (i in 1..20) {
-//                data.add(ItemsViewModel("Paracetamol", "02/10/2023"))
-//            }
-
         }
 
         val db = FirebaseFirestore.getInstance()
@@ -54,11 +49,12 @@ class MedicineStockFragment : Fragment() {
         medicineDataRef.get()
             .addOnSuccessListener { querySnapshot ->
                 for (document in querySnapshot) {
-                    medicineList.add(ItemsViewModel(document.get("medName").toString(), document.get("expDate").toString()))
-//                    Log.i("TAG", "onCreateView: ${medicineList.size}")
-//                    Log.i("TAG", "onCreateView: ${ItemsViewModel(document.get("medName").toString(), document.get("expDate").toString())}")
-                    updateRecyclerView(medicineList)
-                    medicineAdapter.notifyDataSetChanged()
+                    Log.i("TAG", "onCreateView: mediDeleted ${document.get("mediDeleted")}")
+                    if(document.get("mediDeleted").toString() != "Yes"){
+                        medicineList.add(ItemsViewModel(document.get("medName").toString(), document.get("expDate").toString()))
+                        updateRecyclerView(medicineList)
+                        medicineAdapter.notifyDataSetChanged()
+                    }
                 }
 
                 Log.i("TAG", "onCreateView: ${querySnapshot.isEmpty}")
@@ -82,8 +78,6 @@ class MedicineStockFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        val adapter = MedicineStockItemAdapter(data)
-//        recyclerView.adapter = adapter
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

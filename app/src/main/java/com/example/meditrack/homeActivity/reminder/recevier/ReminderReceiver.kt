@@ -25,7 +25,7 @@ class ReminderReceiver : BroadcastReceiver() {
         }
 
         // Vibrate the device before showing the notification
-        vibrateDevice(context)
+//        vibrateDevice(context)
 
     }
 
@@ -38,14 +38,14 @@ class ReminderReceiver : BroadcastReceiver() {
     }
 
     private fun showNotification(context: Context?, title: String, content: String) {
-        Log.i("TAG", "vibrateDevice: 3")
+        Log.i("TAG", "showNotification: 3")
         val notificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationId = 0 // You can use a unique ID for each notification
 
         // Create a notification channel for Android 8.0+ (Oreo and above)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                "1",
+                "0",
                 "Medicine Reminder",
                 NotificationManager.IMPORTANCE_DEFAULT
             )
@@ -53,10 +53,12 @@ class ReminderReceiver : BroadcastReceiver() {
         }
 
         // Create a notification
-        val notificationBuilder = NotificationCompat.Builder(context, "1")
+        val notificationBuilder = NotificationCompat.Builder(context, "0")
             .setSmallIcon(R.drawable.ic_notifications)
             .setContentTitle(title)
             .setContentText(content)
+            .setSound(android.provider.Settings.System.DEFAULT_NOTIFICATION_URI) // Add sound
+            .setVibrate(longArrayOf(1000, 1000)) // Add vibration
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true) // Close the notification when clicked
 

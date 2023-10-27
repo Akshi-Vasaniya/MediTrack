@@ -584,11 +584,11 @@ class AddMedicineFragment : Fragment() {
                             Toast.makeText(requireContext(),"Please add Image of Drug or Medicine",Toast.LENGTH_SHORT).show()
                             return@launch
                         }
-                        Log.i("MedicineData","Medicine Name : ${viewModel.medName}")
-                        Log.i("MedicineData","Medicine Dosage : ${viewModel.dosage}")
-                        Log.i("MedicineData","Medicine Mfg. Date : ${viewModel.mfgDate}")
-                        Log.i("MedicineData","Medicine Exp. Date : ${viewModel.expDate}")
-                        Log.i("MedicineData", "Medicine Frequency : ${viewModel.selectedfreqTags!!.name}")
+//                        Log.i("MedicineData","Medicine Name : ${viewModel.medName}")
+//                        Log.i("MedicineData","Medicine Dosage : ${viewModel.dosage}")
+//                        Log.i("MedicineData","Medicine Mfg. Date : ${viewModel.mfgDate}")
+//                        Log.i("MedicineData","Medicine Exp. Date : ${viewModel.expDate}")
+//                        Log.i("MedicineData", "Medicine Frequency : ${viewModel.selectedfreqTags!!.name}")
 
                         val medicineTime: Any?
 
@@ -657,7 +657,8 @@ class AddMedicineFragment : Fragment() {
                                         doctorName = viewModel.doctorName.toString(),
                                         doctorContact = viewModel.doctorContact.toString(),
                                         notes = viewModel.medNotes.toString(),
-                                        totalQuantity = viewModel.medQuantity!!
+                                        totalQuantity = viewModel.medQuantity!!,
+                                        mediDeleted = "No"
                                     )
                                     Log.i(TAG, "onUploadSuccess: ${medicineData!!.medName}")
                                     Log.i(TAG, "onUploadSuccess: ${medicineData!!.medicineType}")
