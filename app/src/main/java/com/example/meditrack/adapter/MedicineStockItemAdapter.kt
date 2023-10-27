@@ -41,6 +41,7 @@ class MedicineStockItemAdapter(private val context: Context, private val mList: 
         val medicineName: TextView = itemView.findViewById(R.id.medicine_name)
         val expiryDate: TextView = itemView.findViewById(R.id.expiry_date)
         val deleteIcon: ImageView = itemView.findViewById(R.id.delete_btn)
+        val editIcon: ImageView = itemView.findViewById(R.id.edit_btn)
 
         init {
             deleteIcon.setOnClickListener {
@@ -50,6 +51,15 @@ class MedicineStockItemAdapter(private val context: Context, private val mList: 
                     itemClickListener?.onItemClick(item.medicine_id)
                 }
             }
+
+            editIcon.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val item = mList[position]
+                    itemClickListener?.onEditClick(item.medicine_id)
+                }
+            }
+
         }
     }
 
@@ -57,6 +67,7 @@ class MedicineStockItemAdapter(private val context: Context, private val mList: 
     // Interface to handle item click events
     interface OnItemClickListener {
         fun onItemClick(medicineId: String)
+        fun onEditClick(medicineId: String)
     }
 
     // Click listener for items
