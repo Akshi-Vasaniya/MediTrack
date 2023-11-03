@@ -8,6 +8,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.meditrack.R
@@ -19,6 +23,9 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.firestore.FirebaseFirestore
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MedicineStockFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
@@ -26,6 +33,10 @@ class MedicineStockFragment : Fragment() {
     private lateinit var medicineAdapter: MedicineStockItemAdapter
     private val medicineList = ArrayList<ItemsViewModel>()
     private lateinit var dialog: View
+    private lateinit var dropDown: Spinner
+    val TAG = "MedicineStockfragment"
+    private lateinit var customAdapter: ArrayAdapter<String>
+    private var selectedFilter: MedicineFilter = MedicineFilter.INVENTORY
 
 
     companion object {
@@ -43,30 +54,97 @@ class MedicineStockFragment : Fragment() {
         binding = FragmentMedicineStockBinding.bind(view)
 
         medicineList.clear()
+        // Drop Down
+        val items = arrayOf("Inventory", "Expired", "Deleted")
+        customAdapter = object : ArrayAdapter<String>(
+            requireContext(),
+            R.layout.custom_spinner_item,
+            items
+        ) {
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val getView = super.getView(position, convertView, parent)
+                val textView = getView.findViewById<TextView>(R.id.customSpinnerItemTextView)
+                textView.text = getItem(position)
+                return getView
+            }
+
+            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val dropDownView = super.getDropDownView(position, convertView, parent)
+                val textView = dropDownView.findViewById<TextView>(R.id.customSpinnerItemTextView)
+                textView.text = getItem(position)
+                return dropDownView
+            }
+
+        }
+        dropDown = view.findViewById(R.id.dropdownSpinner)
         binding.apply {
             medicineListView.layoutManager = LinearLayoutManager(requireContext())
+            // On edit or delete
             updateRecyclerView(medicineList)
+            // Set the dropdown layout style
+            customAdapter.setDropDownViewResource(R.layout.custom_spinner_item)
+            // Attach the custom adapter to the Spinner
+            dropdownSpinner.adapter = customAdapter
+            addMedicineInRecycleView(MedicineFilter.INVENTORY)
+
+            dropdownSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+                    when (position) {
+                        0 -> selectedFilter = MedicineFilter.INVENTORY
+                        1 -> selectedFilter = MedicineFilter.EXPIRED
+                        2 -> selectedFilter = MedicineFilter.DELETED
+                    }
+                    addMedicineInRecycleView(selectedFilter)
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {
+                    TODO("Not yet implemented")
+                }
+            }
         }
-
-        addMedicineInRecycleView()
-
         return view
     }
 
-    private fun addMedicineInRecycleView(){
+    private fun addMedicineInRecycleView(filter: MedicineFilter){
+        Log.i(TAG, "addMedicineInRecycleView: id ${fBase.getUserId()}")
         val db = FirebaseFirestore.getInstance()
         val medicineDataRef = db.collection("user_medicines").document(fBase.getUserId()).collection("medicine_data")
-
+        medicineList.clear()
+        medicineAdapter.notifyDataSetChanged()
         medicineDataRef.get()
             .addOnSuccessListener { querySnapshot ->
-                for (document in querySnapshot) {
-                    Log.i("TAG", "onCreateView: mediDeleted ${document.get("mediDeleted")}")
-                    if(document.get("mediDeleted").toString() != "Yes"){
-                        medicineList.add(ItemsViewModel(document.id,document.get("medName").toString(), document.get("expDate").toString()))
-                        updateRecyclerView(medicineList)
+                when(filter){
+                    MedicineFilter.INVENTORY ->{
+                        medicineList.clear()
                         medicineAdapter.notifyDataSetChanged()
+                        for (document in querySnapshot) {
+                            if((document.get("mediDeleted").toString() == "No" || document.get("mediDeleted").toString() == "NO") && !isExpired(document.get("expDate").toString())){
+                                medicineList.add(ItemsViewModel(document.id,document.get("medName").toString(), document.get("expDate").toString()))
+                                updateRecyclerView(medicineList)
+                                medicineAdapter.notifyDataSetChanged()
+                            }
+                        }
+                    }
+                    MedicineFilter.EXPIRED ->{
+                        for (document in querySnapshot) {
+                            if(isExpired(document.get("expDate").toString()) && (document.get("mediDeleted").toString() == "No" || document.get("mediDeleted").toString() == "NO")){
+                                medicineList.add(ItemsViewModel(document.id,document.get("medName").toString(), document.get("expDate").toString()))
+                                updateRecyclerView(medicineList)
+                                medicineAdapter.notifyDataSetChanged()
+                            }
+                        }
+                    }
+                    MedicineFilter.DELETED ->{
+                        for (document in querySnapshot) {
+                            if((document.get("mediDeleted").toString() == "Yes") || (document.get("mediDeleted").toString() == "YES")){
+                                medicineList.add(ItemsViewModel(document.id,document.get("medName").toString(), document.get("expDate").toString()))
+                                updateRecyclerView(medicineList)
+                                medicineAdapter.notifyDataSetChanged()
+                            }
+                        }
                     }
                 }
+
 
             }
             .addOnFailureListener { e ->
@@ -75,7 +153,7 @@ class MedicineStockFragment : Fragment() {
             }
     }
 
-    fun updateRecyclerView(dataList: List<ItemsViewModel>) {
+    private fun updateRecyclerView(dataList: List<ItemsViewModel>) {
         Log.d("TAG", "updateRecyclerView: $dataList")
         medicineAdapter = MedicineStockItemAdapter(requireContext(), dataList)
         binding.medicineListView.adapter = medicineAdapter
@@ -92,6 +170,24 @@ class MedicineStockFragment : Fragment() {
         })
     }
 
+    private fun isExpired(expiryDate: String): Boolean {
+        val parts  = expiryDate.split("/")
+        if(parts.size == 2){
+            val expiryMonth = parts[0].toInt()
+            val expiryYear = parts[1].toInt()
+
+            // Get the current date
+            val calendar = Calendar.getInstance()
+            val currentMonth = calendar.get(Calendar.MONTH) + 1 // Calendar.MONTH is zero-based
+
+            // Check if the current year is greater than the expiry year
+            // OR if it's the same year but the current month is greater than the expiry month
+            return (calendar.get(Calendar.YEAR) > expiryYear) || (calendar.get(Calendar.YEAR) == expiryYear && currentMonth > expiryMonth)
+        }
+        return false
+    }
+
+
     private fun handleDeleteButtonClick(medicineId: String) {
         val db = FirebaseFirestore.getInstance()
         val medicineDataRef =
@@ -99,7 +195,7 @@ class MedicineStockFragment : Fragment() {
 
         medicineDataRef.document(medicineId).update("mediDeleted", "Yes")
             .addOnSuccessListener {
-                // Find and remove the deleted medicine from the local data source
+                // Find and remove the deleted medicine from the local data sourc
                 val deletedMedicine = medicineList.find { it.medicine_id == medicineId }
                 if (deletedMedicine != null) {
                     medicineList.remove(deletedMedicine)
@@ -153,16 +249,11 @@ class MedicineStockFragment : Fragment() {
                 medicineList.remove(deletedMedicine)
                 medicineAdapter.notifyDataSetChanged()
                 medicineList.clear()
-                addMedicineInRecycleView()
+                addMedicineInRecycleView(MedicineFilter.INVENTORY)
             }
         } else{
             Toast.makeText(requireContext(), "Fill up the all details", Toast.LENGTH_SHORT).show()
         }
-
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -171,4 +262,8 @@ class MedicineStockFragment : Fragment() {
         // TODO: Use the ViewModel
     }
 
+}
+
+enum class MedicineFilter{
+    INVENTORY, EXPIRED, DELETED
 }
