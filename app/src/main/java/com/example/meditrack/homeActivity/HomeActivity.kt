@@ -22,6 +22,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.bumptech.glide.Glide
 import com.example.meditrack.R
 import com.example.meditrack.dataModel.dataClasses.UserData
 import com.example.meditrack.databinding.ActivityHomeBinding
@@ -152,7 +153,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                     if(!it?.profileImage.isNullOrBlank())
                     {
-                        val bitmap = UtilityFunction.decodeBase64ToBitmap(it?.profileImage!!)
+                        //val bitmap = UtilityFunction.decodeBase64ToBitmap(it?.profileImage!!)
 
                         /*bitmap = getCircularBitmap(bitmap)*/
                         withContext(Dispatchers.Main)
@@ -164,7 +165,10 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             )
                             parentView.requestLayout()
                             binding.menuLayout.profileImage.setImageBitmap(bitmap)*/
-                            userImage!!.setImageBitmap(bitmap)
+                            Glide.with(this@HomeActivity)
+                                .load(it?.profileImage!!)
+                                .into(userImage!!)
+                            //userImage!!.setImageBitmap(bitmap)
                         }
                     }
                 }

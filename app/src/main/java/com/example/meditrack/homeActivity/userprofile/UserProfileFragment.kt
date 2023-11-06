@@ -10,12 +10,14 @@ import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.example.meditrack.R
 import com.example.meditrack.dataModel.dataClasses.UserData
 import com.example.meditrack.databinding.FragmentUserProfileBinding
 import com.example.meditrack.firebase.fBase
 import com.example.meditrack.homeActivity.HomeActivityViewModel
 import com.example.meditrack.utility.UtilityFunction
+import com.example.meditrack.utility.ownDialogs.CustomDialog
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -25,7 +27,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class UserProfileFragment : Fragment() {
+class UserProfileFragment : Fragment(), CustomDialog.CustomDialogListener {
 
     companion object {
         fun newInstance() = UserProfileFragment()
@@ -34,6 +36,23 @@ class UserProfileFragment : Fragment() {
     private lateinit var viewModel: UserProfileViewModel
     private lateinit var binding: FragmentUserProfileBinding
     private lateinit var progressDialog: CustomProgressDialog
+
+    override fun onUpdateButtonClicked(text: String,fieldName:String) {
+        // Perform your actions here with the received text
+        // For example, update the user profile with the provided text
+        val userRef = fBase.getUserReference().child(fBase.getCurrentUser()!!.uid)
+        val updates: MutableMap<String, Any> = HashMap()
+        updates[fieldName] = text
+        userRef.updateChildren(updates)
+            .addOnSuccessListener {
+                // The name has been updated successfully
+                Toast.makeText(requireContext(),"Success",Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                // Handle any errors that may occur
+                Toast.makeText(requireContext(),"Error",Toast.LENGTH_SHORT).show()
+            }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,6 +70,19 @@ class UserProfileFragment : Fragment() {
         binding = FragmentUserProfileBinding.bind(view)
         viewModel = ViewModelProvider(this)[UserProfileViewModel::class.java]
         progressDialog= CustomProgressDialog(requireActivity())
+
+
+
+        binding.apply {
+            editNameButton.setOnClickListener {
+                val customDialog = CustomDialog(requireContext(), this@UserProfileFragment,fragmentUserProfileNameTextInputEditText.text.toString(),"name")
+                customDialog.show()
+            }
+            editSurnameButton.setOnClickListener {
+                val customDialog = CustomDialog(requireContext(), this@UserProfileFragment,fragmentUserProfileSurnameTextInputEditText.text.toString(),"surname")
+                customDialog.show()
+            }
+        }
 
 
         MainScope().launch(Dispatchers.IO) {
@@ -93,11 +125,14 @@ class UserProfileFragment : Fragment() {
 
                     if(!it?.profileImage.isNullOrBlank())
                     {
-                        val bitmap = UtilityFunction.decodeBase64ToBitmap(it?.profileImage!!)
+                        //val bitmap = UtilityFunction.decodeBase64ToBitmap(it?.profileImage!!)
 
                         withContext(Dispatchers.Main)
                         {
-                            binding.fragmentUserProfileProfileImage.setImageBitmap(bitmap)
+                            Glide.with(requireActivity())
+                                .load(it?.profileImage!!)
+                                .into(binding.fragmentUserProfileProfileImage)
+                            //binding.fragmentUserProfileProfileImage.setImageBitmap(bitmap)
                         }
                     }
                 }

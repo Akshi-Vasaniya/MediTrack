@@ -7,6 +7,6 @@ import retrofit2.http.Path
 
 
 interface ApiInterface {
-    @GET("/{query}")
+    @GET("/{query} medicine")
     fun listDocument(@Path("query") query: String?): Call<List<SearchItemData?>?>?
 }

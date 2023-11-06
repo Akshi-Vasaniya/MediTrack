@@ -20,10 +20,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.meditrack.R
+import com.example.meditrack.dataModel.dataClasses.MedicineData
 import com.example.meditrack.dataModel.dataClasses.UserData
+import com.example.meditrack.dataModel.enumClasses.medicine.MedicineFrequency
+import com.example.meditrack.dataModel.enumClasses.medicine.MedicineTimeOfDayType1
 import com.example.meditrack.databinding.FragmentRegistrationBinding
 import com.example.meditrack.exception.HandleException
 import com.example.meditrack.firebase.fBase
+import com.example.meditrack.homeActivity.medicine.addMedicine.AddMedicineFragment
+import com.example.meditrack.homeActivity.reminder.notification.MedicineReminderDialog
 import com.example.meditrack.regularExpression.ListPattern
 import com.example.meditrack.regularExpression.MatchPattern.Companion.validate
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
@@ -34,6 +39,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.*
 
 
 class RegistrationFragment : Fragment() {
@@ -219,23 +225,8 @@ class RegistrationFragment : Fragment() {
             })
 
             fragmentRegistrationRegisterButton.setOnClickListener {
-                val name = viewModel.inputName
-                val surname = viewModel.inputSurname
-                val email = viewModel.inputEmail
-                val password = viewModel.inputPassword
-                val confirmPassword = viewModel.inputConfirmPassword
 
-                if(fragmentRegistrationNameTextInputLayout.helperText==null &&
-                    fragmentRegistrationSurnameTextInputLayout.helperText==null &&
-                    fragmentRegistrationEmailTextInputLayout.helperText==null &&
-                    fragmentRegistrationPasswordTextInputLayout.helperText==null &&
-                    fragmentRegistrationConfirmPasswordTextInputLayout.helperText==null &&
-                    !name.isNullOrBlank() &&
-                    !surname.isNullOrBlank() &&
-                    !email.isNullOrBlank() &&
-                    !password.isNullOrBlank() &&
-                    !confirmPassword.isNullOrBlank()
-                ){
+                if(validateUserInput()){
                     viewModel.inputEmail = viewModel.inputEmail!!.trim()
                     viewModel.inputPassword = viewModel.inputPassword!!.trim()
                     viewModel.inputName = viewModel.inputName!!.trim().uppercase()
@@ -248,24 +239,45 @@ class RegistrationFragment : Fragment() {
                                 try{
                                     var imageString:String? = null
                                     if(inputProfileImage!=null){
-                                        imageString = bitmapToBase64(inputProfileImage!!)
+                                        val imageUri = UtilityFunction.bitmapToUri(
+                                            requireContext(),
+                                            inputProfileImage!!
+                                        )
+                                        uploadImageToFirebaseStorage(it.result?.user!!.uid,imageUri!!, object :
+                                            AddMedicineFragment.UploadCallback {
+                                            override fun onUploadSuccess(downloadUrl: String) {
+                                                try {
+                                                    val user = UserData(viewModel.inputName!!, viewModel.inputSurname!!, viewModel.inputEmail!!,downloadUrl)
+                                                    fBase.getUserReference().child(it.result?.user!!.uid).setValue(user).addOnSuccessListener {
+                                                        fBase.getCurrentUser()?.sendEmailVerification()?.addOnSuccessListener {
+                                                            progressDialog.stop()
+                                                            Toast.makeText(requireContext(),"Verify Your Email",Toast.LENGTH_SHORT).show()
+                                                            findNavController().navigate(R.id.loginFragment)
+                                                        }?.addOnFailureListener {exception->
+                                                            progressDialog.stop()
+                                                            Log.i(tag,exception.toString())
+                                                            Toast.makeText(requireContext(),exception.toString(),Toast.LENGTH_SHORT).show()
+                                                        }
+                                                    }.addOnFailureListener{exception->
+                                                        progressDialog.stop()
+                                                        Log.i(tag,exception.toString())
+                                                        Toast.makeText(requireActivity(),exception.toString(),Toast.LENGTH_SHORT).show()
+                                                    }
+                                                }
+                                                catch (ex:java.lang.Exception)
+                                                {
+                                                    progressDialog.stop()
+                                                }
+                                            }
+
+                                            override fun onUploadFailure(exception: Exception) {
+                                                progressDialog.stop()
+                                                Toast.makeText(requireContext(),"onUploadFailure: Error",Toast.LENGTH_SHORT).show()
+                                            }
+                                        })
+                                        //imageString = bitmapToBase64(inputProfileImage!!)
                                     }
-                                    val user = UserData(viewModel.inputName!!, viewModel.inputSurname!!, viewModel.inputEmail!!,imageString)
-                                    fBase.getUserReference().child(it.result?.user!!.uid).setValue(user).addOnSuccessListener {
-                                        fBase.getCurrentUser()?.sendEmailVerification()?.addOnSuccessListener {
-                                            progressDialog.stop()
-                                            Toast.makeText(requireContext(),"Verify Your Email",Toast.LENGTH_SHORT).show()
-                                            findNavController().navigate(R.id.loginFragment)
-                                        }?.addOnFailureListener {exception->
-                                            progressDialog.stop()
-                                            Log.i(tag,exception.toString())
-                                            Toast.makeText(requireContext(),exception.toString(),Toast.LENGTH_SHORT).show()
-                                        }
-                                    }.addOnFailureListener{exception->
-                                        progressDialog.stop()
-                                        Log.i(tag,exception.toString())
-                                        Toast.makeText(requireActivity(),exception.toString(),Toast.LENGTH_SHORT).show()
-                                    }
+
                                 }
                                 catch (ex:Exception)
                                 {
@@ -311,6 +323,43 @@ class RegistrationFragment : Fragment() {
                 }
             }
         }
+    }
+
+    fun uploadImageToFirebaseStorage(uid:String,imageUri: Uri, callback: AddMedicineFragment.UploadCallback) {
+        val storageRef = fBase.getStorageReference()
+        val imagesRef = storageRef.child("userProfileImage/${uid}")
+        val uploadTask = imagesRef.putFile(imageUri)
+
+        uploadTask.continueWithTask { task ->
+            if (!task.isSuccessful) {
+                task.exception?.let {
+                    throw it
+                }
+            }
+            imagesRef.downloadUrl
+        }.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val downloadUri = task.result
+                downloadUri?.let { callback.onUploadSuccess(it.toString()) }
+            } else {
+                // Handle failures
+                task.exception?.let { callback.onUploadFailure(it) }
+            }
+        }
+    }
+
+    private fun validateUserInput():Boolean
+    {
+        return (binding.fragmentRegistrationNameTextInputLayout.helperText==null &&
+                binding.fragmentRegistrationSurnameTextInputLayout.helperText==null &&
+                binding.fragmentRegistrationEmailTextInputLayout.helperText==null &&
+                binding.fragmentRegistrationPasswordTextInputLayout.helperText==null &&
+                binding.fragmentRegistrationConfirmPasswordTextInputLayout.helperText==null &&
+                !viewModel.inputName.isNullOrBlank() &&
+                !viewModel.inputSurname.isNullOrBlank() &&
+                !viewModel.inputEmail.isNullOrBlank() &&
+                !viewModel.inputPassword.isNullOrBlank() &&
+                !viewModel.inputConfirmPassword.isNullOrBlank())
     }
 
     private fun checkPermission(): Boolean {

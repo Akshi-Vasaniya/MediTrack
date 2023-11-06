@@ -19,16 +19,16 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/fragment_home_toolbar_menu_layout"
-                android:layout_width="@dimen/_20sdp"
-                android:layout_height="@dimen/_20sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
                     android:id="@+id/fragment_home_toolbar_menu_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
                     android:contentDescription="@string/slide_menu_image"
                     android:src="@drawable/menu_icon"
                     app:layout_constraintBottom_toBottomOf="parent"
