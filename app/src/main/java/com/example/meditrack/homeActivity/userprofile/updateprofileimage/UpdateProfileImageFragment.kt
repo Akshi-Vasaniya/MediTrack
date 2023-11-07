@@ -16,6 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -25,6 +26,8 @@ import com.example.meditrack.databinding.FragmentUserProfileBinding
 import com.example.meditrack.firebase.fBase
 import com.example.meditrack.utility.UtilityFunction
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
+import com.theartofdev.edmodo.cropper.CropImage
+import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -62,7 +65,7 @@ class UpdateProfileImageFragment : Fragment() {
         }
         binding.btnSelectImage.setOnClickListener {
             if (checkPermission()) {
-                openImagePicker()
+                getContent.launch("image/*")
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
                     requestPermissions(
@@ -85,6 +88,8 @@ class UpdateProfileImageFragment : Fragment() {
 
             }
         }
+
+
 
         binding.btnRemoveImage.setOnClickListener {
             val drawableResourceId = resources.getIdentifier("profilepic", "drawable", requireContext().packageName)
@@ -144,8 +149,60 @@ class UpdateProfileImageFragment : Fragment() {
     ) {
         if (requestCode == 101) {
             if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                openImagePicker()
+                getContent.launch("image/*")
             }
+        }
+    }
+
+    private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        try {
+            if(uri!=null)
+            {
+                CropImage.activity(uri)
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setAllowRotation(true)
+                    .setMultiTouchEnabled(true)
+                    .start(requireActivity(),this)
+            }
+        }
+        catch (ex:Exception)
+        {
+            Log.i("OCR Select Image","${ex.message}")
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        // handle result of CropImageActivity
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            try {
+                val result = CropImage.getActivityResult(data)
+                if (resultCode == Activity.RESULT_OK) {
+                    MainScope().launch(Dispatchers.IO) {
+                        // The user has selected an image. You can get the image URI from the data intent.
+                        val selectedImageUri: Uri? = result.uri
+                        if (selectedImageUri != null) {
+                            try {
+                                profileImageUri = selectedImageUri
+                                val bimapImage = UtilityFunction.uriToBitmap(requireActivity(), selectedImageUri)
+                                withContext(Dispatchers.Main){
+                                    binding.imageViewProfile.setImageBitmap(bimapImage)
+                                }
+                            }
+                            catch (ex:Exception)
+                            {
+                                Toast.makeText(requireActivity(),"Error! to load Image", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
+                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                    Log.i("UpdateProfileImage Crop Image","$requestCode")
+                }
+            }
+            catch (ex:Exception)
+            {
+                Log.i("UpdateProfileImage","${ex.message}")
+            }
+
         }
     }
 
@@ -184,30 +241,6 @@ class UpdateProfileImageFragment : Fragment() {
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
         startActivityForResult(intent, 102)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 102 && resultCode == Activity.RESULT_OK) {
-            MainScope().launch(Dispatchers.IO) {
-                // The user has selected an image. You can get the image URI from the data intent.
-                val selectedImageUri: Uri? = data?.data
-                if (selectedImageUri != null) {
-                    try {
-                        profileImageUri = selectedImageUri
-                        val bimapImage = UtilityFunction.uriToBitmap(requireActivity(), selectedImageUri)
-                        withContext(Dispatchers.Main){
-                            binding.imageViewProfile.setImageBitmap(bimapImage)
-                        }
-                    }
-                    catch (ex:Exception)
-                    {
-                        Toast.makeText(requireActivity(),"Error! to load Image", Toast.LENGTH_LONG).show()
-                    }
-                }
-            }
-
-        }
     }
 
     fun updateUserProfileImage(imageUri: Uri, callback: (Boolean, String) -> Unit) {

@@ -12,13 +12,13 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/user_image_menu_header"
         android:layout_width="75dp"
         android:layout_height="75dp"
         android:contentDescription="@string/nav_header_desc"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        app:srcCompat="@drawable/profilepic" />
+        android:src="@drawable/profilepic" />
 
     <TextView
         android:id="@+id/user_name_menu_header"

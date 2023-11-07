@@ -218,8 +218,6 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
         {
             Log.i("OCR Select Image","${ex.message}")
         }
-
-
     }
 
 
