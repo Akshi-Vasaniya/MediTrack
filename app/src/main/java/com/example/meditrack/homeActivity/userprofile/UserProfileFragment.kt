@@ -1,5 +1,6 @@
 package com.example.meditrack.homeActivity.userprofile
 
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -36,6 +37,7 @@ class UserProfileFragment : Fragment(), CustomDialog.CustomDialogListener {
     private lateinit var viewModel: UserProfileViewModel
     private lateinit var binding: FragmentUserProfileBinding
     private lateinit var progressDialog: CustomProgressDialog
+    private var userProfileImgUrl:String = ""
 
     override fun onUpdateButtonClicked(text: String,fieldName:String) {
         // Perform your actions here with the received text
@@ -82,6 +84,16 @@ class UserProfileFragment : Fragment(), CustomDialog.CustomDialogListener {
                 val customDialog = CustomDialog(requireContext(), this@UserProfileFragment,fragmentUserProfileSurnameTextInputEditText.text.toString(),"surname")
                 customDialog.show()
             }
+            userProfileImage.setOnClickListener {
+                val bundle = Bundle()
+                bundle.putString("profileImageUrl", userProfileImgUrl)
+                findNavController().navigate(R.id.updateProfileImageFragment,bundle)
+            }
+            userProfileImageFloatingBtn.setOnClickListener {
+                val bundle = Bundle()
+                bundle.putString("profileImageUrl", userProfileImgUrl)
+                findNavController().navigate(R.id.updateProfileImageFragment,bundle)
+            }
         }
 
 
@@ -126,11 +138,11 @@ class UserProfileFragment : Fragment(), CustomDialog.CustomDialogListener {
                     if(!it?.profileImage.isNullOrBlank())
                     {
                         //val bitmap = UtilityFunction.decodeBase64ToBitmap(it?.profileImage!!)
-
+                        userProfileImgUrl = it?.profileImage!!
                         withContext(Dispatchers.Main)
                         {
                             Glide.with(requireActivity())
-                                .load(it?.profileImage!!)
+                                .load(userProfileImgUrl)
                                 .into(binding.fragmentUserProfileProfileImage)
                             //binding.fragmentUserProfileProfileImage.setImageBitmap(bitmap)
                         }
@@ -144,5 +156,6 @@ class UserProfileFragment : Fragment(), CustomDialog.CustomDialogListener {
             }
         }
     }
+
 
 }

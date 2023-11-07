@@ -48,6 +48,9 @@ import com.example.meditrack.homeActivity.medicine.addMedicine.AddMedicineFragme
 import com.example.meditrack.homeActivity.reminder.notification.MedicineReminderDialog
 import com.example.meditrack.utility.UtilityFunction.Companion.getCurrentDate
 import com.example.meditrack.utility.UtilityFunction.Companion.getCurrentTime
+import com.example.meditrack.utility.UtilityFunction.Companion.stringCompress
+import com.example.meditrack.utility.UtilityFunction.Companion.stringNormalize
+import com.example.meditrack.utility.UtilityFunction.Companion.stringtobase64
 
 
 class AddMedicineFragment : Fragment() {
@@ -642,81 +645,102 @@ class AddMedicineFragment : Fragment() {
                         {
                             progressDialog.start("Loading...")
                         }
-                        uploadImageToFirebaseStorage(imageUri, object : UploadCallback {
-                            override fun onUploadSuccess(downloadUrl: String) {
-                                try {
-                                    medicineData = MedicineData(
-                                        medImage = downloadUrl,
-                                        medName = viewModel.medName!!,
-                                        medicineType = viewModel.selectedMedTypeTags!!,
-                                        dosage = viewModel.dosage!!,
-                                        mfgDate = viewModel.mfgDate!!,
-                                        expDate = viewModel.expDate!!,
-                                        medFreq = viewModel.selectedfreqTags!!,
-                                        weekDay = viewModel.selectedWeekDayItem,
-                                        takeTime = medicineTime,
-                                        instruction = viewModel.medInstruction.toString(),
-                                        doctorName = viewModel.doctorName.toString(),
-                                        doctorContact = viewModel.doctorContact.toString(),
-                                        notes = viewModel.medNotes.toString(),
-                                        totalQuantity = viewModel.medQuantity!!,
-                                        mediDeleted = "No",
-                                        getCurrentDate(),
-                                        getCurrentTime()
-                                    )
-                                    Log.i(TAG, "onUploadSuccess: ${medicineData!!.medName}")
-                                    Log.i(TAG, "onUploadSuccess: ${medicineData!!.medicineType}")
-                                    Log.i(TAG, "onUploadSuccess: ${medicineData!!.medFreq}")
-                                    Log.i(TAG, "onUploadSuccess: ${medicineData!!.weekDay}")
-                                    Log.i(TAG, "onUploadSuccess: ${medicineData!!.takeTime}")
-                                    Log.i(TAG, "onUploadSuccess: ${medicineData!!.notes}")
-                                    Log.i(TAG, "onUploadSuccess: ${medicineData!!.totalQuantity}")
-                                    val dialog = MedicineReminderDialog()
-                                    db.collection("user_medicines").document(fBase.getUserId()).collection("medicine_data")
-                                        .add(medicineData!!)
-                                        .addOnSuccessListener { documentReference ->
+                        val docName = stringNormalize(viewModel.medName!!)
+                        val medicineDataDocRef = db.collection("user_medicines")
+                            .document(fBase.getUserId())
+                            .collection("medicine_data")
+                            .document(docName)
+                        medicineDataDocRef.get()
+                            .addOnSuccessListener { document ->
+                                if (document.exists()) {
+                                    progressDialog.stop()
+                                    // Document with the same custom name already exists, skip insertion
+                                    // Handle this case if needed
+                                    Toast.makeText(requireContext(),"Medicine Already Exists",Toast.LENGTH_SHORT).show()
+                                } else {
+                                    uploadImageToFirebaseStorage(imageUri, object : UploadCallback {
+                                        override fun onUploadSuccess(downloadUrl: String) {
                                             try {
-                                                progressDialog.stop()
-                                                Toast.makeText(requireContext(),"Medicine and Reminder Successfully Added",Toast.LENGTH_SHORT).show()
-                                                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                                                medicineData = MedicineData(
+                                                    medImage = downloadUrl,
+                                                    medName = viewModel.medName!!.trim(),
+                                                    medicineType = viewModel.selectedMedTypeTags!!,
+                                                    dosage = viewModel.dosage!!,
+                                                    mfgDate = viewModel.mfgDate!!,
+                                                    expDate = viewModel.expDate!!,
+                                                    medFreq = viewModel.selectedfreqTags!!,
+                                                    weekDay = viewModel.selectedWeekDayItem,
+                                                    takeTime = medicineTime,
+                                                    instruction = viewModel.medInstruction.toString().trim(),
+                                                    doctorName = viewModel.doctorName.toString().trim(),
+                                                    doctorContact = viewModel.doctorContact.toString().trim(),
+                                                    notes = viewModel.medNotes.toString().trim(),
+                                                    totalQuantity = viewModel.medQuantity!!,
+                                                    mediDeleted = "No",
+                                                    getCurrentDate(),
+                                                    getCurrentTime()
+                                                )
+                                                Log.i(TAG, "onUploadSuccess: ${medicineData!!.medName}")
+                                                Log.i(TAG, "onUploadSuccess: ${medicineData!!.medicineType}")
+                                                Log.i(TAG, "onUploadSuccess: ${medicineData!!.medFreq}")
+                                                Log.i(TAG, "onUploadSuccess: ${medicineData!!.weekDay}")
+                                                Log.i(TAG, "onUploadSuccess: ${medicineData!!.takeTime}")
+                                                Log.i(TAG, "onUploadSuccess: ${medicineData!!.notes}")
+                                                Log.i(TAG, "onUploadSuccess: ${medicineData!!.totalQuantity}")
+                                                val dialog = MedicineReminderDialog()
 
-                                                // Medicine Taking Reminder
-                                                for(item in medicineData!!.takeTime as ArrayList<MedicineTimeOfDayType1>)
-                                                {
-                                                    var hour = item.time.split(":")
-                                                    Log.i(TAG, "onUploadSuccess: ${hour[0]}")
-                                                    if(medicineData!!.medFreq == MedicineFrequency.DAILY) {
-                                                        dialog.scheduleNotifications(medicineData!!.medName, mutableListOf(0, 1, 2, 3, 4, 5, 6),  hour[0].toInt(), 0)
-                                                    }else{
-                                                        dialog.scheduleNotifications(medicineData!!.medName, medicineData!!.weekDay as MutableList<Int>,  hour[0].toInt(), 0)
+                                                db.collection("user_medicines").document(fBase.getUserId()).collection("medicine_data")
+                                                    .document(docName)
+                                                    .set(medicineData!!)
+                                                    .addOnSuccessListener {
+                                                        try {
+                                                            progressDialog.stop()
+                                                            Toast.makeText(requireContext(),"Medicine and Reminder Successfully Added",Toast.LENGTH_SHORT).show()
+                                                            Log.d(TAG, "DocumentSnapshot added with ID: $docName")
+
+                                                            // Medicine Taking Reminder
+                                                            for(item in medicineData!!.takeTime as ArrayList<MedicineTimeOfDayType1>)
+                                                            {
+                                                                var hour = item.time.split(":")
+                                                                Log.i(TAG, "onUploadSuccess: ${hour[0]}")
+                                                                if(medicineData!!.medFreq == MedicineFrequency.DAILY) {
+                                                                    dialog.scheduleNotifications(medicineData!!.medName, mutableListOf(0, 1, 2, 3, 4, 5, 6),  hour[0].toInt(), 0)
+                                                                }else{
+                                                                    dialog.scheduleNotifications(medicineData!!.medName, medicineData!!.weekDay as MutableList<Int>,  hour[0].toInt(), 0)
+                                                                }
+                                                            }
+
+                                                        }
+                                                        catch (ex:Exception)
+                                                        {
+                                                            Log.e("addOnSuccessListener","${ex.message}")
+                                                        }
+
                                                     }
-                                                }
-                                                
+                                                    .addOnFailureListener { e ->
+                                                        progressDialog.stop()
+                                                        Toast.makeText(requireContext(),"addOnFailureListener: Error",Toast.LENGTH_SHORT).show()
+                                                        Log.w(TAG, "Error adding document", e)
+                                                    }
                                             }
-                                            catch (ex:Exception)
+                                            catch (ex:java.lang.Exception)
                                             {
-                                                Log.e("addOnSuccessListener","${ex.message}")
+                                                Log.w("$TAG : uploadImageToFirebaseStorage", "Error uploadImageToFirebaseStorage", ex)
                                             }
-
                                         }
-                                        .addOnFailureListener { e ->
+
+                                        override fun onUploadFailure(exception: Exception) {
                                             progressDialog.stop()
-                                            Toast.makeText(requireContext(),"addOnFailureListener: Error",Toast.LENGTH_SHORT).show()
-                                            Log.w(TAG, "Error adding document", e)
+                                            Log.w("$TAG : onUploadFailure", "Error adding document", exception)
+                                            Toast.makeText(requireContext(),"onUploadFailure: Error",Toast.LENGTH_SHORT).show()
                                         }
+                                    })
                                 }
-                                catch (ex:java.lang.Exception)
-                                {
-                                    Log.w("$TAG : uploadImageToFirebaseStorage", "Error uploadImageToFirebaseStorage", ex)
-                                }
+                            }
+                            .addOnFailureListener { e ->
+                                // Handle failure here
                             }
 
-                            override fun onUploadFailure(exception: Exception) {
-                                progressDialog.stop()
-                                Log.w("$TAG : onUploadFailure", "Error adding document", exception)
-                                Toast.makeText(requireContext(),"onUploadFailure: Error",Toast.LENGTH_SHORT).show()
-                            }
-                        })
 
                         /*db.collection("user_medicines").document(MediTrackUserReference.getUserId()).collection("medicine_data")
                             .add(medicineData)
@@ -785,7 +809,7 @@ class AddMedicineFragment : Fragment() {
     // Function to upload an image to Firebase Storage and provide the result via callback
     fun uploadImageToFirebaseStorage(imageUri: Uri, callback: UploadCallback) {
         val storageRef = fBase.getStorageReference()
-        val imagesRef = storageRef.child("images/${UUID.randomUUID()}")
+        val imagesRef = storageRef.child("user_medicine_images/${fBase.getUserId()}/${stringNormalize(viewModel.medName!!)}")
         val uploadTask = imagesRef.putFile(imageUri)
 
         uploadTask.continueWithTask { task ->

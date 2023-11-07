@@ -51,6 +51,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
     private lateinit var viewModel: OCRViewModel
     private lateinit var binding:FragmentOCRBinding
     private lateinit var recognizer: TextRecognizer
+    private var cameraOrientation:Int = 0
     private val TAG = "Testing"
     private val SAVED_TEXT_TAG = "SavedText"
 
@@ -156,6 +157,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
 
         binding.apply {
             extractTextButton.setOnClickListener {
+                cameraOrientation = camera.cameraInfo.sensorRotationDegrees ?: 0
                 when {
                     previewImage.visibility == View.VISIBLE -> {
                         savedBitmap = previewImage.drawable.toBitmap()
@@ -278,6 +280,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
                 }
                 //var filterOutput = UtilityFunction.filterFirstSecondThirdLargestRect(rectList)
                 var filterOutput = UtilityFunction.findNearlySimilarRectangles(rectList,0.9)
+
                 overlayView.setBoundingRects(filterOutput)
                 /*filterOutput?.let { (firstList, secondList, thirdList) ->
 

@@ -69,10 +69,19 @@
         android:id="@+id/userProfileFragment"
         android:name="com.example.meditrack.homeActivity.userprofile.UserProfileFragment"
         android:label="fragment_user_profile"
-        tools:layout="@layout/fragment_user_profile" />
+        tools:layout="@layout/fragment_user_profile" >
+        <action
+            android:id="@+id/action_userProfileFragment_to_updateProfileImageFragment"
+            app:destination="@id/updateProfileImageFragment" />
+    </fragment>
     <fragment
         android:id="@+id/aboutUsFragment"
         android:name="com.example.meditrack.homeActivity.about.AboutUsFragment"
         android:label="fragment_about_us"
         tools:layout="@layout/fragment_about_us" />
+    <fragment
+        android:id="@+id/updateProfileImageFragment"
+        android:name="com.example.meditrack.homeActivity.userprofile.updateprofileimage.UpdateProfileImageFragment"
+        android:label="fragment_update_profile_image"
+        tools:layout="@layout/fragment_update_profile_image" />
 </navigation>

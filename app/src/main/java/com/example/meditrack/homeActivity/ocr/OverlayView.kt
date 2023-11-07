@@ -48,6 +48,45 @@ class OverlayView(context: Context) : View(context) {
         selectedRects.clear()
         invalidate()
     }
+    fun setBoundingRects(rects: ArrayList<Pair<Rect, String>>, sensorRotation: Int) {
+        // Adjust the rectangles based on the sensor rotation
+        val adjustedRects = adjustRectsForOrientation(rects, sensorRotation)
+
+        // Set the adjusted rectangles for drawing
+        boundingRects = adjustedRects
+        selectedRects.clear()
+        invalidate()
+    }
+
+    private fun adjustRectsForOrientation(rects: ArrayList<Pair<Rect, String>>, sensorRotation: Int): ArrayList<Pair<Rect, String>> {
+        // Adjust the rectangle coordinates based on the sensor rotation
+        val adjustedRects = ArrayList<Pair<Rect, String>>()
+        for ((rect, text) in rects) {
+            val adjustedRect = when (sensorRotation) {
+                90 -> Rect(
+                    rect.top,
+                    height - rect.right,
+                    rect.bottom,
+                    height - rect.left
+                )
+                180 -> Rect(
+                    width - rect.right,
+                    height - rect.bottom,
+                    width - rect.left,
+                    height - rect.top
+                )
+                270 -> Rect(
+                    width - rect.bottom,
+                    rect.left,
+                    width - rect.top,
+                    rect.right
+                )
+                else -> Rect(rect)
+            }
+            adjustedRects.add(Pair(adjustedRect, text))
+        }
+        return adjustedRects
+    }
 
     fun clearOverlay() {
         boundingRects?.clear()

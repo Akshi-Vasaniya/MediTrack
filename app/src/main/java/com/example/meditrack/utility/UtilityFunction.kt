@@ -9,9 +9,9 @@ import androidx.core.content.FileProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.*
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.zip.GZIPOutputStream
 
 class UtilityFunction {
 
@@ -94,6 +94,29 @@ class UtilityFunction {
                 }
 
             }
+        }
+
+        fun stringNormalize(inputString: String):String{
+            return inputString.trim().replace(Regex("[\t ]+"), " ").replace(" ", "_")
+        }
+
+        fun stringCompress(inputString: String): String {
+            // Compress the long string
+            val compressedBytes = ByteArrayOutputStream().use { byteStream ->
+                GZIPOutputStream(byteStream).use { gzipStream ->
+                    gzipStream.write(inputString.toByteArray())
+                }
+                byteStream.toByteArray()
+            }
+
+            // Convert compressed bytes back to a string
+            return String(compressedBytes)
+        }
+
+        fun stringtobase64(inputString: String): String {
+            val trimmedLowerCaseString = inputString.trim().toLowerCase(Locale.getDefault())
+
+            return Base64.encodeToString(trimmedLowerCaseString.toByteArray(), Base64.DEFAULT)
         }
         suspend fun decodeBase64ToBitmap(base64String: String): Bitmap {
             return withContext(Dispatchers.IO){

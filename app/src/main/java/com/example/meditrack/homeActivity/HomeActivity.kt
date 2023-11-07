@@ -219,7 +219,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 R.id.addMedicineFragment,
                 R.id.medicineStockFragment,
                 R.id.userProfileFragment,
-                R.id.aboutUsFragment
+                R.id.aboutUsFragment,
+                R.id.updateProfileImageFragment
             )
         ).build()
 
