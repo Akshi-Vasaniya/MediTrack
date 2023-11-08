@@ -135,7 +135,7 @@ class UserProfileFragment : Fragment(), CustomDialog.CustomDialogListener {
                         binding.fragmentUserProfileEmailTextInputEditText.setText(it.email)
                     }
 
-                    if(!it?.profileImage.isNullOrBlank())
+                    if(it?.profileImage != null && it.profileImage!!.isNotEmpty() && it.profileImage!!.isNotBlank() && it.profileImage!="null")
                     {
                         //val bitmap = UtilityFunction.decodeBase64ToBitmap(it?.profileImage!!)
                         userProfileImgUrl = it?.profileImage!!
@@ -146,6 +146,10 @@ class UserProfileFragment : Fragment(), CustomDialog.CustomDialogListener {
                                 .into(binding.fragmentUserProfileProfileImage)
                             //binding.fragmentUserProfileProfileImage.setImageBitmap(bitmap)
                         }
+                    }
+                    else{
+                        val drawableResourceId = resources.getIdentifier("profilepic", "drawable", requireContext().packageName)
+                        binding.fragmentUserProfileProfileImage.setImageResource(drawableResourceId)
                     }
                 }
                 catch (ex:Exception)

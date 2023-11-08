@@ -21,9 +21,11 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.meditrack.R
+import com.example.meditrack.dataModel.dataClasses.UserData
 import com.example.meditrack.databinding.FragmentUpdateProfileImageBinding
 import com.example.meditrack.databinding.FragmentUserProfileBinding
 import com.example.meditrack.firebase.fBase
+import com.example.meditrack.homeActivity.HomeActivityViewModel
 import com.example.meditrack.utility.UtilityFunction
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.theartofdev.edmodo.cropper.CropImage
@@ -46,6 +48,7 @@ class UpdateProfileImageFragment : Fragment() {
     private lateinit var viewModel: UpdateProfileImageViewModel
     private lateinit var binding: FragmentUpdateProfileImageBinding
     private var profileImageUri:Uri? = null
+    private var imageDeleted:Boolean = false
     private lateinit var progressDialog: CustomProgressDialog
 
     override fun onCreateView(
@@ -57,10 +60,18 @@ class UpdateProfileImageFragment : Fragment() {
         progressDialog = CustomProgressDialog(requireContext())
         val receivedBundle = arguments
         if (receivedBundle != null) {
-            val data = receivedBundle.getString("profileImageUrl") // Replace "key" with your key
-            Glide.with(requireActivity())
-                .load(data)
-                .into(binding.imageViewProfile)
+            val data = receivedBundle.getString("profileImageUrl")
+
+            if(data!="null" && data!!.isNotBlank() && data.isNotEmpty()){
+                Glide.with(requireActivity())
+                    .load(data)
+                    .into(binding.imageViewProfile)
+            }
+            else{
+                profileImageUri=null
+                imageDeleted=false
+            }
+
             // Do something with the data
         }
         binding.btnSelectImage.setOnClickListener {
@@ -92,9 +103,15 @@ class UpdateProfileImageFragment : Fragment() {
 
 
         binding.btnRemoveImage.setOnClickListener {
-            val drawableResourceId = resources.getIdentifier("profilepic", "drawable", requireContext().packageName)
-            binding.imageViewProfile.setImageResource(drawableResourceId)
-            profileImageUri = getImageUriFromImageView(binding.imageViewProfile)
+            if (!imageDeleted)
+            {
+                val drawableResourceId = resources.getIdentifier("profilepic", "drawable", requireContext().packageName)
+                binding.imageViewProfile.setImageResource(drawableResourceId)
+                profileImageUri = null
+                imageDeleted = true
+            }
+
+            //profileImageUri = getImageUriFromImageView(binding.imageViewProfile)
 
         }
 
@@ -102,6 +119,7 @@ class UpdateProfileImageFragment : Fragment() {
             if (profileImageUri!=null)
             {
                 progressDialog.start("Updating....")
+
                 MainScope().launch(Dispatchers.IO) {
                     updateUserProfileImage(profileImageUri!!) { isSuccess, message ->
                         if (isSuccess) {
@@ -118,10 +136,43 @@ class UpdateProfileImageFragment : Fragment() {
                 }
 
             }else{
-                findNavController().popBackStack()
+                if (imageDeleted)
+                {
+                    progressDialog.start("Updating....")
+                    MainScope().launch(Dispatchers.IO) {
+                        deleteImageAndData(fBase.getUserId(), object : DeletionCallback{
+                            override fun onSuccess(message: String) {
+
+                                progressDialog.stop()
+                                findNavController().popBackStack()
+                            }
+
+                            override fun onFailure(errorMessage: String) {
+                                progressDialog.stop()
+                                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+                            }
+
+                        })
+                    }
+                }
+                else{
+                    findNavController().popBackStack()
+                }
             }
         }
         return view
+    }
+
+    interface DeletionCallback {
+        fun onSuccess(message: String)
+        fun onFailure(errorMessage: String)
+    }
+
+    private fun getHomeActivityViewModel(): HomeActivityViewModel? {
+        activity?.let {
+            return ViewModelProvider(it)[HomeActivityViewModel::class.java]
+        }
+        return null
     }
 
     // Function to get the Uri from ImageView
@@ -187,6 +238,7 @@ class UpdateProfileImageFragment : Fragment() {
                                 val bimapImage = UtilityFunction.uriToBitmap(requireActivity(), selectedImageUri)
                                 withContext(Dispatchers.Main){
                                     binding.imageViewProfile.setImageBitmap(bimapImage)
+                                    imageDeleted = false
                                 }
                             }
                             catch (ex:Exception)
@@ -242,6 +294,24 @@ class UpdateProfileImageFragment : Fragment() {
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
         startActivityForResult(intent, 102)
+    }
+
+    fun deleteImageAndData(userID: String, deletionCallback: DeletionCallback) {
+        val storageRef = fBase.getStorageReference()
+        val imageRef = storageRef.child("userProfileImage/$userID")
+
+        // Delete the image from the Firebase Storage
+        imageRef.delete().addOnSuccessListener {
+            // If image deletion is successful, delete the corresponding data from the Realtime Database
+            val databaseRef = fBase.getUserReference().child(userID)
+            databaseRef.child("profileImage").removeValue().addOnSuccessListener {
+                deletionCallback.onSuccess("Image and corresponding data deleted successfully.")
+            }.addOnFailureListener {
+                deletionCallback.onFailure("Failed to delete corresponding data from the database: $it")
+            }
+        }.addOnFailureListener {
+            deletionCallback.onFailure("Failed to delete the image from the storage: $it")
+        }
     }
 
     fun updateUserProfileImage(imageUri: Uri, callback: (Boolean, String) -> Unit) {

@@ -38,6 +38,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.log
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var navController: NavController
@@ -151,11 +152,12 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         binding.menuLayout.profileImage.setImageBitmap(null)*/
                     }
 
-                    if(!it?.profileImage.isNullOrBlank())
+                    if(it?.profileImage != null && it.profileImage!!.isNotEmpty() && it.profileImage!!.isNotBlank() && it.profileImage!="null")
                     {
                         //val bitmap = UtilityFunction.decodeBase64ToBitmap(it?.profileImage!!)
 
                         /*bitmap = getCircularBitmap(bitmap)*/
+                        Log.i("Profile Image URL: ","${it.profileImage}")
                         withContext(Dispatchers.Main)
                         {
                             /*val parentView = binding.menuLayout.profileImage.parent as View
@@ -166,10 +168,14 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             parentView.requestLayout()
                             binding.menuLayout.profileImage.setImageBitmap(bitmap)*/
                             Glide.with(this@HomeActivity)
-                                .load(it?.profileImage!!)
+                                .load(it.profileImage!!)
                                 .into(userImage!!)
                             //userImage!!.setImageBitmap(bitmap)
                         }
+                    }
+                    else{
+                        val drawableResourceId = resources.getIdentifier("profilepic", "drawable", packageName)
+                        userImage!!.setImageResource(drawableResourceId)
                     }
                 }
                 catch (ex:Exception)
