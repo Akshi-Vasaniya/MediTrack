@@ -19,6 +19,8 @@ import com.example.meditrack.adapter.MedicineStockItemAdapter
 import com.example.meditrack.dataModel.ItemsViewModel
 import com.example.meditrack.databinding.FragmentMedicineStockBinding
 import com.example.meditrack.firebase.fBase
+import com.example.meditrack.homeActivity.medicine.addMedicine.AddMedicineViewModel
+import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -45,6 +47,7 @@ class MedicineStockFragment : Fragment() {
 
     private lateinit var viewModel: MedicineStockViewModel
     private lateinit var binding: FragmentMedicineStockBinding
+    private lateinit var progressDialog: CustomProgressDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,7 +55,8 @@ class MedicineStockFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_medicine_stock, container, false)
         binding = FragmentMedicineStockBinding.bind(view)
-
+        viewModel = ViewModelProvider(this)[MedicineStockViewModel::class.java]
+        progressDialog = CustomProgressDialog(requireContext())
         medicineList.clear()
         // Drop Down
         val items = arrayOf("Inventory", "Expired", "Deleted")
@@ -256,11 +260,6 @@ class MedicineStockFragment : Fragment() {
         }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(MedicineStockViewModel::class.java)
-        // TODO: Use the ViewModel
-    }
 
 }
 

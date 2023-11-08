@@ -39,9 +39,12 @@ class LoginFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+        val view  = inflater.inflate(R.layout.fragment_login, container, false)
+        binding = FragmentLoginBinding.bind(view)
         viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
-        return inflater.inflate(R.layout.fragment_login, container, false)
+        progressDialog= CustomProgressDialog(requireActivity())
+        return binding.root
     }
 
     override fun onResume() {
@@ -56,8 +59,6 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = FragmentLoginBinding.bind(view)
-        progressDialog= CustomProgressDialog(requireActivity())
 
         binding.fragmentLoginRegisterAccountText.setOnClickListener {
             binding.fragmentLoginEmailTextInputEditText.text!!.clear()

@@ -27,9 +27,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.meditrack.R
 import com.example.meditrack.databinding.FragmentOCRBinding
+import com.example.meditrack.databinding.FragmentSplashBinding
 import com.example.meditrack.homeActivity.home.HomeViewModel
 import com.example.meditrack.homeActivity.medicine.addMedicine.AddMedicineFragment
 import com.example.meditrack.utility.UtilityFunction
+import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
@@ -65,23 +67,27 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
 
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var overlayView: OverlayView
+    private lateinit var progressDialog: CustomProgressDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val view = inflater.inflate(R.layout.fragment_o_c_r, container, false)
+        viewModel = ViewModelProvider(this)[OCRViewModel::class.java]
+        binding = FragmentOCRBinding.bind(view)
+        progressDialog = CustomProgressDialog(requireContext())
+
         overlayView = OverlayView(requireContext())
         overlayView.overlaySelectionListener = this
         val frameLayout: ViewGroup = view!!.findViewById(R.id.camera_fragment_layout) // Replace with your layout id
         frameLayout.addView(overlayView)
-        viewModel = ViewModelProvider(this)[OCRViewModel::class.java]
-        return view
+
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = FragmentOCRBinding.bind(view)
 
         if (savedInstanceState != null) {
             val savedText = savedInstanceState.getString(SAVED_TEXT_TAG)

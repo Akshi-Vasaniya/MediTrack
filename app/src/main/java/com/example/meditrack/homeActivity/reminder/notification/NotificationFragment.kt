@@ -13,22 +13,28 @@ import android.widget.Button
 import com.example.meditrack.R
 import com.example.meditrack.databinding.FragmentNotificationBinding
 import com.example.meditrack.homeActivity.home.HomeViewModel
+import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class NotificationFragment : Fragment() {
-    private lateinit var binding: FragmentNotificationBinding
+
 
     companion object {
         fun newInstance() = NotificationFragment()
     }
 
     private lateinit var viewModel: NotificationViewModel
+    private lateinit var binding: FragmentNotificationBinding
+    private lateinit var progressDialog: CustomProgressDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val view = inflater.inflate(R.layout.fragment_notification, container, false)
+        viewModel = ViewModelProvider(this).get(NotificationViewModel::class.java)
+        binding = FragmentNotificationBinding.bind(view)
+        progressDialog = CustomProgressDialog(requireContext())
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -49,12 +55,12 @@ class NotificationFragment : Fragment() {
             dialog.show(childFragmentManager, "MedicineReminderDialog")
         }
 
-        return view
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(NotificationViewModel::class.java)
+
 
 
     }

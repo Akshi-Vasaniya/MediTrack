@@ -2,9 +2,11 @@ package com.example.meditrack.utility
 
 import android.content.Context
 import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.util.Base64
 import android.util.Log
+import android.widget.ImageView
 import androidx.core.content.FileProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -232,6 +234,23 @@ class UtilityFunction {
                 e.printStackTrace()
                 null
             }
+        }
+
+        // Function to get the Uri from ImageView
+        fun getImageUriFromImageView(context: Context,imageView: ImageView): Uri? {
+            val bitmap = (imageView.drawable as BitmapDrawable).bitmap
+            var imageUri: Uri? = null
+            try {
+                val file = File(context.externalCacheDir, "${UUID.randomUUID()}.jpg")
+                val fOut = FileOutputStream(file)
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut)
+                fOut.flush()
+                fOut.close()
+                imageUri = Uri.fromFile(file)
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+            return imageUri
         }
     }
 }

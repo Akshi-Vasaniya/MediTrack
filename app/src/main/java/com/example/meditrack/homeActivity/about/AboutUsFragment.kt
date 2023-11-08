@@ -17,6 +17,7 @@ import com.example.meditrack.databinding.FragmentAboutUsBinding
 import com.example.meditrack.databinding.FragmentAddMedicineBinding
 import com.example.meditrack.firebase.fBase
 import com.example.meditrack.homeActivity.medicine.addMedicine.AddMedicineViewModel
+import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -30,14 +31,16 @@ class AboutUsFragment : Fragment() {
 
     private lateinit var viewModel: AboutUsViewModel
     lateinit var binding:FragmentAboutUsBinding
+    private lateinit var progressDialog: CustomProgressDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        //val view = inflater.inflate(R.layout.fragment_about_us, container, false)
-        binding = FragmentAboutUsBinding.inflate(inflater, container, false)
+    ): View {
+        val view = inflater.inflate(R.layout.fragment_about_us, container, false)
+        binding = FragmentAboutUsBinding.bind(view)
         viewModel = ViewModelProvider(this)[AboutUsViewModel::class.java]
+        progressDialog = CustomProgressDialog(requireContext())
 
         binding.apply {
 

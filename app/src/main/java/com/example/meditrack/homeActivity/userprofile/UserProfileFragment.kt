@@ -59,21 +59,16 @@ class UserProfileFragment : Fragment(), CustomDialog.CustomDialogListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val view = inflater.inflate(R.layout.fragment_user_profile, container, false)
-
         binding = FragmentUserProfileBinding.bind(view)
-
-        return view
+        viewModel = ViewModelProvider(this)[UserProfileViewModel::class.java]
+        progressDialog= CustomProgressDialog(requireActivity())
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = FragmentUserProfileBinding.bind(view)
-        viewModel = ViewModelProvider(this)[UserProfileViewModel::class.java]
-        progressDialog= CustomProgressDialog(requireActivity())
-
-
 
         binding.apply {
             editNameButton.setOnClickListener {

@@ -54,156 +54,124 @@ class UpdateProfileImageFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val view = inflater.inflate(R.layout.fragment_update_profile_image, container, false)
         binding = FragmentUpdateProfileImageBinding.bind(view)
+        viewModel = ViewModelProvider(this)[UpdateProfileImageViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
-        val receivedBundle = arguments
-        if (receivedBundle != null) {
-            val data = receivedBundle.getString("profileImageUrl")
 
-            if(data!="null" && data!!.isNotBlank() && data.isNotEmpty()){
-                Glide.with(requireActivity())
-                    .load(data)
-                    .into(binding.imageViewProfile)
-            }
-            else{
-                profileImageUri=null
-                imageDeleted=false
-            }
+        return binding.root
+    }
 
-            // Do something with the data
-        }
-        binding.btnSelectImage.setOnClickListener {
-            if (checkPermission()) {
-                getContent.launch("image/*")
-            } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                    requestPermissions(
-                        arrayOf(
-                            android.Manifest.permission.CAMERA,
-                            android.Manifest.permission.READ_MEDIA_IMAGES
-                        ),
-                        101
-                    )
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.apply {
+            val receivedBundle = arguments
+            if (receivedBundle != null) {
+                val data = receivedBundle.getString("profileImageUrl")
+
+                if(data!="null" && data!!.isNotBlank() && data.isNotEmpty()){
+                    Glide.with(requireActivity())
+                        .load(data)
+                        .into(imageViewProfile)
                 }
                 else{
-                    requestPermissions(
-                        arrayOf(
-                            android.Manifest.permission.CAMERA,
-                            android.Manifest.permission.READ_EXTERNAL_STORAGE
-                        ),
-                        101
-                    )
+                    profileImageUri=null
+                    imageDeleted=false
                 }
 
-            }
-        }
-
-
-
-        binding.btnRemoveImage.setOnClickListener {
-            if (!imageDeleted)
-            {
-                val drawableResourceId = resources.getIdentifier("profilepic", "drawable", requireContext().packageName)
-                binding.imageViewProfile.setImageResource(drawableResourceId)
-                profileImageUri = null
-                imageDeleted = true
+                // Do something with the data
             }
 
-            //profileImageUri = getImageUriFromImageView(binding.imageViewProfile)
-
-        }
-
-        binding.btnSave.setOnClickListener {
-            if (profileImageUri!=null)
-            {
-                progressDialog.start("Updating....")
-
-                MainScope().launch(Dispatchers.IO) {
-                    updateUserProfileImage(profileImageUri!!) { isSuccess, message ->
-                        if (isSuccess) {
-                            // Handle success
-                            progressDialog.stop()
-                            findNavController().popBackStack()
-                            //Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-                        } else {
-                            // Handle failure
-                            progressDialog.stop()
-                            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-                        }
+            btnSelectImage.setOnClickListener {
+                if (checkPermission()) {
+                    getContent.launch("image/*")
+                } else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                        requestPermissions(
+                            arrayOf(
+                                android.Manifest.permission.CAMERA,
+                                android.Manifest.permission.READ_MEDIA_IMAGES
+                            ),
+                            101
+                        )
                     }
+                    else{
+                        requestPermissions(
+                            arrayOf(
+                                android.Manifest.permission.CAMERA,
+                                android.Manifest.permission.READ_EXTERNAL_STORAGE
+                            ),
+                            101
+                        )
+                    }
+
+                }
+            }
+
+            btnRemoveImage.setOnClickListener {
+                if (!imageDeleted)
+                {
+                    val drawableResourceId = resources.getIdentifier("profilepic", "drawable", requireContext().packageName)
+                    imageViewProfile.setImageResource(drawableResourceId)
+                    profileImageUri = null
+                    imageDeleted = true
                 }
 
-            }else{
-                if (imageDeleted)
+                //profileImageUri = getImageUriFromImageView(binding.imageViewProfile)
+
+            }
+
+            btnSave.setOnClickListener {
+                if (profileImageUri!=null)
                 {
                     progressDialog.start("Updating....")
-                    MainScope().launch(Dispatchers.IO) {
-                        deleteImageAndData(fBase.getUserId(), object : DeletionCallback{
-                            override fun onSuccess(message: String) {
 
+                    MainScope().launch(Dispatchers.IO) {
+                        updateUserProfileImage(profileImageUri!!) { isSuccess, message ->
+                            if (isSuccess) {
+                                // Handle success
                                 progressDialog.stop()
                                 findNavController().popBackStack()
-                            }
-
-                            override fun onFailure(errorMessage: String) {
+                                //Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                            } else {
+                                // Handle failure
                                 progressDialog.stop()
-                                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+                                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
                             }
+                        }
+                    }
 
-                        })
+                }else{
+                    if (imageDeleted)
+                    {
+                        progressDialog.start("Updating....")
+                        MainScope().launch(Dispatchers.IO) {
+                            deleteImageAndData(fBase.getUserId(), object : DeletionCallback{
+                                override fun onSuccess(message: String) {
+
+                                    progressDialog.stop()
+                                    findNavController().popBackStack()
+                                }
+
+                                override fun onFailure(errorMessage: String) {
+                                    progressDialog.stop()
+                                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+                                }
+
+                            })
+                        }
+                    }
+                    else{
+                        findNavController().popBackStack()
                     }
                 }
-                else{
-                    findNavController().popBackStack()
-                }
             }
         }
-        return view
+
     }
 
-    interface DeletionCallback {
-        fun onSuccess(message: String)
-        fun onFailure(errorMessage: String)
-    }
-
-    private fun getHomeActivityViewModel(): HomeActivityViewModel? {
-        activity?.let {
-            return ViewModelProvider(it)[HomeActivityViewModel::class.java]
-        }
-        return null
-    }
-
-    // Function to get the Uri from ImageView
-    fun getImageUriFromImageView(imageView: ImageView): Uri? {
-        val bitmap = (imageView.drawable as BitmapDrawable).bitmap
-        var imageUri: Uri? = null
-        try {
-            val file = File(requireContext().externalCacheDir, "${UUID.randomUUID()}.jpg")
-            val fOut = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut)
-            fOut.flush()
-            fOut.close()
-            imageUri = Uri.fromFile(file)
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        return imageUri
-    }
-
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == 101) {
-            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                getContent.launch("image/*")
-            }
-        }
-    }
 
     private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         try {
@@ -290,12 +258,22 @@ class UpdateProfileImageFragment : Fragment() {
 
     }
 
-    private fun openImagePicker() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        startActivityForResult(intent, 102)
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == 101) {
+            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                getContent.launch("image/*")
+            }
+        }
     }
 
+    interface DeletionCallback {
+        fun onSuccess(message: String)
+        fun onFailure(errorMessage: String)
+    }
     fun deleteImageAndData(userID: String, deletionCallback: DeletionCallback) {
         val storageRef = fBase.getStorageReference()
         val imageRef = storageRef.child("userProfileImage/$userID")

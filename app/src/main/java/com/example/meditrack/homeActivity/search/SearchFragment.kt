@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.meditrack.R
 import com.example.meditrack.adapter.SearchItemAdapter
 import com.example.meditrack.dataModel.dataClasses.SearchItemData
@@ -35,15 +36,18 @@ class SearchFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_search, container, false)
+        val view = inflater.inflate(R.layout.fragment_search, container, false)
+        binding=FragmentSearchBinding.bind(view)
+        viewModel = ViewModelProvider(this)[SearchViewModel::class.java]
+        progressDialog= CustomProgressDialog(requireActivity())
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding=FragmentSearchBinding.bind(view)
-        progressDialog= CustomProgressDialog(requireActivity())
-        binding.outputText.text = ""
+
         binding.apply {
+            outputText.text = ""
             fragmentSearchButton.setOnClickListener {
                 val searchText = fragmentSearchTextTextInputEditText.text.toString()
                 MainScope().launch(Dispatchers.IO) {

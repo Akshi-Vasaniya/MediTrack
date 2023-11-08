@@ -18,9 +18,10 @@ import com.example.meditrack.R
 @SuppressLint("InflateParams")
 class CustomProgressDialog(context: Context) {
 
-    private var dialog: CustomDialog
+    //private var dialog: CustomDialog
     private var cpTitle: TextView
     private var progressBar: ProgressBar
+    private var dialog: CustomDialog
 
     fun start(title: String = "") {
         cpTitle.text = title

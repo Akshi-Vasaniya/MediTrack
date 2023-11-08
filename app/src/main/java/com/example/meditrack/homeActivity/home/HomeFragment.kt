@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.caverock.androidsvg.SVG
 import com.example.meditrack.R
 import com.example.meditrack.databinding.FragmentHomeBinding
+import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -24,25 +25,28 @@ class HomeFragment : Fragment() {
     private lateinit var binding:FragmentHomeBinding
     //private lateinit var homeActivity: HomeActivity
     private val homeTag = "HomeFragment"
+    private lateinit var progressDialog: CustomProgressDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         /*if (context is HomeActivity) {
             homeActivity = context as HomeActivity
         } else {
             throw IllegalStateException("Parent activity must be HomeActivity")
         }*/
+        val view = inflater.inflate(R.layout.fragment_home, container, false)
+        binding = FragmentHomeBinding.bind(view)
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+        progressDialog = CustomProgressDialog(requireContext())
 
-
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = FragmentHomeBinding.bind(view)
+
 
         //homeActivity.getToolbarMenuLayout().visibility = View.VISIBLE
 

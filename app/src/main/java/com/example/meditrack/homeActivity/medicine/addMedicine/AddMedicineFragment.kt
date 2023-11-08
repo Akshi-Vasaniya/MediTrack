@@ -1,6 +1,8 @@
 package com.example.meditrack.homeActivity.medicine.addMedicine
 
+import android.app.AlertDialog
 import android.app.Dialog
+import android.app.ProgressDialog
 import android.graphics.Bitmap
 import android.graphics.Rect
 import android.net.Uri
@@ -13,7 +15,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ImageButton
+import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -22,35 +26,33 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.meditrack.R
 import com.example.meditrack.adapter.MedicineTypeItemAdapter
+import com.example.meditrack.dataModel.api.ApiInstance
 import com.example.meditrack.dataModel.dataClasses.MedicineData
 import com.example.meditrack.dataModel.enumClasses.medicine.MedicineFrequency
 import com.example.meditrack.dataModel.enumClasses.medicine.MedicineTimeOfDayType1
-import com.example.meditrack.dataModel.enumClasses.medicine.MedicineTimeOfDayType2
 import com.example.meditrack.dataModel.enumClasses.medicine.MedicineType
 import com.example.meditrack.databinding.FragmentAddMedicineBinding
 import com.example.meditrack.firebase.fBase
+import com.example.meditrack.homeActivity.reminder.notification.MedicineReminderDialog
 import com.example.meditrack.regularExpression.ListPattern
 import com.example.meditrack.regularExpression.MatchPattern.Companion.validate
-import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
-import com.example.meditrack.utility.ownDialogs.MonthYearPickerDialog
 import com.example.meditrack.utility.UtilityFunction
 import com.example.meditrack.utility.UtilityFunction.Companion.bitmapToUri
+import com.example.meditrack.utility.UtilityFunction.Companion.getCurrentDate
+import com.example.meditrack.utility.UtilityFunction.Companion.getCurrentTime
+import com.example.meditrack.utility.UtilityFunction.Companion.stringNormalize
+import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
+import com.example.meditrack.utility.ownDialogs.MonthYearPickerDialog
 import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
-import com.google.android.material.textfield.TextInputEditText
+import com.google.gson.JsonElement
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
-import kotlin.collections.ArrayList
-import com.example.meditrack.homeActivity.medicine.addMedicine.AddMedicineFragment
-import com.example.meditrack.homeActivity.reminder.notification.MedicineReminderDialog
-import com.example.meditrack.utility.UtilityFunction.Companion.getCurrentDate
-import com.example.meditrack.utility.UtilityFunction.Companion.getCurrentTime
-import com.example.meditrack.utility.UtilityFunction.Companion.stringCompress
-import com.example.meditrack.utility.UtilityFunction.Companion.stringNormalize
-import com.example.meditrack.utility.UtilityFunction.Companion.stringtobase64
 
 
 class AddMedicineFragment : Fragment() {
@@ -85,11 +87,11 @@ class AddMedicineFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        //val view = inflater.inflate(R.layout.fragment_add_medicine, container, false)
-        binding = FragmentAddMedicineBinding.inflate(inflater, container, false)
+    ): View {
+        val view = inflater.inflate(R.layout.fragment_add_medicine, container, false)
+        binding = FragmentAddMedicineBinding.bind(view)
         viewModel = ViewModelProvider(this)[AddMedicineViewModel::class.java]
-
+        progressDialog = CustomProgressDialog(requireContext())
 
         /*val autoCompleteTextView = view.findViewById<AutoCompleteTextView>(R.id.fragment_week_days_TextInputEditText)
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, viewModel.weekDayItems)
@@ -99,6 +101,55 @@ class AddMedicineFragment : Fragment() {
             viewModel.selectedWeekDayItem = viewModel.weekDayItems[position]
             binding.fragmentWeekDaysTextInputLayout.helperText=null
         }*/
+
+
+        /*progressDialog.start("Loading......")
+        MainScope().launch(Dispatchers.IO) {
+            val response = ApiInstance.api.insertDocument("Cetrizine")
+            response.enqueue(object : Callback<JsonElement> {
+                override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                    progressDialog.stop()
+                    val res = response.body()!!.asJsonObject
+                    val builder = AlertDialog.Builder(requireActivity())
+                    builder.setCancelable(true)
+                    builder.setMessage(res.toString())
+                    builder.setTitle("Response Success")
+                    val alertDialog: AlertDialog = builder.create()
+                    alertDialog.show()
+                }
+
+                override fun onFailure(call: Call<JsonElement>, t: Throwable) {
+                    progressDialog.stop()
+                    Log.i("onFailure: ",t.message.toString())
+                    val builder = AlertDialog.Builder(requireActivity())
+                    builder.setCancelable(true)
+                    builder.setMessage(t.message)
+                    builder.setTitle("Error !")
+                    val alertDialog: AlertDialog = builder.create()
+                    alertDialog.show()
+
+                }
+
+            })
+        }*/
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        cardView = binding.additionalView
+        hiddenView = binding.hiddenView
+
+        // Get the Bundle from arguments
+        val bundle = arguments
+
+        // Retrieve the bitmap from the Bundle
+        viewModel.bimapMedImage = bundle?.getParcelable<Bitmap>("bitmap")
+
+        // Retrieve the ArrayList from the Bundle
+        viewModel.selectedTextArray = bundle?.getSerializable("arrayList") as ArrayList<Pair<Rect,String>>?
 
         binding.apply {
             for (tag in viewModel.weekDayItems) {
@@ -312,6 +363,52 @@ class AddMedicineFragment : Fragment() {
                 medicineTimeofDayType2ChipGroup.addView(chip)
             }
 
+            if(viewModel.bimapMedImage!=null)
+            {
+                medicineImage.setImageBitmap(viewModel.bimapMedImage)
+            }
+            try {
+                viewModel.medName=""
+                viewModel.selectedTextArray!!.forEach {
+                    viewModel.medName += it.second
+                }
+                viewModel.medName = viewModel.medName!!.trim()
+                viewModel.medName = viewModel.medName!!.replace("\n"," ")
+                fragmentMedicineNameTextInputEditText.setText(viewModel.medName)
+                fragmentMedicineNameTextInputLayout.helperText=null
+            }catch (e:java.lang.NullPointerException)
+            {
+                viewModel.medName=null
+                e.printStackTrace()
+            }
+
+
+            /*homeActivity.getToolbarMenuLayout().visibility = View.GONE*/
+
+            val dialog = Dialog(requireContext())
+            dialog.setContentView(R.layout.medicine_type_info_dialog_layout)
+
+            val closeButton = dialog.findViewById<ImageButton>(R.id.closeButton)
+            closeButton.setOnClickListener { dialog.dismiss() }
+
+            val recyclerView = dialog.findViewById<RecyclerView>(R.id.recyclerView)
+
+            val medicineDataList = mutableListOf<Pair<String, String>>()
+            val medicineTypes = MedicineType.values()
+            for (type in medicineTypes) {
+                val name = type.name.replace("_", " ")
+                val description = type.getDescription(requireContext())
+                medicineDataList.add(Pair(name, description))
+            }
+
+            val adapter = MedicineTypeItemAdapter(medicineDataList)
+            recyclerView.layoutManager = LinearLayoutManager(requireContext())
+            recyclerView.adapter = adapter
+
+            // Add animation
+            dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
+
+
 
             fragmentMedicineStartdateTextInputEditText.setOnClickListener {
                 MonthYearPickerDialog().also {
@@ -339,6 +436,7 @@ class AddMedicineFragment : Fragment() {
                 }
                 //mfgDatePicker()
             }
+
             fragmentMedicineExpirydateTextInputEditText.setOnClickListener {
                 MonthYearPickerDialog().also {
                     it.setListener { _, year, month, _ ->
@@ -365,65 +463,21 @@ class AddMedicineFragment : Fragment() {
                 }
                 /*expiryDatePickerDialog()*/
             }
-        }
 
-
-
-
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        binding = FragmentAddMedicineBinding.bind(view)
-        progressDialog= CustomProgressDialog(requireActivity())
-
-        cardView = binding.additionalView
-        hiddenView = binding.hiddenView
-
-        // Get the Bundle from arguments
-        val bundle = arguments
-
-        // Retrieve the bitmap from the Bundle
-        viewModel.bimapMedImage = bundle?.getParcelable<Bitmap>("bitmap")
-
-        // Retrieve the ArrayList from the Bundle
-        viewModel.selectedTextArray = bundle?.getSerializable("arrayList") as ArrayList<Pair<Rect,String>>?
-
-        if(viewModel.bimapMedImage!=null)
-        {
-            binding.medicineImage.setImageBitmap(viewModel.bimapMedImage)
-        }
-        try {
-            viewModel.medName=""
-            viewModel.selectedTextArray!!.forEach {
-                viewModel.medName += it.second
+            fixedLayout.setOnClickListener {
+                showAditionalDetails()
             }
-            viewModel.medName = viewModel.medName!!.trim()
-            viewModel.medName = viewModel.medName!!.replace("\n"," ")
-            binding.fragmentMedicineNameTextInputEditText.setText(viewModel.medName)
-            binding.fragmentMedicineNameTextInputLayout.helperText=null
-        }catch (e:java.lang.NullPointerException)
-        {
-            viewModel.medName=null
-            e.printStackTrace()
-        }
 
+            arrowButton.setOnClickListener {
+                showAditionalDetails()
+            }
 
-
-        binding.fixedLayout.setOnClickListener {
-            showAditionalDetails()
-        }
-        binding.arrowButton.setOnClickListener {
-            showAditionalDetails()
-        }
-
-        /*homeActivity.getToolbarMenuLayout().visibility = View.GONE*/
-
-        binding.apply {
             medicineImage.setOnClickListener {
                 findNavController().navigate(R.id.OCRFragment)
+            }
+
+            medTypeInfo.setOnClickListener {
+                dialog.show()
             }
 
             fragmentMedicineNameTextInputEditText.addTextChangedListener(object : TextWatcher {
@@ -755,34 +809,13 @@ class AddMedicineFragment : Fragment() {
                     }
                 }
             }
-
-            val dialog = Dialog(requireContext())
-            dialog.setContentView(R.layout.medicine_type_info_dialog_layout)
-
-            val closeButton = dialog.findViewById<ImageButton>(R.id.closeButton)
-            closeButton.setOnClickListener { dialog.dismiss() }
-
-            val recyclerView = dialog.findViewById<RecyclerView>(R.id.recyclerView)
-
-            val medicineDataList = mutableListOf<Pair<String, String>>()
-            val medicineTypes = MedicineType.values()
-            for (type in medicineTypes) {
-                val name = type.name.replace("_", " ")
-                val description = type.getDescription(requireContext())
-                medicineDataList.add(Pair(name, description))
-            }
-
-            val adapter = MedicineTypeItemAdapter(medicineDataList)
-            recyclerView.layoutManager = LinearLayoutManager(requireContext())
-            recyclerView.adapter = adapter
-
-            // Add animation
-            dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
-
-            medTypeInfo.setOnClickListener {
-                dialog.show()
-            }
         }
+    }
+
+    // Callback interface for upload result
+    interface UploadCallback {
+        fun onUploadSuccess(downloadUrl: String)
+        fun onUploadFailure(exception: Exception)
     }
 
     fun showAditionalDetails()
@@ -800,11 +833,7 @@ class AddMedicineFragment : Fragment() {
     }
 
 
-    // Callback interface for upload result
-    interface UploadCallback {
-        fun onUploadSuccess(downloadUrl: String)
-        fun onUploadFailure(exception: Exception)
-    }
+
 
     // Function to upload an image to Firebase Storage and provide the result via callback
     fun uploadImageToFirebaseStorage(imageUri: Uri, callback: UploadCallback) {
@@ -828,6 +857,25 @@ class AddMedicineFragment : Fragment() {
                 task.exception?.let { callback.onUploadFailure(it) }
             }
         }
+    }
+
+    fun validateInput():Boolean{
+        return binding.fragmentMedicineNameTextInputLayout.helperText==null &&
+                binding.fragmentMedicineStartdateTextInputLayout.helperText==null &&
+                binding.fragmentMedicineExpirydateTextInputLayout.helperText==null &&
+                binding.fragmentDosageInfoTextInputLayout.helperText==null &&
+                binding.fragmentMedicineQuantityTextInputLayout.helperText==null &&
+                viewModel.medName!=null &&
+                viewModel.dosage!=null &&
+                viewModel.medQuantity!=null &&
+                viewModel.selectedMedTypeTags!=null &&
+                (((viewModel.selectedMedTypeTags== MedicineType.Drops || viewModel.selectedMedTypeTags== MedicineType.Topical)
+                        && viewModel.selectedMedicineTimeOfDayType2.isNotEmpty())
+                        ||
+                        ((viewModel.selectedMedTypeTags!= MedicineType.Drops && viewModel.selectedMedTypeTags!= MedicineType.Topical)
+                                && viewModel.selectedMedicineTimeOfDayType1.isNotEmpty()))
+                &&
+                (viewModel.selectedfreqTags== MedicineFrequency.DAILY || (viewModel.selectedfreqTags== MedicineFrequency.WEEKLY && viewModel.selectedWeekDayItem.isNotEmpty()))
     }
 
     /*fun expiryDatePickerDialog() {
@@ -887,23 +935,6 @@ class AddMedicineFragment : Fragment() {
         datePickerDialog.show()
     }*/
 
-    fun validateInput():Boolean{
-        return binding.fragmentMedicineNameTextInputLayout.helperText==null &&
-                binding.fragmentMedicineStartdateTextInputLayout.helperText==null &&
-                binding.fragmentMedicineExpirydateTextInputLayout.helperText==null &&
-                binding.fragmentDosageInfoTextInputLayout.helperText==null &&
-                binding.fragmentMedicineQuantityTextInputLayout.helperText==null &&
-                viewModel.medName!=null &&
-                viewModel.dosage!=null &&
-                viewModel.medQuantity!=null &&
-                viewModel.selectedMedTypeTags!=null &&
-                (((viewModel.selectedMedTypeTags== MedicineType.Drops || viewModel.selectedMedTypeTags== MedicineType.Topical)
-                        && viewModel.selectedMedicineTimeOfDayType2.isNotEmpty())
-                        ||
-                        ((viewModel.selectedMedTypeTags!= MedicineType.Drops && viewModel.selectedMedTypeTags!= MedicineType.Topical)
-                                && viewModel.selectedMedicineTimeOfDayType1.isNotEmpty()))
-                &&
-                (viewModel.selectedfreqTags== MedicineFrequency.DAILY || (viewModel.selectedfreqTags== MedicineFrequency.WEEKLY && viewModel.selectedWeekDayItem.isNotEmpty()))
-    }
+
 
 }

@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.meditrack.R
 import com.example.meditrack.databinding.FragmentSplashBinding
+import com.example.meditrack.firebase.fBase
 import com.example.meditrack.homeActivity.HomeActivity
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
@@ -44,21 +45,19 @@ class SplashFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         val view = inflater.inflate(R.layout.fragment_splash, container, false)
-
+        binding = FragmentSplashBinding.bind(view)
         viewModel = ViewModelProvider(this)[SplashViewModel::class.java]
 
-        return view
+        return binding.root
 
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        binding = FragmentSplashBinding.bind(view)
-
-        firebaseAuth=FirebaseAuth.getInstance()
+        firebaseAuth=fBase.getFireBaseAuth()
 
         binding.mediIcon.setSVG(viewModel.getAppSVG(resources))
 

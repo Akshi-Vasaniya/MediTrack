@@ -62,10 +62,12 @@ class RegistrationFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+        val view = inflater.inflate(R.layout.fragment_registration, container, false)
         viewModel = ViewModelProvider(this)[RegistrationViewModel::class.java]
-
-        return inflater.inflate(R.layout.fragment_registration, container, false)
+        binding = FragmentRegistrationBinding.bind(view)
+        progressDialog= CustomProgressDialog(requireActivity())
+        return binding.root
     }
 
     override fun onResume() {
@@ -81,8 +83,7 @@ class RegistrationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = FragmentRegistrationBinding.bind(view)
-        progressDialog= CustomProgressDialog(requireActivity())
+
 
         binding.fragmentRegistrationLoginAccountText.setOnClickListener {
             findNavController().popBackStack()
