@@ -1,5 +1,6 @@
 package com.example.meditrack.mainActivity.register
 
+import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -14,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -35,6 +37,8 @@ import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.example.meditrack.utility.UtilityFunction
 import com.example.meditrack.utility.UtilityFunction.Companion.bitmapToBase64
 import com.example.meditrack.utility.UtilityFunction.Companion.uriToBitmap
+import com.theartofdev.edmodo.cropper.CropImage
+import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -299,7 +303,8 @@ class RegistrationFragment : Fragment() {
 
             profileImage.setOnClickListener {
                 if (checkPermission()) {
-                    openImagePicker()
+                    //openImagePicker()
+                    getContent.launch("image/*")
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
                         requestPermissions(
@@ -322,6 +327,23 @@ class RegistrationFragment : Fragment() {
 
                 }
             }
+        }
+    }
+    private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        try {
+            if(uri!=null)
+            {
+                CropImage.activity(uri)
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setAllowRotation(true)
+                    .setMultiTouchEnabled(true)
+                    .setAspectRatio(1,1)
+                    .start(requireActivity(),this)
+            }
+        }
+        catch (ex:Exception)
+        {
+            Log.i("OCR Select Image","${ex.message}")
         }
     }
 
@@ -400,43 +422,79 @@ class RegistrationFragment : Fragment() {
     ) {
         if (requestCode == 101) {
             if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                openImagePicker()
+                //openImagePicker()
+                getContent.launch("image/*")
             }
         }
-    }
-
-    private fun openImagePicker() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        startActivityForResult(intent, 102)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 102 && resultCode == RESULT_OK) {
-            MainScope().launch(Dispatchers.IO) {
-                // The user has selected an image. You can get the image URI from the data intent.
-                val selectedImageUri: Uri? = data?.data
-                if (selectedImageUri != null) {
-                    try {
-                        binding.profileImage.setPadding(0, 0, 0, 0)
-                        inputProfileImage = uriToBitmap(requireActivity(),selectedImageUri)
-                        inputProfileImage = UtilityFunction.getCircularBitmap(inputProfileImage)
-                        withContext(Dispatchers.Main){
-                            binding.profileImage.setImageBitmap(inputProfileImage)
+        // handle result of CropImageActivity
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            try {
+                val result = CropImage.getActivityResult(data)
+                if (resultCode == RESULT_OK) {
+                    MainScope().launch(Dispatchers.IO) {
+                        // The user has selected an image. You can get the image URI from the data intent.
+                        val selectedImageUri: Uri? = result.uri
+                        if (selectedImageUri != null) {
+                            try {
+                                binding.profileImage.setPadding(0, 0, 0, 0)
+                                inputProfileImage = uriToBitmap(requireActivity(),selectedImageUri)
+                                inputProfileImage = UtilityFunction.getCircularBitmap(inputProfileImage)
+                                withContext(Dispatchers.Main){
+                                    binding.profileImage.setImageBitmap(inputProfileImage)
+                                }
+                            }
+                            catch (ex:Exception)
+                            {
+                                Log.e(tag,"RegistrationFragment.kt -> function onActivityResult() -> $ex")
+                                Toast.makeText(requireActivity(),"Error! to load Image",Toast.LENGTH_LONG).show()
+                            }
                         }
                     }
-                    catch (ex:Exception)
-                    {
-                        Log.e(tag,"RegistrationFragment.kt -> function onActivityResult() -> $ex")
-                        Toast.makeText(requireActivity(),"Error! to load Image",Toast.LENGTH_LONG).show()
-                    }
+                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                    Log.i("Registration Crop Image","$requestCode")
                 }
+            }
+            catch (ex:Exception)
+            {
+                Log.i("Registration","${ex.message}")
             }
 
         }
     }
 
-
+//    private fun openImagePicker() {
+//        val intent = Intent(Intent.ACTION_PICK)
+//        intent.type = "image/*"
+//        startActivityForResult(intent, 102)
+//    }
+//
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        if (requestCode == 102 && resultCode == RESULT_OK) {
+//            MainScope().launch(Dispatchers.IO) {
+//                // The user has selected an image. You can get the image URI from the data intent.
+//                val selectedImageUri: Uri? = data?.data
+//                if (selectedImageUri != null) {
+//                    try {
+//                        binding.profileImage.setPadding(0, 0, 0, 0)
+//                        inputProfileImage = uriToBitmap(requireActivity(),selectedImageUri)
+//                        inputProfileImage = UtilityFunction.getCircularBitmap(inputProfileImage)
+//                        withContext(Dispatchers.Main){
+//                            binding.profileImage.setImageBitmap(inputProfileImage)
+//                        }
+//                    }
+//                    catch (ex:Exception)
+//                    {
+//                        Log.e(tag,"RegistrationFragment.kt -> function onActivityResult() -> $ex")
+//                        Toast.makeText(requireActivity(),"Error! to load Image",Toast.LENGTH_LONG).show()
+//                    }
+//                }
+//            }
+//
+//        }
+//    }
 
 }

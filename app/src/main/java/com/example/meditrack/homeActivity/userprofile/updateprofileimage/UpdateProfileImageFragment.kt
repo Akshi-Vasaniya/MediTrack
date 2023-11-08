@@ -162,6 +162,7 @@ class UpdateProfileImageFragment : Fragment() {
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .setAllowRotation(true)
                     .setMultiTouchEnabled(true)
+                    .setAspectRatio(1,1)
                     .start(requireActivity(),this)
             }
         }
