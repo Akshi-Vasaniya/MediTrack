@@ -400,7 +400,9 @@
                             android:id="@+id/additional_view"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            style="@style/Base.CardView">
+                            style="@style/Base.CardView"
+                            android:backgroundTint="@color/transparent"
+                            app:cardElevation="0dp">
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
