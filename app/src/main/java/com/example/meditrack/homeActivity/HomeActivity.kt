@@ -258,18 +258,18 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 navController.navigate(R.id.notificationFragment)
             }
 
-            R.id.nav_settings -> {
-                Toast.makeText(this, "Clicked Settings", Toast.LENGTH_SHORT).show()
-            }
+//            R.id.nav_settings -> {
+//                Toast.makeText(this, "Clicked Settings", Toast.LENGTH_SHORT).show()
+//            }
 
             R.id.nav_aboutUs -> {
                 navHostFragment.findNavController().navigate(R.id.aboutUsFragment)
                 //Toast.makeText(this, "Clicked About Us", Toast.LENGTH_SHORT).show()
             }
 
-            R.id.nav_privacyPolicy -> {
-                Toast.makeText(this, "Clicked Privacy Policy", Toast.LENGTH_SHORT).show()
-            }
+//            R.id.nav_privacyPolicy -> {
+//                Toast.makeText(this, "Clicked Privacy Policy", Toast.LENGTH_SHORT).show()
+//            }
 
             R.id.nav_sign_out->{
                 FirebaseAuth.getInstance().signOut()

@@ -11,6 +11,8 @@ interface ApiInterface {
     @GET("/{query} medicine")
     fun listDocument(@Path("query") query: String?): Call<List<SearchItemData?>?>?
 
-    @GET("/medname/{medicinename}")
+    @GET("/medicine_web_scrap/{medicinename}")
     fun insertDocument(@Path("medicinename") medicinename: String?): Call<JsonElement>
+
+
 }

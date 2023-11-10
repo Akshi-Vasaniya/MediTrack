@@ -1,5 +1,6 @@
 package com.example.meditrack.dataModel.api
 
+import com.example.meditrack.homeActivity.home.HomeFragment
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -9,13 +10,13 @@ import java.util.concurrent.TimeUnit
 
 object ApiInstance {
     val okHttpClient: OkHttpClient = OkHttpClient.Builder()
-        .readTimeout(60, TimeUnit.SECONDS)
-        .connectTimeout(60, TimeUnit.SECONDS)
+        .readTimeout(120, TimeUnit.SECONDS)
+        .connectTimeout(120, TimeUnit.SECONDS)
         .build()
     val api: ApiInterface by lazy{
         Retrofit
             .Builder()
-            .baseUrl("http://192.168.197.48:3000")
+            .baseUrl("https://friendly-adapted-gobbler.ngrok-free.app")
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()

@@ -103,6 +103,8 @@ class AddMedicineFragment : Fragment() {
         }*/
 
 
+
+
         /*progressDialog.start("Loading......")
         MainScope().launch(Dispatchers.IO) {
             val response = ApiInstance.api.insertDocument("Cetrizine")
@@ -749,8 +751,36 @@ class AddMedicineFragment : Fragment() {
                                                     .addOnSuccessListener {
                                                         try {
                                                             progressDialog.stop()
-                                                            Toast.makeText(requireContext(),"Medicine and Reminder Successfully Added",Toast.LENGTH_SHORT).show()
+                                                            //Toast.makeText(requireContext(),"Medicine and Reminder Successfully Added",Toast.LENGTH_SHORT).show()
                                                             Log.d(TAG, "DocumentSnapshot added with ID: $docName")
+
+                                                            progressDialog.start("Server Increase Medicine Dataset...")
+                                                            MainScope().launch(Dispatchers.IO) {
+                                                                val response = ApiInstance.api.insertDocument(medicineData!!.medName)
+                                                                response.enqueue(object : Callback<JsonElement> {
+                                                                    override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                                                                        progressDialog.stop()
+                                                                        val res = response.body()!!.asJsonObject
+                                                                        var toastMessage = ""
+                                                                        if(res.has("success") || res.has("info"))
+                                                                        {
+                                                                            toastMessage = "Success"
+                                                                        }
+                                                                        else if(res.has("error"))
+                                                                        {
+                                                                            toastMessage = res.get("error").toString()
+                                                                        }
+                                                                        Toast.makeText(requireContext(),toastMessage,Toast.LENGTH_SHORT).show()
+                                                                    }
+
+                                                                    override fun onFailure(call: Call<JsonElement>, t: Throwable) {
+                                                                        progressDialog.stop()
+                                                                        Log.i("onFailure: ",t.message.toString())
+                                                                        Toast.makeText(requireContext(),"Request Error",Toast.LENGTH_SHORT).show()
+                                                                    }
+
+                                                                })
+                                                            }
 
                                                             // Medicine Taking Reminder
                                                             for(item in medicineData!!.takeTime as ArrayList<MedicineTimeOfDayType1>)

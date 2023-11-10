@@ -1,6 +1,8 @@
 package com.example.meditrack.homeActivity.home
 
+import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,12 +11,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.caverock.androidsvg.SVG
 import com.example.meditrack.R
+import com.example.meditrack.dataModel.api.MyAsyncTask
 import com.example.meditrack.databinding.FragmentHomeBinding
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 
 
 class HomeFragment : Fragment() {
@@ -55,6 +59,27 @@ class HomeFragment : Fragment() {
         val userName = headerView?.findViewById<TextView>(R.id.user_name_menu_header)
         val userEmail = headerView?.findViewById<TextView>(R.id.user_email_menu_header)
         val userImage = headerView?.findViewById<ImageView>(R.id.user_image_menu_header)*/
+
+        /*val url = "https://leavemanagementuvpce.000webhostapp.com/test.php"
+
+        try{
+            progressDialog.start("Connecting...")
+            MainScope().launch(Dispatchers.IO) {
+                val flaskBaseUrlCallback: (String) -> Unit = { result ->
+                    progressDialog.stop()
+                    // Process the result or update UI
+                    val jsonResult = JSONObject(result)
+                    flaskURL = jsonResult.getString("success")
+                }
+                MyAsyncTask(flaskBaseUrlCallback).execute(url)
+            }
+
+        }
+        catch (ex:Exception)
+        {
+            Log.i("HomeFragment",ex.message.toString())
+        }*/
+
 
 
         binding.apply {
