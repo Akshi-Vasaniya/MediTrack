@@ -1,8 +1,6 @@
 package com.example.meditrack.homeActivity.medicine.addMedicine
 
-import android.app.AlertDialog
 import android.app.Dialog
-import android.app.ProgressDialog
 import android.graphics.Bitmap
 import android.graphics.Rect
 import android.net.Uri
@@ -28,9 +26,7 @@ import com.example.meditrack.R
 import com.example.meditrack.adapter.MedicineTypeItemAdapter
 import com.example.meditrack.dataModel.api.ApiInstance
 import com.example.meditrack.dataModel.dataClasses.MedicineData
-import com.example.meditrack.dataModel.enumClasses.medicine.MedicineFrequency
-import com.example.meditrack.dataModel.enumClasses.medicine.MedicineTimeOfDayType1
-import com.example.meditrack.dataModel.enumClasses.medicine.MedicineType
+import com.example.meditrack.dataModel.enumClasses.medicine.*
 import com.example.meditrack.databinding.FragmentAddMedicineBinding
 import com.example.meditrack.firebase.fBase
 import com.example.meditrack.homeActivity.reminder.notification.MedicineReminderDialog
@@ -144,15 +140,612 @@ class AddMedicineFragment : Fragment() {
         cardView = binding.additionalView
         hiddenView = binding.hiddenView
 
-        // Get the Bundle from arguments
-        val bundle = arguments
+        try{
+            // Get the Bundle from arguments
+            val bundle = arguments
 
-        // Retrieve the bitmap from the Bundle
-        viewModel.bimapMedImage = bundle?.getParcelable<Bitmap>("bitmap")
+            // Retrieve the bitmap from the Bundle
+            viewModel.bimapMedImage = bundle?.getParcelable<Bitmap>("bitmap")
 
-        // Retrieve the ArrayList from the Bundle
-        viewModel.selectedTextArray = bundle?.getSerializable("arrayList") as ArrayList<Pair<Rect,String>>?
+            // Retrieve the ArrayList from the Bundle
+            viewModel.selectedTextArray = bundle?.getSerializable("arrayList") as ArrayList<Pair<Rect,String>>?
+        }catch(e:Exception){
+            e.printStackTrace()
+        }
 
+
+
+        binding.apply {
+            fillChipGroup()
+
+            if(viewModel.bimapMedImage!=null)
+            {
+                medicineImage.setImageBitmap(viewModel.bimapMedImage)
+            }
+            try {
+                viewModel.medName=""
+                viewModel.selectedTextArray!!.forEach {
+                    viewModel.medName += it.second
+                }
+                viewModel.medName = viewModel.medName!!.trim()
+                viewModel.medName = viewModel.medName!!.replace("\n"," ")
+                fragmentMedicineNameTextInputEditText.setText(viewModel.medName)
+                fragmentMedicineNameTextInputLayout.helperText=null
+            }catch (e:java.lang.NullPointerException)
+            {
+                viewModel.medName=null
+                e.printStackTrace()
+            }
+
+
+            /*homeActivity.getToolbarMenuLayout().visibility = View.GONE*/
+
+
+            loadTypeInfoDialod()
+
+
+            fragmentMedicineStartdateTextInputEditText.setOnClickListener {
+                MonthYearPickerDialog().also {
+                    it.setListener { _, year, month, _ ->
+                        viewModel.mfgDate="${month}/${year}"
+                        if(viewModel.expDate!=null)
+                        {
+                            if(UtilityFunction.validateMedicine(viewModel.mfgDate!!,viewModel.expDate!!))
+                            {
+                                fragmentMedicineStartdateTextInputEditText.setText(viewModel.mfgDate)
+                                binding.fragmentMedicineStartdateTextInputLayout.helperText=null
+                            }
+                            else{
+                                viewModel.mfgDate=null
+                                fragmentMedicineStartdateTextInputEditText.setText("")
+                                binding.fragmentMedicineStartdateTextInputLayout.helperText="Invalid"
+                            }
+                        }
+                        else{
+                            fragmentMedicineStartdateTextInputEditText.setText(viewModel.mfgDate)
+                            binding.fragmentMedicineStartdateTextInputLayout.helperText=null
+                        }
+                    }
+                    it.show(requireFragmentManager(), "MonthYearPickerDialog")
+                }
+                //mfgDatePicker()
+            }
+
+            fragmentMedicineExpirydateTextInputEditText.setOnClickListener {
+                MonthYearPickerDialog().also {
+                    it.setListener { _, year, month, _ ->
+                        viewModel.expDate = "${month}/${year}"
+                        if(viewModel.mfgDate!=null)
+                        {
+                            if(UtilityFunction.validateMedicine(viewModel.mfgDate!!,viewModel.expDate!!))
+                            {
+                                fragmentMedicineExpirydateTextInputEditText.setText(viewModel.expDate)
+                                binding.fragmentMedicineExpirydateTextInputLayout.helperText=null
+                            }
+                            else{
+                                viewModel.expDate=null
+                                fragmentMedicineExpirydateTextInputEditText.setText("")
+                                binding.fragmentMedicineExpirydateTextInputLayout.helperText="Invalid"
+                            }
+                        }
+                        else{
+                            fragmentMedicineExpirydateTextInputEditText.setText(viewModel.expDate)
+                            binding.fragmentMedicineExpirydateTextInputLayout.helperText=null
+                        }
+                    }
+                    it.show(requireFragmentManager(), "MonthYearPickerDialog")
+                }
+                /*expiryDatePickerDialog()*/
+            }
+
+            fixedLayout.setOnClickListener {
+                showAditionalDetails()
+            }
+
+            arrowButton.setOnClickListener {
+                showAditionalDetails()
+            }
+
+            medicineImage.setOnClickListener {
+                findNavController().navigate(R.id.OCRFragment)
+            }
+
+            fragmentMedicineNameTextInputEditText.addTextChangedListener(object : TextWatcher {
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                    viewModel.medName = s.toString()
+                    Log.i(TAG,viewModel.medName.toString())
+                    if(viewModel.medName.toString()=="")
+                    {
+                        viewModel.medName=null
+                        fragmentMedicineNameTextInputLayout.helperText="Required"
+                    }
+                    /*else if(!viewModel.medName.toString().validate(ListPattern.getMedNameRegex()))
+                    {
+                        viewModel.medName=null
+                        fragmentMedicineNameTextInputLayout.helperText="Invalid"
+                    }*/
+                    else {
+                        // Input is valid, clear the error
+                        fragmentMedicineNameTextInputLayout.helperText=null
+                    }
+                }
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {}
+
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
+            fragmentDosageInfoTextInputEditText.addTextChangedListener(object : TextWatcher {
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                    try {
+                        viewModel.dosage = s.toString().toDouble()
+                        fragmentDosageInfoTextInputLayout.helperText=null
+                    } catch (e: NumberFormatException) {
+                        viewModel.dosage=null
+                        fragmentDosageInfoTextInputLayout.helperText="Required"
+                    }
+                }
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {}
+
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
+            fragmentMedicineQuantityTextInputEditText.addTextChangedListener(object :TextWatcher{
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                    try {
+                        viewModel.medQuantity = s.toString().toInt()
+                        fragmentMedicineQuantityTextInputLayout.helperText=null
+                    } catch (e: NumberFormatException) {
+                        viewModel.medQuantity=null
+                        fragmentMedicineQuantityTextInputLayout.helperText="Required"
+                    }
+                }
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {}
+
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
+            fragmentDoctorNameTextInputEditText.addTextChangedListener(object :TextWatcher{
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                    viewModel.doctorName = s.toString()
+                    if(viewModel.doctorName=="")
+                    {
+                        viewModel.doctorName=null
+                    }
+                    else if(!viewModel.doctorName!!.validate(ListPattern.getDoctorNameRegex())){
+                        viewModel.doctorName=null
+                        fragmentDoctorNameTextInputLayout.helperText="Invalid Name"
+                    }
+                    else{
+                        fragmentDoctorNameTextInputLayout.helperText=null
+                    }
+                }
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {}
+
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
+            fragmentDoctorContactTextInputEditText.addTextChangedListener(object:TextWatcher{
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                    viewModel.doctorContact = s.toString()
+                    if(viewModel.doctorContact=="")
+                    {
+                        viewModel.doctorContact=null
+                    }
+                    else if(!viewModel.doctorContact!!.validate(ListPattern.getDoctorContactRegex())){
+                        viewModel.doctorContact=null
+                        fragmentDoctorContactTextInputLayout.helperText="Invalid Name"
+                    }
+                    else{
+                        fragmentDoctorContactTextInputLayout.helperText=null
+                    }
+                }
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {}
+
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
+            fragmentNotesOrCommentsTextInputEditText.addTextChangedListener(object : TextWatcher{
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {}
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    viewModel.medNotes = s.toString()
+                }
+
+                override fun afterTextChanged(s: Editable?) {}
+
+            })
+
+            fragmentSpecialInstructionTextInputEditText.addTextChangedListener(object :TextWatcher{
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {}
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    viewModel.medInstruction = s.toString()
+                }
+
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
+            btnCorrectSpell.setOnClickListener {
+                if (viewModel.medName!="" && viewModel.medName!=null)
+                {
+                    progressDialog.start("Checking Spell...")
+                    MainScope().launch(Dispatchers.IO) {
+                        val response = ApiInstance.api.spellCorrect(viewModel.medName)
+                        response.enqueue(object : Callback<JsonElement> {
+                            override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                                progressDialog.stop()
+                                val res_jsonObject = response.body()!!.asJsonObject
+                                Log.i("JSOnDATA","${res_jsonObject}")
+                                if(res_jsonObject.has("success"))
+                                {
+                                    fragmentMedicineNameTextInputEditText.setText(res_jsonObject.get("success").asString)
+                                    viewModel.medName = res_jsonObject.get("success").asString
+                                }
+                            }
+
+                            override fun onFailure(call: Call<JsonElement>, t: Throwable) {
+                                progressDialog.stop()
+                                Log.i("onFailure: ",t.message.toString())
+                            }
+
+                        })
+                    }
+                }
+
+            }
+
+            fragmentMedicineAddButton.setOnClickListener {
+                MainScope().launch(Dispatchers.IO) {
+                    if(validateInput())
+                    {
+                        if(viewModel.bimapMedImage==null){
+                            Toast.makeText(requireContext(),"Please add Image of Drug or Medicine",Toast.LENGTH_SHORT).show()
+                            return@launch
+                        }
+//                        Log.i("MedicineData","Medicine Name : ${viewModel.medName}")
+//                        Log.i("MedicineData","Medicine Dosage : ${viewModel.dosage}")
+//                        Log.i("MedicineData","Medicine Mfg. Date : ${viewModel.mfgDate}")
+//                        Log.i("MedicineData","Medicine Exp. Date : ${viewModel.expDate}")
+//                        Log.i("MedicineData", "Medicine Frequency : ${viewModel.selectedfreqTags!!.name}")
+
+                        val medicineTime: Any?
+
+                        if(viewModel.selectedMedicineTimeOfDayType1.isEmpty())
+                        {
+                            if(viewModel.selectedMedicineTimeOfDayType2.isEmpty())
+                            {
+                                Toast.makeText(requireContext(),"Please select medicine time",Toast.LENGTH_SHORT).show()
+                                return@launch
+                            }
+                            medicineTime = viewModel.selectedMedicineTimeOfDayType2
+                            viewModel.selectedMedicineTimeOfDayType2.forEach {
+                                Log.i("MedicineData", "Medicine Time of Day Type 2 : ${it.description}")
+                            }
+                        }else{
+                            medicineTime = viewModel.selectedMedicineTimeOfDayType1
+                            viewModel.selectedMedicineTimeOfDayType1.forEach {
+                                Log.i("MedicineData", "Medicine Time of Day Type 1 : ${it.description}")
+                            }
+                        }
+                        viewModel.weekDayItems.forEach {
+                            Log.i("MedicineData", "Medicine Week Day : ${it.name}")
+                        }
+                        Log.i("MedicineData","Medicine Doctor Name : ${viewModel.doctorName}")
+                        Log.i("MedicineData","Medicine Doctor Contact : ${viewModel.doctorContact}")
+                        Log.i("MedicineData","Medicine Instruction : ${viewModel.medInstruction}")
+                        Log.i("MedicineData","Medicine Notes : ${viewModel.medNotes}")
+                        Log.i("MedicineData","Medicine Quantity : ${viewModel.medQuantity}")
+
+                        val imageUri = bitmapToUri(requireContext(),viewModel.bimapMedImage!!)
+                        if(imageUri==null)
+                        {
+                            withContext(Dispatchers.Main)
+                            {
+                                Toast.makeText(requireContext(),"imageUri is NULL",Toast.LENGTH_SHORT).show()
+                                return@withContext
+                            }
+                            return@launch
+                        }
+
+
+                        /*withContext(Dispatchers.Main)
+                        {
+                            Toast.makeText(requireContext(),"Done",Toast.LENGTH_SHORT).show()
+                        }*/
+
+
+                        withContext(Dispatchers.Main)
+                        {
+                            progressDialog.start("Loading...")
+                        }
+                        val docName = stringNormalize(viewModel.medName!!)
+                        val insertDocumentFlaskPython = object : Callback<JsonElement>{
+                            override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                                progressDialog.stop()
+                                val res = response.body()!!.asJsonObject
+                                var toastMessage = ""
+                                if(res.has("success") || res.has("info"))
+                                {
+                                    toastMessage = "Success"
+                                }
+                                else if(res.has("error"))
+                                {
+                                    toastMessage = res.get("error").toString()
+                                }
+                                clearForm()
+                                Toast.makeText(requireContext(),toastMessage,Toast.LENGTH_SHORT).show()
+
+                            }
+
+                            override fun onFailure(call: Call<JsonElement>, t: Throwable) {
+                                progressDialog.stop()
+                                Log.i("onFailure: ",t.message.toString())
+                                Toast.makeText(requireContext(),"Request Error",Toast.LENGTH_SHORT).show()
+                            }
+
+                        }
+                        val insertMedicineDataFirebaseCallback = object : InsertMedicineDataFirebaseCallback{
+                            override fun onSuccess() {
+                                MainScope().launch(Dispatchers.IO) {
+                                    try {
+                                        val dialog = MedicineReminderDialog()
+                                        withContext(Dispatchers.Main)
+                                        {
+                                            progressDialog.stop()
+                                            //Toast.makeText(requireContext(),"Medicine and Reminder Successfully Added",Toast.LENGTH_SHORT).show()
+                                            Log.d(TAG, "DocumentSnapshot added with ID: $docName")
+
+                                            progressDialog.start("Server Increase Medicine Dataset...")
+                                        }
+
+                                        MainScope().launch(Dispatchers.IO) {
+                                            val response = ApiInstance.api.insertDocument(medicineData!!.medName)
+                                            response.enqueue(insertDocumentFlaskPython)
+                                        }
+
+                                        // Medicine Taking Reminder
+                                        for(item in medicineData!!.takeTime as ArrayList<MedicineTimeOfDayType1>)
+                                        {
+                                            var hour = item.time.split(":")
+                                            Log.i(TAG, "onUploadSuccess: ${hour[0]}")
+                                            if(medicineData!!.medFreq == MedicineFrequency.DAILY) {
+                                                dialog.scheduleNotifications(medicineData!!.medName, mutableListOf(0, 1, 2, 3, 4, 5, 6),  hour[0].toInt(), 0)
+                                            }else{
+                                                dialog.scheduleNotifications(medicineData!!.medName, medicineData!!.weekDay as MutableList<Int>,  hour[0].toInt(), 0)
+                                            }
+                                        }
+
+                                    }
+                                    catch (ex:Exception)
+                                    {
+                                        Log.e("addOnSuccessListener","${ex.message}")
+                                    }
+                                }
+
+                            }
+
+                            override fun onFailure(exception: Exception) {
+                                progressDialog.stop()
+                                Toast.makeText(requireContext(),"addOnFailureListener: Error",Toast.LENGTH_SHORT).show()
+                                Log.w(TAG, "Error adding document", exception)
+                            }
+
+                        }
+                        val imageUploadCallback = object : UploadCallback{
+                            override fun onUploadSuccess(downloadUrl: String) {
+                                MainScope().launch(Dispatchers.IO) {
+                                    try {
+                                        medicineData = MedicineData(
+                                            medImage = downloadUrl,
+                                            medName = viewModel.medName!!.trim(),
+                                            medicineType = viewModel.selectedMedTypeTags!!,
+                                            dosage = viewModel.dosage!!,
+                                            mfgDate = viewModel.mfgDate!!,
+                                            expDate = viewModel.expDate!!,
+                                            medFreq = viewModel.selectedfreqTags!!,
+                                            weekDay = viewModel.selectedWeekDayItem,
+                                            takeTime = medicineTime,
+                                            instruction = viewModel.medInstruction.toString().trim(),
+                                            doctorName = viewModel.doctorName.toString().trim(),
+                                            doctorContact = viewModel.doctorContact.toString().trim(),
+                                            notes = viewModel.medNotes.toString().trim(),
+                                            totalQuantity = viewModel.medQuantity!!,
+                                            mediDeleted = "No",
+                                            getCurrentDate(),
+                                            getCurrentTime()
+                                        )
+                                        Log.i(TAG, "onUploadSuccess: ${medicineData!!.medName}")
+                                        Log.i(TAG, "onUploadSuccess: ${medicineData!!.medicineType}")
+                                        Log.i(TAG, "onUploadSuccess: ${medicineData!!.medFreq}")
+                                        Log.i(TAG, "onUploadSuccess: ${medicineData!!.weekDay}")
+                                        Log.i(TAG, "onUploadSuccess: ${medicineData!!.takeTime}")
+                                        Log.i(TAG, "onUploadSuccess: ${medicineData!!.notes}")
+                                        Log.i(TAG, "onUploadSuccess: ${medicineData!!.totalQuantity}")
+
+
+                                        db.collection("user_medicines").document(fBase.getUserId()).collection("medicine_data")
+                                            .document(docName)
+                                            .set(medicineData!!)
+                                            .addOnSuccessListener {
+                                                insertMedicineDataFirebaseCallback.onSuccess()
+                                            }
+                                            .addOnFailureListener { e ->
+                                                insertMedicineDataFirebaseCallback.onFailure(e)
+                                            }
+                                    }
+                                    catch (ex:java.lang.Exception)
+                                    {
+                                        Log.w("$TAG : uploadImageToFirebaseStorage", "Error uploadImageToFirebaseStorage", ex)
+                                    }
+                                }
+
+                            }
+
+                            override fun onUploadFailure(exception: Exception) {
+                                progressDialog.stop()
+                                Log.w("$TAG : onUploadFailure", "Error adding document", exception)
+                                Toast.makeText(requireContext(),"onUploadFailure: Error",Toast.LENGTH_SHORT).show()
+                            }
+
+                        }
+                        val medicineExistsFirebaseCallback = object : MedicineExistsFirebaseCallback{
+                            override fun onSuccess(status: Boolean) {
+                                if(status)
+                                {
+                                    uploadImageToFirebaseStorage(imageUri, imageUploadCallback)
+                                }
+                                else{
+                                    Toast.makeText(requireContext(),"Medicine Already Exists",Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                            override fun onFailure(exception: Exception) {
+
+                            }
+
+                        }
+
+                        val medicineDataDocRef = db.collection("user_medicines")
+                            .document(fBase.getUserId())
+                            .collection("medicine_data")
+                            .document(docName)
+                        medicineDataDocRef.get()
+                            .addOnSuccessListener { document ->
+                                if (document.exists()) {
+                                    progressDialog.stop()
+                                    // Document with the same custom name already exists, skip insertion
+                                    // Handle this case if needed
+                                    medicineExistsFirebaseCallback.onSuccess(false)
+
+                                } else {
+                                    medicineExistsFirebaseCallback.onSuccess(true)
+
+                                }
+                            }
+                            .addOnFailureListener { e ->
+                                medicineExistsFirebaseCallback.onFailure(e)
+                            }
+
+
+                        /*db.collection("user_medicines").document(MediTrackUserReference.getUserId()).collection("medicine_data")
+                            .add(medicineData)
+                            .addOnSuccessListener { documentReference ->
+                                progressDialog.stop()
+                                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                            }
+                            .addOnFailureListener { e ->
+                                progressDialog.stop()
+                                Log.w(TAG, "Error adding document", e)
+                            }*/
+                    }
+                }
+            }
+        }
+    }
+
+    interface MedicineExistsFirebaseCallback{
+        fun onSuccess(status:Boolean)
+        fun onFailure(exception: Exception)
+    }
+
+    interface  InsertMedicineDataFirebaseCallback{
+        fun onSuccess()
+        fun onFailure(exception: Exception)
+    }
+
+    // Callback interface for upload result
+    interface UploadCallback {
+        fun onUploadSuccess(downloadUrl: String)
+        fun onUploadFailure(exception: Exception)
+    }
+
+    fun loadTypeInfoDialod()
+    {
+        binding.apply {
+            val dialog = Dialog(requireContext())
+            dialog.setContentView(R.layout.medicine_type_info_dialog_layout)
+
+            val closeButton = dialog.findViewById<ImageButton>(R.id.closeButton)
+            closeButton.setOnClickListener { dialog.dismiss() }
+
+            val recyclerView = dialog.findViewById<RecyclerView>(R.id.recyclerView)
+
+            val medicineDataList = mutableListOf<Pair<String, String>>()
+            val medicineTypes = MedicineType.values()
+            for (type in medicineTypes) {
+                val name = type.name.replace("_", " ")
+                val description = type.getDescription(requireContext())
+                medicineDataList.add(Pair(name, description))
+            }
+
+            val adapter = MedicineTypeItemAdapter(medicineDataList)
+            recyclerView.layoutManager = LinearLayoutManager(requireContext())
+            recyclerView.adapter = adapter
+
+            // Add animation
+            dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
+
+            medTypeInfo.setOnClickListener {
+                dialog.show()
+            }
+        }
+    }
+
+    fun showAditionalDetails()
+    {
+        if(hiddenView.visibility == View.GONE){
+            TransitionManager.beginDelayedTransition(cardView, AutoTransition())
+            hiddenView.visibility = View.VISIBLE
+            binding.arrowButton.setImageResource(R.drawable.round_keyboard_arrow_up_24)
+        }
+        else{
+            TransitionManager.beginDelayedTransition(cardView, AutoTransition())
+            hiddenView.visibility = View.GONE
+            binding.arrowButton.setImageResource(R.drawable.round_keyboard_arrow_down_24)
+        }
+    }
+
+
+    fun fillChipGroup(){
         binding.apply {
             for (tag in viewModel.weekDayItems) {
                 val chip = Chip(requireContext())
@@ -364,505 +957,137 @@ class AddMedicineFragment : Fragment() {
                 }
                 medicineTimeofDayType2ChipGroup.addView(chip)
             }
-
-            if(viewModel.bimapMedImage!=null)
-            {
-                medicineImage.setImageBitmap(viewModel.bimapMedImage)
-            }
-            try {
-                viewModel.medName=""
-                viewModel.selectedTextArray!!.forEach {
-                    viewModel.medName += it.second
-                }
-                viewModel.medName = viewModel.medName!!.trim()
-                viewModel.medName = viewModel.medName!!.replace("\n"," ")
-                fragmentMedicineNameTextInputEditText.setText(viewModel.medName)
-                fragmentMedicineNameTextInputLayout.helperText=null
-            }catch (e:java.lang.NullPointerException)
-            {
-                viewModel.medName=null
-                e.printStackTrace()
-            }
-
-
-            /*homeActivity.getToolbarMenuLayout().visibility = View.GONE*/
-
-            val dialog = Dialog(requireContext())
-            dialog.setContentView(R.layout.medicine_type_info_dialog_layout)
-
-            val closeButton = dialog.findViewById<ImageButton>(R.id.closeButton)
-            closeButton.setOnClickListener { dialog.dismiss() }
-
-            val recyclerView = dialog.findViewById<RecyclerView>(R.id.recyclerView)
-
-            val medicineDataList = mutableListOf<Pair<String, String>>()
-            val medicineTypes = MedicineType.values()
-            for (type in medicineTypes) {
-                val name = type.name.replace("_", " ")
-                val description = type.getDescription(requireContext())
-                medicineDataList.add(Pair(name, description))
-            }
-
-            val adapter = MedicineTypeItemAdapter(medicineDataList)
-            recyclerView.layoutManager = LinearLayoutManager(requireContext())
-            recyclerView.adapter = adapter
-
-            // Add animation
-            dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
-
-
-
-            fragmentMedicineStartdateTextInputEditText.setOnClickListener {
-                MonthYearPickerDialog().also {
-                    it.setListener { _, year, month, _ ->
-                        viewModel.mfgDate="${month}/${year}"
-                        if(viewModel.expDate!=null)
-                        {
-                            if(UtilityFunction.validateMedicine(viewModel.mfgDate!!,viewModel.expDate!!))
-                            {
-                                fragmentMedicineStartdateTextInputEditText.setText(viewModel.mfgDate)
-                                binding.fragmentMedicineStartdateTextInputLayout.helperText=null
-                            }
-                            else{
-                                viewModel.mfgDate=null
-                                fragmentMedicineStartdateTextInputEditText.setText("")
-                                binding.fragmentMedicineStartdateTextInputLayout.helperText="Invalid"
-                            }
-                        }
-                        else{
-                            fragmentMedicineStartdateTextInputEditText.setText(viewModel.mfgDate)
-                            binding.fragmentMedicineStartdateTextInputLayout.helperText=null
-                        }
-                    }
-                    it.show(requireFragmentManager(), "MonthYearPickerDialog")
-                }
-                //mfgDatePicker()
-            }
-
-            fragmentMedicineExpirydateTextInputEditText.setOnClickListener {
-                MonthYearPickerDialog().also {
-                    it.setListener { _, year, month, _ ->
-                        viewModel.expDate = "${month}/${year}"
-                        if(viewModel.mfgDate!=null)
-                        {
-                            if(UtilityFunction.validateMedicine(viewModel.mfgDate!!,viewModel.expDate!!))
-                            {
-                                fragmentMedicineExpirydateTextInputEditText.setText(viewModel.expDate)
-                                binding.fragmentMedicineExpirydateTextInputLayout.helperText=null
-                            }
-                            else{
-                                viewModel.expDate=null
-                                fragmentMedicineExpirydateTextInputEditText.setText("")
-                                binding.fragmentMedicineExpirydateTextInputLayout.helperText="Invalid"
-                            }
-                        }
-                        else{
-                            fragmentMedicineExpirydateTextInputEditText.setText(viewModel.expDate)
-                            binding.fragmentMedicineExpirydateTextInputLayout.helperText=null
-                        }
-                    }
-                    it.show(requireFragmentManager(), "MonthYearPickerDialog")
-                }
-                /*expiryDatePickerDialog()*/
-            }
-
-            fixedLayout.setOnClickListener {
-                showAditionalDetails()
-            }
-
-            arrowButton.setOnClickListener {
-                showAditionalDetails()
-            }
-
-            medicineImage.setOnClickListener {
-                findNavController().navigate(R.id.OCRFragment)
-            }
-
-            medTypeInfo.setOnClickListener {
-                dialog.show()
-            }
-
-            fragmentMedicineNameTextInputEditText.addTextChangedListener(object : TextWatcher {
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-                    viewModel.medName = s.toString()
-                    Log.i(TAG,viewModel.medName.toString())
-                    if(viewModel.medName.toString()=="")
-                    {
-                        viewModel.medName=null
-                        fragmentMedicineNameTextInputLayout.helperText="Required"
-                    }
-                    /*else if(!viewModel.medName.toString().validate(ListPattern.getMedNameRegex()))
-                    {
-                        viewModel.medName=null
-                        fragmentMedicineNameTextInputLayout.helperText="Invalid"
-                    }*/
-                    else {
-                        // Input is valid, clear the error
-                        fragmentMedicineNameTextInputLayout.helperText=null
-                    }
-                }
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {}
-
-                override fun afterTextChanged(s: Editable?) {}
-            })
-
-            fragmentDosageInfoTextInputEditText.addTextChangedListener(object : TextWatcher {
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-                    try {
-                        viewModel.dosage = s.toString().toDouble()
-                        fragmentDosageInfoTextInputLayout.helperText=null
-                    } catch (e: NumberFormatException) {
-                        viewModel.dosage=null
-                        fragmentDosageInfoTextInputLayout.helperText="Required"
-                    }
-                }
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {}
-
-                override fun afterTextChanged(s: Editable?) {}
-            })
-
-            fragmentMedicineQuantityTextInputEditText.addTextChangedListener(object :TextWatcher{
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-                    try {
-                        viewModel.medQuantity = s.toString().toInt()
-                        fragmentMedicineQuantityTextInputLayout.helperText=null
-                    } catch (e: NumberFormatException) {
-                        viewModel.medQuantity=null
-                        fragmentMedicineQuantityTextInputLayout.helperText="Required"
-                    }
-                }
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {}
-
-                override fun afterTextChanged(s: Editable?) {}
-            })
-
-            fragmentDoctorNameTextInputEditText.addTextChangedListener(object :TextWatcher{
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-                    viewModel.doctorName = s.toString()
-                    if(viewModel.doctorName=="")
-                    {
-                        viewModel.doctorName=null
-                    }
-                    else if(!viewModel.doctorName!!.validate(ListPattern.getDoctorNameRegex())){
-                        viewModel.doctorName=null
-                        fragmentDoctorNameTextInputLayout.helperText="Invalid Name"
-                    }
-                    else{
-                        fragmentDoctorNameTextInputLayout.helperText=null
-                    }
-                }
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {}
-
-                override fun afterTextChanged(s: Editable?) {}
-            })
-
-            fragmentDoctorContactTextInputEditText.addTextChangedListener(object:TextWatcher{
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-                    viewModel.doctorContact = s.toString()
-                    if(viewModel.doctorContact=="")
-                    {
-                        viewModel.doctorContact=null
-                    }
-                    else if(!viewModel.doctorContact!!.validate(ListPattern.getDoctorContactRegex())){
-                        viewModel.doctorContact=null
-                        fragmentDoctorContactTextInputLayout.helperText="Invalid Name"
-                    }
-                    else{
-                        fragmentDoctorContactTextInputLayout.helperText=null
-                    }
-                }
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {}
-
-                override fun afterTextChanged(s: Editable?) {}
-            })
-
-            fragmentNotesOrCommentsTextInputEditText.addTextChangedListener(object : TextWatcher{
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {}
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    viewModel.medNotes = s.toString()
-                }
-
-                override fun afterTextChanged(s: Editable?) {}
-
-            })
-
-            fragmentSpecialInstructionTextInputEditText.addTextChangedListener(object :TextWatcher{
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {}
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    viewModel.medInstruction = s.toString()
-                }
-
-                override fun afterTextChanged(s: Editable?) {}
-            })
-
-            fragmentMedicineAddButton.setOnClickListener {
-                MainScope().launch(Dispatchers.IO) {
-                    if(validateInput())
-                    {
-                        if(viewModel.bimapMedImage==null){
-                            Toast.makeText(requireContext(),"Please add Image of Drug or Medicine",Toast.LENGTH_SHORT).show()
-                            return@launch
-                        }
-//                        Log.i("MedicineData","Medicine Name : ${viewModel.medName}")
-//                        Log.i("MedicineData","Medicine Dosage : ${viewModel.dosage}")
-//                        Log.i("MedicineData","Medicine Mfg. Date : ${viewModel.mfgDate}")
-//                        Log.i("MedicineData","Medicine Exp. Date : ${viewModel.expDate}")
-//                        Log.i("MedicineData", "Medicine Frequency : ${viewModel.selectedfreqTags!!.name}")
-
-                        val medicineTime: Any?
-
-                        if(viewModel.selectedMedicineTimeOfDayType1.isEmpty())
-                        {
-                            if(viewModel.selectedMedicineTimeOfDayType2.isEmpty())
-                            {
-                                Toast.makeText(requireContext(),"Please select medicine time",Toast.LENGTH_SHORT).show()
-                                return@launch
-                            }
-                            medicineTime = viewModel.selectedMedicineTimeOfDayType2
-                            viewModel.selectedMedicineTimeOfDayType2.forEach {
-                                Log.i("MedicineData", "Medicine Time of Day Type 2 : ${it.description}")
-                            }
-                        }else{
-                            medicineTime = viewModel.selectedMedicineTimeOfDayType1
-                            viewModel.selectedMedicineTimeOfDayType1.forEach {
-                                Log.i("MedicineData", "Medicine Time of Day Type 1 : ${it.description}")
-                            }
-                        }
-                        viewModel.weekDayItems.forEach {
-                            Log.i("MedicineData", "Medicine Week Day : ${it.name}")
-                        }
-                        Log.i("MedicineData","Medicine Doctor Name : ${viewModel.doctorName}")
-                        Log.i("MedicineData","Medicine Doctor Contact : ${viewModel.doctorContact}")
-                        Log.i("MedicineData","Medicine Instruction : ${viewModel.medInstruction}")
-                        Log.i("MedicineData","Medicine Notes : ${viewModel.medNotes}")
-                        Log.i("MedicineData","Medicine Quantity : ${viewModel.medQuantity}")
-
-                        val imageUri = bitmapToUri(requireContext(),viewModel.bimapMedImage!!)
-                        if(imageUri==null)
-                        {
-                            withContext(Dispatchers.Main)
-                            {
-                                Toast.makeText(requireContext(),"imageUri is NULL",Toast.LENGTH_SHORT).show()
-                                return@withContext
-                            }
-                            return@launch
-                        }
-
-
-                        /*withContext(Dispatchers.Main)
-                        {
-                            Toast.makeText(requireContext(),"Done",Toast.LENGTH_SHORT).show()
-                        }*/
-
-
-                        withContext(Dispatchers.Main)
-                        {
-                            progressDialog.start("Loading...")
-                        }
-                        val docName = stringNormalize(viewModel.medName!!)
-                        val medicineDataDocRef = db.collection("user_medicines")
-                            .document(fBase.getUserId())
-                            .collection("medicine_data")
-                            .document(docName)
-                        medicineDataDocRef.get()
-                            .addOnSuccessListener { document ->
-                                if (document.exists()) {
-                                    progressDialog.stop()
-                                    // Document with the same custom name already exists, skip insertion
-                                    // Handle this case if needed
-                                    Toast.makeText(requireContext(),"Medicine Already Exists",Toast.LENGTH_SHORT).show()
-                                } else {
-                                    uploadImageToFirebaseStorage(imageUri, object : UploadCallback {
-                                        override fun onUploadSuccess(downloadUrl: String) {
-                                            try {
-                                                medicineData = MedicineData(
-                                                    medImage = downloadUrl,
-                                                    medName = viewModel.medName!!.trim(),
-                                                    medicineType = viewModel.selectedMedTypeTags!!,
-                                                    dosage = viewModel.dosage!!,
-                                                    mfgDate = viewModel.mfgDate!!,
-                                                    expDate = viewModel.expDate!!,
-                                                    medFreq = viewModel.selectedfreqTags!!,
-                                                    weekDay = viewModel.selectedWeekDayItem,
-                                                    takeTime = medicineTime,
-                                                    instruction = viewModel.medInstruction.toString().trim(),
-                                                    doctorName = viewModel.doctorName.toString().trim(),
-                                                    doctorContact = viewModel.doctorContact.toString().trim(),
-                                                    notes = viewModel.medNotes.toString().trim(),
-                                                    totalQuantity = viewModel.medQuantity!!,
-                                                    mediDeleted = "No",
-                                                    getCurrentDate(),
-                                                    getCurrentTime()
-                                                )
-                                                Log.i(TAG, "onUploadSuccess: ${medicineData!!.medName}")
-                                                Log.i(TAG, "onUploadSuccess: ${medicineData!!.medicineType}")
-                                                Log.i(TAG, "onUploadSuccess: ${medicineData!!.medFreq}")
-                                                Log.i(TAG, "onUploadSuccess: ${medicineData!!.weekDay}")
-                                                Log.i(TAG, "onUploadSuccess: ${medicineData!!.takeTime}")
-                                                Log.i(TAG, "onUploadSuccess: ${medicineData!!.notes}")
-                                                Log.i(TAG, "onUploadSuccess: ${medicineData!!.totalQuantity}")
-                                                val dialog = MedicineReminderDialog()
-
-                                                db.collection("user_medicines").document(fBase.getUserId()).collection("medicine_data")
-                                                    .document(docName)
-                                                    .set(medicineData!!)
-                                                    .addOnSuccessListener {
-                                                        try {
-                                                            progressDialog.stop()
-                                                            //Toast.makeText(requireContext(),"Medicine and Reminder Successfully Added",Toast.LENGTH_SHORT).show()
-                                                            Log.d(TAG, "DocumentSnapshot added with ID: $docName")
-
-                                                            progressDialog.start("Server Increase Medicine Dataset...")
-                                                            MainScope().launch(Dispatchers.IO) {
-                                                                val response = ApiInstance.api.insertDocument(medicineData!!.medName)
-                                                                response.enqueue(object : Callback<JsonElement> {
-                                                                    override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-                                                                        progressDialog.stop()
-                                                                        val res = response.body()!!.asJsonObject
-                                                                        var toastMessage = ""
-                                                                        if(res.has("success") || res.has("info"))
-                                                                        {
-                                                                            toastMessage = "Success"
-                                                                        }
-                                                                        else if(res.has("error"))
-                                                                        {
-                                                                            toastMessage = res.get("error").toString()
-                                                                        }
-                                                                        Toast.makeText(requireContext(),toastMessage,Toast.LENGTH_SHORT).show()
-                                                                    }
-
-                                                                    override fun onFailure(call: Call<JsonElement>, t: Throwable) {
-                                                                        progressDialog.stop()
-                                                                        Log.i("onFailure: ",t.message.toString())
-                                                                        Toast.makeText(requireContext(),"Request Error",Toast.LENGTH_SHORT).show()
-                                                                    }
-
-                                                                })
-                                                            }
-
-                                                            // Medicine Taking Reminder
-                                                            for(item in medicineData!!.takeTime as ArrayList<MedicineTimeOfDayType1>)
-                                                            {
-                                                                var hour = item.time.split(":")
-                                                                Log.i(TAG, "onUploadSuccess: ${hour[0]}")
-                                                                if(medicineData!!.medFreq == MedicineFrequency.DAILY) {
-                                                                    dialog.scheduleNotifications(medicineData!!.medName, mutableListOf(0, 1, 2, 3, 4, 5, 6),  hour[0].toInt(), 0)
-                                                                }else{
-                                                                    dialog.scheduleNotifications(medicineData!!.medName, medicineData!!.weekDay as MutableList<Int>,  hour[0].toInt(), 0)
-                                                                }
-                                                            }
-
-                                                        }
-                                                        catch (ex:Exception)
-                                                        {
-                                                            Log.e("addOnSuccessListener","${ex.message}")
-                                                        }
-
-                                                    }
-                                                    .addOnFailureListener { e ->
-                                                        progressDialog.stop()
-                                                        Toast.makeText(requireContext(),"addOnFailureListener: Error",Toast.LENGTH_SHORT).show()
-                                                        Log.w(TAG, "Error adding document", e)
-                                                    }
-                                            }
-                                            catch (ex:java.lang.Exception)
-                                            {
-                                                Log.w("$TAG : uploadImageToFirebaseStorage", "Error uploadImageToFirebaseStorage", ex)
-                                            }
-                                        }
-
-                                        override fun onUploadFailure(exception: Exception) {
-                                            progressDialog.stop()
-                                            Log.w("$TAG : onUploadFailure", "Error adding document", exception)
-                                            Toast.makeText(requireContext(),"onUploadFailure: Error",Toast.LENGTH_SHORT).show()
-                                        }
-                                    })
-                                }
-                            }
-                            .addOnFailureListener { e ->
-                                // Handle failure here
-                            }
-
-
-                        /*db.collection("user_medicines").document(MediTrackUserReference.getUserId()).collection("medicine_data")
-                            .add(medicineData)
-                            .addOnSuccessListener { documentReference ->
-                                progressDialog.stop()
-                                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-                            }
-                            .addOnFailureListener { e ->
-                                progressDialog.stop()
-                                Log.w(TAG, "Error adding document", e)
-                            }*/
-                    }
-                }
-            }
         }
     }
 
-    // Callback interface for upload result
-    interface UploadCallback {
-        fun onUploadSuccess(downloadUrl: String)
-        fun onUploadFailure(exception: Exception)
-    }
-
-    fun showAditionalDetails()
+    fun clearForm()
     {
-        if(hiddenView.visibility == View.GONE){
-            TransitionManager.beginDelayedTransition(cardView, AutoTransition())
-            hiddenView.visibility = View.VISIBLE
-            binding.arrowButton.setImageResource(R.drawable.round_keyboard_arrow_up_24)
-        }
-        else{
-            TransitionManager.beginDelayedTransition(cardView, AutoTransition())
-            hiddenView.visibility = View.GONE
-            binding.arrowButton.setImageResource(R.drawable.round_keyboard_arrow_down_24)
+        binding.apply {
+            viewModel.medName = null
+            viewModel.medImage = null
+            viewModel.bimapMedImage = null
+            viewModel.medInstruction = null
+            viewModel.medNotes = null
+            viewModel.dosage = null
+            viewModel.medQuantity = null
+            viewModel.mfgDate = null
+            viewModel.expDate = null
+            viewModel.doctorName = null
+            viewModel.doctorContact = null
+            viewModel.selectedfreqTags = null
+            viewModel.selectedMedicineTimeOfDayType1 = ArrayList()
+            viewModel.selectedMedicineTimeOfDayType2 = ArrayList()
+            viewModel.selectedMedTypeTags = null
+            viewModel.selectedWeekDayItem = ArrayList()
+
+            MainScope().launch {
+                fragmentMedicineNameTextInputEditText.setText("")
+                fragmentDosageInfoTextInputEditText.setText("")
+                fragmentMedicineStartdateTextInputEditText.setText("")
+                fragmentMedicineExpirydateTextInputEditText.setText("")
+                fragmentMedicineQuantityTextInputEditText.setText("")
+                fragmentDoctorContactTextInputEditText.setText("")
+                fragmentDoctorNameTextInputEditText.setText("")
+                fragmentSpecialInstructionTextInputEditText.setText("")
+                fragmentNotesOrCommentsTextInputEditText.setText("")
+                val drawableResourceId = resources.getIdentifier("round_medication_24", "drawable", requireContext().packageName)
+                medicineImage.setImageResource(drawableResourceId)
+
+                // Iterate over the child views of the ChipGroup
+                for (i in 0 until medTypeChipGroup.childCount) {
+                    val childView = medTypeChipGroup.getChildAt(i)
+
+                    // Check if the child view is a Chip
+                    if (childView is Chip) {
+                        // Uncheck the chip
+                        if(childView.isChecked)
+                        {
+                            childView.isChecked = false
+                        }
+                    }
+                }
+
+                for (i in 0 until freqChipGroup.childCount) {
+                    val childView = freqChipGroup.getChildAt(i)
+
+                    // Check if the child view is a Chip
+                    if (childView is Chip) {
+                        // Uncheck the chip
+                        if(childView.isChecked)
+                        {
+                            childView.isChecked = false
+                        }
+                    }
+                }
+
+                for (i in 0 until weekDaysChipGroup.childCount) {
+                    val childView = weekDaysChipGroup.getChildAt(i)
+
+                    // Check if the child view is a Chip
+                    if (childView is Chip) {
+                        // Uncheck the chip
+                        if(childView.isChecked)
+                        {
+                            childView.isChecked = false
+                        }
+                    }
+                }
+
+                for (i in 0 until breakFastChipGroup.childCount) {
+                    val childView = breakFastChipGroup.getChildAt(i)
+
+                    // Check if the child view is a Chip
+                    if (childView is Chip) {
+                        // Uncheck the chip
+                        if(childView.isChecked)
+                        {
+                            childView.isChecked = false
+                        }
+                    }
+                }
+
+                for (i in 0 until launchChipGroup.childCount) {
+                    val childView = launchChipGroup.getChildAt(i)
+
+                    // Check if the child view is a Chip
+                    if (childView is Chip) {
+                        // Uncheck the chip
+                        if(childView.isChecked)
+                        {
+                            childView.isChecked = false
+                        }
+                    }
+                }
+
+                for (i in 0 until dinnerChipGroup.childCount) {
+                    val childView = dinnerChipGroup.getChildAt(i)
+
+                    // Check if the child view is a Chip
+                    if (childView is Chip) {
+                        // Uncheck the chip
+                        if(childView.isChecked)
+                        {
+                            childView.isChecked = false
+                        }
+                    }
+                }
+
+                for (i in 0 until medicineTimeofDayType2ChipGroup.childCount) {
+                    val childView = medicineTimeofDayType2ChipGroup.getChildAt(i)
+
+                    // Check if the child view is a Chip
+                    if (childView is Chip) {
+                        // Uncheck the chip
+                        if(childView.isChecked)
+                        {
+                            childView.isChecked = false
+                        }
+                    }
+                }
+            }
+
         }
     }
-
-
 
 
     // Function to upload an image to Firebase Storage and provide the result via callback
