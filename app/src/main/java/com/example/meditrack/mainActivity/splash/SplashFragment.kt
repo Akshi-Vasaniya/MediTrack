@@ -7,13 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.meditrack.R
 import com.example.meditrack.databinding.FragmentSplashBinding
-import com.example.meditrack.firebase.fBase
+import com.example.meditrack.firebase.FBase
 import com.example.meditrack.homeActivity.HomeActivity
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
@@ -30,9 +29,9 @@ class SplashFragment : Fragment() {
     private lateinit var viewModel: SplashViewModel
     private lateinit var binding: FragmentSplashBinding
     private lateinit var firebaseAuth: FirebaseAuth
-    private val tag="SplashFragment"
+    //private val tAG="SplashFragment"
 
-    override fun onResume() {
+    /*override fun onResume() {
         super.onResume()
         (activity as AppCompatActivity?)!!.supportActionBar!!.hide()
     }
@@ -40,7 +39,7 @@ class SplashFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         (activity as AppCompatActivity?)!!.supportActionBar!!.show()
-    }
+    }*/
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,7 +56,7 @@ class SplashFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        firebaseAuth=fBase.getFireBaseAuth()
+        firebaseAuth=FBase.getFireBaseAuth()
 
         binding.mediIcon.setSVG(viewModel.getAppSVG(resources))
 

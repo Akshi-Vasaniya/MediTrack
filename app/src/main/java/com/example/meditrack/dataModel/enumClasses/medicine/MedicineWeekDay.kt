@@ -9,7 +9,7 @@ enum class MedicineWeekDay {
     Friday,
     Saturday;
 
-    fun daynumber():Int
+    /*fun daynumber():Int
     {
         when(this){
             Sunday ->return  0
@@ -20,5 +20,5 @@ enum class MedicineWeekDay {
             Friday ->return  5
             Saturday ->return  6
         }
-    }
+    }*/
 }

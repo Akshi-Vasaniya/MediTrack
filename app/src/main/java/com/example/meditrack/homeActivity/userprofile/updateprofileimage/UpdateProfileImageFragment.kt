@@ -3,29 +3,23 @@ package com.example.meditrack.homeActivity.userprofile.updateprofileimage
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.meditrack.R
-import com.example.meditrack.dataModel.dataClasses.UserData
 import com.example.meditrack.databinding.FragmentUpdateProfileImageBinding
-import com.example.meditrack.databinding.FragmentUserProfileBinding
-import com.example.meditrack.firebase.fBase
-import com.example.meditrack.homeActivity.HomeActivityViewModel
+import com.example.meditrack.firebase.FBase
 import com.example.meditrack.utility.UtilityFunction
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.theartofdev.edmodo.cropper.CropImage
@@ -34,10 +28,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.util.*
 
 class UpdateProfileImageFragment : Fragment() {
 
@@ -113,7 +103,8 @@ class UpdateProfileImageFragment : Fragment() {
             btnRemoveImage.setOnClickListener {
                 if (!imageDeleted)
                 {
-                    val drawableResourceId = resources.getIdentifier("profilepic", "drawable", requireContext().packageName)
+                    //val drawableResourceId = resources.getIdentifier("profilepic", "drawable", requireContext().packageName)
+                    val drawableResourceId = R.drawable.profilepic
                     imageViewProfile.setImageResource(drawableResourceId)
                     profileImageUri = null
                     imageDeleted = true
@@ -148,7 +139,7 @@ class UpdateProfileImageFragment : Fragment() {
                     {
                         progressDialog.start("Updating....")
                         MainScope().launch(Dispatchers.IO) {
-                            deleteImageAndData(fBase.getUserId(), object : DeletionCallback{
+                            deleteImageAndData(FBase.getUserId(), object : DeletionCallback{
                                 override fun onSuccess(message: String) {
 
                                     progressDialog.stop()
@@ -274,14 +265,14 @@ class UpdateProfileImageFragment : Fragment() {
         fun onSuccess(message: String)
         fun onFailure(errorMessage: String)
     }
-    fun deleteImageAndData(userID: String, deletionCallback: DeletionCallback) {
-        val storageRef = fBase.getStorageReference()
+    private fun deleteImageAndData(userID: String, deletionCallback: DeletionCallback) {
+        val storageRef = FBase.getStorageReference()
         val imageRef = storageRef.child("userProfileImage/$userID")
 
         // Delete the image from the Firebase Storage
         imageRef.delete().addOnSuccessListener {
             // If image deletion is successful, delete the corresponding data from the Realtime Database
-            val databaseRef = fBase.getUserReference().child(userID)
+            val databaseRef = FBase.getUserReference().child(userID)
             databaseRef.child("profileImage").removeValue().addOnSuccessListener {
                 deletionCallback.onSuccess("Image and corresponding data deleted successfully.")
             }.addOnFailureListener {
@@ -292,12 +283,12 @@ class UpdateProfileImageFragment : Fragment() {
         }
     }
 
-    fun updateUserProfileImage(imageUri: Uri, callback: (Boolean, String) -> Unit) {
-        val storageReference = fBase.getStorageReference()
-        val databaseReference = fBase.getUserReference().child(fBase.getUserId())
+    private fun updateUserProfileImage(imageUri: Uri, callback: (Boolean, String) -> Unit) {
+        val storageReference = FBase.getStorageReference()
+        val databaseReference = FBase.getUserReference().child(FBase.getUserId())
 
         // Upload the image to Firebase Storage
-        val userProfileImageRef = storageReference.child("userProfileImage/${fBase.getUserId()}")
+        val userProfileImageRef = storageReference.child("userProfileImage/${FBase.getUserId()}")
         val uploadTask = userProfileImageRef.putFile(imageUri)
         uploadTask.continueWithTask { task ->
             if (!task.isSuccessful) {

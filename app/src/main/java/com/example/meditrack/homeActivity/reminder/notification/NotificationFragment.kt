@@ -3,16 +3,14 @@ package com.example.meditrack.homeActivity.reminder.notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.meditrack.R
 import com.example.meditrack.databinding.FragmentNotificationBinding
-import com.example.meditrack.homeActivity.home.HomeViewModel
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -32,7 +30,7 @@ class NotificationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.fragment_notification, container, false)
-        viewModel = ViewModelProvider(this).get(NotificationViewModel::class.java)
+        viewModel = ViewModelProvider(this)[NotificationViewModel::class.java]
         binding = FragmentNotificationBinding.bind(view)
         progressDialog = CustomProgressDialog(requireContext())
 
@@ -56,13 +54,6 @@ class NotificationFragment : Fragment() {
         }
 
         return binding.root
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

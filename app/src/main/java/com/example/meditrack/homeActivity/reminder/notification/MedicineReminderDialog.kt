@@ -5,15 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.Vibrator
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.DialogFragment
 import com.example.meditrack.R
 import com.example.meditrack.homeActivity.reminder.recevier.ReminderReceiver
@@ -47,7 +44,7 @@ class MedicineReminderDialog: DialogFragment() {
 
             val timePickerDialog = TimePickerDialog(
                 requireContext(),
-                TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+                { _, hourOfDay, minute ->
                     setTime(hourOfDay, minute)
                     notfiHour = hourOfDay
                     notfiMin = minute
@@ -71,7 +68,7 @@ class MedicineReminderDialog: DialogFragment() {
         )
 
         // Handle checkbox selection
-        for (i in 0 until dayCheckBoxes.size) {
+        for (i in dayCheckBoxes.indices) {
             dayCheckBoxes[i].setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     selectedDays.add(i)
@@ -124,10 +121,10 @@ class MedicineReminderDialog: DialogFragment() {
         calendar.set(Calendar.MINUTE, Min)
         val sdf = SimpleDateFormat("h:mm a", Locale.getDefault()) // Format for 12-hour time with AM/PM
         val formattedTime = sdf.format(calendar.time)
-        reminderTimeEditText.setText(formattedTime)
+        reminderTimeEditText.text = formattedTime
     }
 
-    fun scheduleNotifications(medicineName: String, days: MutableList<Int> = mutableListOf<Int>(), notfiHr: Int, notfiMin: Int) {
+    fun scheduleNotifications(medicineName: String, days: MutableList<Int> = mutableListOf(), notfiHr: Int, notfiMin: Int) {
         val now = Calendar.getInstance()
         Log.i("TAG", "scheduleNotifications: days = $days")
         Log.i("TAG", "scheduleNotifications: hour =  $notfiHr")
@@ -144,7 +141,7 @@ class MedicineReminderDialog: DialogFragment() {
         }
     }
 
-    fun calculateNextOccurrence(selectedDay: Int, now: Calendar, hour: Int, minute: Int): Calendar {
+    private fun calculateNextOccurrence(selectedDay: Int, now: Calendar, hour: Int, minute: Int): Calendar {
         val nextOccurrence = now.clone() as Calendar
         nextOccurrence.set(Calendar.HOUR_OF_DAY, hour)
         nextOccurrence.set(Calendar.MINUTE, minute)
@@ -165,7 +162,7 @@ class MedicineReminderDialog: DialogFragment() {
     }
 
 
-    fun scheduleNotification(content: String, dayOfWeek: Int,hour: Int, minute: Int) {
+    private fun scheduleNotification(content: String, dayOfWeek: Int, hour: Int, minute: Int) {
         // Create an Intent for the ReminderReceiver
         val intent = Intent(requireContext(), ReminderReceiver::class.java)
         intent.putExtra("title", "Medicine Reminder")

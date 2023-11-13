@@ -1,7 +1,7 @@
 package com.example.meditrack.dataModel.dataClasses
 
 import com.example.meditrack.dataModel.EmailAvailabilityCallback
-import com.example.meditrack.firebase.fBase
+import com.example.meditrack.firebase.FBase
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -30,7 +30,7 @@ data class UserData(var name:String?=null, var surname:String?=null, var email:S
         }*/
 
         fun isEmailAvailable(email: String, callback: EmailAvailabilityCallback){
-            val userRefForEmail = fBase.getUserReference()
+            val userRefForEmail = FBase.getUserReference()
 
             userRefForEmail.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(object :
             ValueEventListener{

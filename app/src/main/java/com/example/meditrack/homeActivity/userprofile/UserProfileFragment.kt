@@ -1,13 +1,11 @@
 package com.example.meditrack.homeActivity.userprofile
 
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -15,9 +13,7 @@ import com.bumptech.glide.Glide
 import com.example.meditrack.R
 import com.example.meditrack.dataModel.dataClasses.UserData
 import com.example.meditrack.databinding.FragmentUserProfileBinding
-import com.example.meditrack.firebase.fBase
-import com.example.meditrack.homeActivity.HomeActivityViewModel
-import com.example.meditrack.utility.UtilityFunction
+import com.example.meditrack.firebase.FBase
 import com.example.meditrack.utility.ownDialogs.CustomDialog
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.google.firebase.database.DataSnapshot
@@ -42,7 +38,7 @@ class UserProfileFragment : Fragment(), CustomDialog.CustomDialogListener {
     override fun onUpdateButtonClicked(text: String,fieldName:String) {
         // Perform your actions here with the received text
         // For example, update the user profile with the provided text
-        val userRef = fBase.getUserReference().child(fBase.getCurrentUser()!!.uid)
+        val userRef = FBase.getUserReference().child(FBase.getCurrentUser()!!.uid)
         val updates: MutableMap<String, Any> = HashMap()
         updates[fieldName] = text
         userRef.updateChildren(updates)
@@ -97,7 +93,7 @@ class UserProfileFragment : Fragment(), CustomDialog.CustomDialogListener {
             {
                 progressDialog.start("Loading Details...")
             }
-            val userQuery = fBase.getUserDataQuery()
+            val userQuery = FBase.getUserDataQuery()
             userQuery.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     snapshot.children.forEach {
@@ -120,7 +116,7 @@ class UserProfileFragment : Fragment(), CustomDialog.CustomDialogListener {
 
             })
         }
-        viewModel._userData.observe(viewLifecycleOwner){
+        viewModel.userData.observe(viewLifecycleOwner){
             MainScope().launch(Dispatchers.IO) {
                 try {
                     withContext(Dispatchers.Main)
@@ -133,7 +129,7 @@ class UserProfileFragment : Fragment(), CustomDialog.CustomDialogListener {
                     if(it?.profileImage != null && it.profileImage!!.isNotEmpty() && it.profileImage!!.isNotBlank() && it.profileImage!="null")
                     {
                         //val bitmap = UtilityFunction.decodeBase64ToBitmap(it?.profileImage!!)
-                        userProfileImgUrl = it?.profileImage!!
+                        userProfileImgUrl = it.profileImage!!
                         withContext(Dispatchers.Main)
                         {
                             Glide.with(requireActivity())
@@ -143,7 +139,8 @@ class UserProfileFragment : Fragment(), CustomDialog.CustomDialogListener {
                         }
                     }
                     else{
-                        val drawableResourceId = resources.getIdentifier("profilepic", "drawable", requireContext().packageName)
+                        //val drawableResourceId = resources.getIdentifier("profilepic", "drawable", requireContext().packageName)
+                        val drawableResourceId = R.drawable.profilepic
                         binding.fragmentUserProfileProfileImage.setImageResource(drawableResourceId)
                     }
                 }

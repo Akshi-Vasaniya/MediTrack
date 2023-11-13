@@ -1,8 +1,6 @@
 package com.example.meditrack.homeActivity.home
 
-import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,14 +9,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.caverock.androidsvg.SVG
 import com.example.meditrack.R
-import com.example.meditrack.dataModel.api.MyAsyncTask
 import com.example.meditrack.databinding.FragmentHomeBinding
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
 
 
 class HomeFragment : Fragment() {
@@ -28,7 +24,7 @@ class HomeFragment : Fragment() {
     private lateinit var slideOutAnimation: ValueAnimator*/
     private lateinit var binding:FragmentHomeBinding
     //private lateinit var homeActivity: HomeActivity
-    private val homeTag = "HomeFragment"
+    //private val tAG = "HomeFragment"
     private lateinit var progressDialog: CustomProgressDialog
 
     override fun onCreateView(
@@ -177,7 +173,7 @@ class HomeFragment : Fragment() {
             }*/
             MainScope().launch(Dispatchers.IO) {
                 val addMedicineSVG = SVG.getFromResource(resources, R.raw.add_medicine)
-                val addPrescriptionSVG = SVG.getFromResource(resources, R.raw.add_prescription)
+                //val addPrescriptionSVG = SVG.getFromResource(resources, R.raw.add_prescription)
                 val checkStockMedicineSVG = SVG.getFromResource(resources, R.raw.check_stock_medicine)
                 val medicineSuggestionSVG = SVG.getFromResource(resources, R.raw.medicine_sugestion)
 

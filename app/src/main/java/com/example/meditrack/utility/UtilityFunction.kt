@@ -2,23 +2,20 @@ package com.example.meditrack.utility
 
 import android.content.Context
 import android.graphics.*
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.util.Base64
 import android.util.Log
-import android.widget.ImageView
 import androidx.core.content.FileProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.zip.GZIPOutputStream
 
 class UtilityFunction {
 
     companion object{
-        private const val TAG="utilityFunction"
+        private const val tAG="utilityFunction"
         suspend fun uriToBitmap(context: Context, uri: Uri): Bitmap? {
             return withContext(Dispatchers.IO){
                 var inputStream: InputStream? = null
@@ -81,6 +78,21 @@ class UtilityFunction {
             }
         }
 
+        suspend fun bitmapToByteArray(bitmap: Bitmap): ByteArray {
+            return withContext(Dispatchers.IO){
+                val stream = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                stream.toByteArray()
+            }
+
+        }
+
+        suspend fun byteArrayToBitmap(byteArray: ByteArray): Bitmap {
+            return withContext(Dispatchers.IO){
+                BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+            }
+        }
+
         suspend fun bitmapToBase64(bitmap: Bitmap): String {
             return withContext(Dispatchers.IO){
                 try {
@@ -91,7 +103,7 @@ class UtilityFunction {
                 }
                 catch (ex:Exception)
                 {
-                    Log.e(TAG,"utilityFunction.kt -> function bitmapToBase64() -> $ex")
+                    Log.e(tAG,"utilityFunction.kt -> function bitmapToBase64() -> $ex")
                     throw ex
                 }
 
@@ -102,7 +114,7 @@ class UtilityFunction {
             return inputString.trim().replace(Regex("[\t ]+"), " ").replace(" ", "_")
         }
 
-        fun stringCompress(inputString: String): String {
+        /*fun stringCompress(inputString: String): String {
             // Compress the long string
             val compressedBytes = ByteArrayOutputStream().use { byteStream ->
                 GZIPOutputStream(byteStream).use { gzipStream ->
@@ -113,13 +125,14 @@ class UtilityFunction {
 
             // Convert compressed bytes back to a string
             return String(compressedBytes)
-        }
+        }*/
 
         fun stringtobase64(inputString: String): String {
             val trimmedLowerCaseString = inputString.trim().toLowerCase(Locale.getDefault())
 
             return Base64.encodeToString(trimmedLowerCaseString.toByteArray(), Base64.DEFAULT)
         }
+
         suspend fun decodeBase64ToBitmap(base64String: String): Bitmap {
             return withContext(Dispatchers.IO){
                 try{
@@ -128,11 +141,11 @@ class UtilityFunction {
                 }
                 catch (exNull:NullPointerException)
                 {
-                    Log.e(TAG,"utilityFunction.kt -> function decodeBase64ToBitmap() -> NullPointerException: $exNull")
+                    Log.e(tAG,"utilityFunction.kt -> function decodeBase64ToBitmap() -> NullPointerException: $exNull")
                     throw exNull
                 }
                 catch (ex:Exception){
-                    Log.e(TAG,"utilityFunction.kt -> function decodeBase64ToBitmap() -> $ex")
+                    Log.e(tAG,"utilityFunction.kt -> function decodeBase64ToBitmap() -> $ex")
                     throw ex
                 }
 
@@ -169,7 +182,7 @@ class UtilityFunction {
         }
 
         // Function to find nearly similar rectangles based on height, including the highest rectangle
-        fun findNearlySimilarRectangles(
+        /*fun findNearlySimilarRectangles(
             rectangles: ArrayList<Pair<Rect, String>>,
             tolerancePercentage: Double
         ): ArrayList<Pair<Rect, String>> {
@@ -190,9 +203,9 @@ class UtilityFunction {
             similarRects.add(0, highestRectPair)
 
             return ArrayList(similarRects)
-        }
+        }*/
 
-        fun filterFirstSecondThirdLargestRect(rectList: List<Pair<Rect, String>>): Triple<List<Pair<Rect, String>>, List<Pair<Rect, String>>, List<Pair<Rect, String>>>? {
+        /*fun filterFirstSecondThirdLargestRect(rectList: List<Pair<Rect, String>>): Triple<List<Pair<Rect, String>>, List<Pair<Rect, String>>, List<Pair<Rect, String>>>? {
             if (rectList.size < 3) return null
 
             val sortedRects = rectList.sortedByDescending { it.first.width() * it.first.height() }
@@ -206,7 +219,7 @@ class UtilityFunction {
             val thirdLargestRects = sortedRects.filter { it.first.width() * it.first.height() == thirdLargestRect.width() * thirdLargestRect.height() }
 
             return Triple(firstLargestRects, secondLargestRects, thirdLargestRects)
-        }
+        }*/
 
 
         // Function to convert Bitmap to Uri
@@ -237,7 +250,7 @@ class UtilityFunction {
         }
 
         // Function to get the Uri from ImageView
-        fun getImageUriFromImageView(context: Context,imageView: ImageView): Uri? {
+        /*fun getImageUriFromImageView(context: Context,imageView: ImageView): Uri? {
             val bitmap = (imageView.drawable as BitmapDrawable).bitmap
             var imageUri: Uri? = null
             try {
@@ -251,6 +264,6 @@ class UtilityFunction {
                 e.printStackTrace()
             }
             return imageUri
-        }
+        }*/
     }
 }

@@ -10,7 +10,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
 <!--        <include-->
 <!--            android:id="@+id/menuLayout"-->
@@ -72,29 +73,39 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@drawable/shape_card_view">
+                        android:background="@drawable/side_nav_bar">
 
-                        <com.caverock.androidsvg.SVGImageView
-                            android:id="@+id/addMedicineImageView"
-                            android:layout_width="@dimen/_30sdp"
-                            android:layout_height="@dimen/_30sdp"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="@dimen/_5sdp"
-                            android:layout_marginStart="@dimen/_5sdp"
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/addMedicineCardView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:elevation="25dp"
+
+                            >
+                            <com.caverock.androidsvg.SVGImageView
+                                android:id="@+id/addMedicineImageView"
+                                android:layout_width="@dimen/_30sdp"
+                                android:layout_height="@dimen/_30sdp"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_marginVertical="10dp"
+                                />
+                        </androidx.cardview.widget.CardView>
+
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/comfortaa_bold"
-                            android:text="Add\nMedicine"
+                            android:text="Add Medicine"
                             android:textColor="@color/white"
                             android:textSize="@dimen/_10sdp"
-                            android:layout_marginEnd="@dimen/_10sdp"
-                            android:layout_marginBottom="@dimen/_2sdp"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent" />
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/addMedicineCardView" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </com.google.android.material.card.MaterialCardView>
                 <com.google.android.material.card.MaterialCardView
@@ -112,29 +123,39 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@drawable/shape_card_view">
+                        android:background="@drawable/side_nav_bar">
 
-                        <com.caverock.androidsvg.SVGImageView
-                            android:id="@+id/medicineSuggestionsImageView"
-                            android:layout_width="@dimen/_30sdp"
-                            android:layout_height="@dimen/_30sdp"
-                            android:layout_marginTop="@dimen/_5sdp"
-                            android:layout_marginStart="@dimen/_5sdp"
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/medicineSuggestionsCardView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:elevation="25dp"
+                            >
+                            <com.caverock.androidsvg.SVGImageView
+                                android:id="@+id/medicineSuggestionsImageView"
+                                android:layout_width="@dimen/_30sdp"
+                                android:layout_height="@dimen/_30sdp"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_marginVertical="10dp"
+                                />
+                        </androidx.cardview.widget.CardView>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textAlignment="center"
+                            android:layout_marginBottom="@dimen/_2sdp"
                             android:fontFamily="@font/comfortaa_bold"
                             android:text="Suggestions"
+                            android:textAlignment="center"
                             android:textColor="@color/white"
                             android:textSize="@dimen/_10sdp"
-                            android:layout_marginEnd="@dimen/_10sdp"
-                            android:layout_marginBottom="@dimen/_2sdp"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"/>
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/medicineSuggestionsCardView" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
@@ -247,30 +268,41 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@drawable/shape_card_view">
+                        android:background="@drawable/side_nav_bar">
 
-                        <com.caverock.androidsvg.SVGImageView
-                            android:id="@+id/checkStockMedicinesImageView"
-                            android:layout_width="@dimen/_30sdp"
-                            android:layout_height="@dimen/_30sdp"
-                            android:layout_marginTop="@dimen/_5sdp"
-                            android:layout_marginStart="@dimen/_5sdp"
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/checkStockMedicinesCardView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:elevation="25dp"
+                            >
+                            <com.caverock.androidsvg.SVGImageView
+                                android:id="@+id/checkStockMedicinesImageView"
+                                android:layout_width="@dimen/_30sdp"
+                                android:layout_height="@dimen/_30sdp"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_marginVertical="10dp"
+                                />
+                        </androidx.cardview.widget.CardView>
+
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
+                            android:layout_marginBottom="@dimen/_2sdp"
                             android:fontFamily="@font/comfortaa_bold"
                             android:gravity="center"
-                            android:text="Check Stock\nof Medicines"
+                            android:text="Stock"
                             android:textColor="@color/white"
                             android:textSize="@dimen/_10sdp"
-                            android:layout_marginEnd="@dimen/_10sdp"
-                            android:layout_marginBottom="@dimen/_2sdp"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent" />
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/checkStockMedicinesCardView" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>

@@ -19,7 +19,7 @@ class AddMedicineViewModel : ViewModel() {
     var expDate: String? = null
     var doctorName: String? = null
     var doctorContact: String? = null
-    var selectedTextArray:ArrayList<Pair<Rect,String>>? = null
+    var selectedMedNameText:String? = null
 
     val freqTags = MedicineFrequency.values()
     val medTypeTags = MedicineType.values()
@@ -34,7 +34,7 @@ class AddMedicineViewModel : ViewModel() {
         MedicineTimeOfDayType1.BEFORE_DINNER,
         MedicineTimeOfDayType1.AFTER_DINNER,)
 
-    var selectedfreqTags: MedicineFrequency? = null
+    var selectedFreqTags: MedicineFrequency? = null
     var selectedMedicineTimeOfDayType1: ArrayList<MedicineTimeOfDayType1> = ArrayList()
     var selectedMedicineTimeOfDayType2: ArrayList<MedicineTimeOfDayType2> = ArrayList()
     var selectedMedTypeTags: MedicineType? = null

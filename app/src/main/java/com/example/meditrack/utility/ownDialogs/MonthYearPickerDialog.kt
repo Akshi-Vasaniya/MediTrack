@@ -8,13 +8,11 @@ import android.view.View
 import android.widget.NumberPicker
 import androidx.fragment.app.DialogFragment
 import com.example.meditrack.R
-import java.time.Year
 import java.util.*
 
 
 class MonthYearPickerDialog : DialogFragment() {
 
-    private val MAX_YEAR = 2099
     private var listener: OnDateSetListener? = null
 
     fun setListener(listener: OnDateSetListener?) {
@@ -38,9 +36,9 @@ class MonthYearPickerDialog : DialogFragment() {
         monthPicker.value = cal.get(Calendar.MONTH)
 
         val year: Int = currentYear - 4
-        val MAX_YEAR = 2099 // Define your MAX_YEAR value
+        val maxYears = 2099 // Define your MAX_YEAR value
         yearPicker.minValue = year
-        yearPicker.maxValue = MAX_YEAR
+        yearPicker.maxValue = maxYears
         yearPicker.value = year
 
         builder.setView(dialog)
@@ -48,8 +46,8 @@ class MonthYearPickerDialog : DialogFragment() {
             .setPositiveButton("OK") { _, _ ->
                 listener?.onDateSet(null, yearPicker.value, monthPicker.value, 0)
             }
-            .setNegativeButton("Cancel") { dialog, _ ->
-                dialog.cancel()
+            .setNegativeButton("Cancel") { monthYearPickerDialog, _ ->
+                monthYearPickerDialog.cancel()
             }
         return builder.create()
     }

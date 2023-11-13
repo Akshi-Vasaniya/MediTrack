@@ -119,9 +119,13 @@
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnCorrectSpell"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="40dp"
                             android:text="Correct Spell"
-                            android:textAllCaps="false"/>
+                            android:textAllCaps="false"
+                            android:layout_marginTop="5dp"
+                            app:backgroundTint="@null"
+                            android:background="@drawable/button_background"
+                            android:layout_marginBottom="10dp"/>
                     </com.google.android.material.textfield.TextInputLayout>
                     <LinearLayout
                         android:layout_width="match_parent"

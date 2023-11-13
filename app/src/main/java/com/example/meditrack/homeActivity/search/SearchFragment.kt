@@ -9,8 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.meditrack.R
 import com.example.meditrack.adapter.SearchItemAdapter
-import com.example.meditrack.dataModel.dataClasses.SearchItemData
 import com.example.meditrack.dataModel.api.ApiInstance
+import com.example.meditrack.dataModel.dataClasses.SearchItemData
 import com.example.meditrack.databinding.FragmentSearchBinding
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import kotlinx.coroutines.Dispatchers
@@ -35,7 +35,7 @@ class SearchFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val view = inflater.inflate(R.layout.fragment_search, container, false)
         binding=FragmentSearchBinding.bind(view)
         viewModel = ViewModelProvider(this)[SearchViewModel::class.java]
@@ -63,7 +63,7 @@ class SearchFragment : Fragment() {
                         ) {
                             try {
                                 Log.i("Search", "onResponse: ${response.body()!!}")
-                                var res = response.body()!!
+                                val res = response.body()!!
                                 binding.rvCombineImage.adapter = SearchItemAdapter(res)
                                 progressDialog.stop()
                             }

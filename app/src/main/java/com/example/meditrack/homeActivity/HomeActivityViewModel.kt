@@ -5,10 +5,10 @@ import androidx.lifecycle.ViewModel
 import com.example.meditrack.dataModel.dataClasses.UserData
 
 class HomeActivityViewModel : ViewModel(){
-    val _userData = MutableLiveData<UserData>()
+    val userData = MutableLiveData<UserData>()
 
     fun setUserData(user: UserData)
     {
-        _userData.value=user
+        userData.value=user
     }
 }

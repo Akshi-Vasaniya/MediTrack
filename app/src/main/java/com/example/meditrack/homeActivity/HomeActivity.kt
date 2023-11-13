@@ -9,7 +9,6 @@ import android.util.Log
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -26,9 +25,8 @@ import com.bumptech.glide.Glide
 import com.example.meditrack.R
 import com.example.meditrack.dataModel.dataClasses.UserData
 import com.example.meditrack.databinding.ActivityHomeBinding
-import com.example.meditrack.firebase.fBase
+import com.example.meditrack.firebase.FBase
 import com.example.meditrack.mainActivity.MainActivity
-import com.example.meditrack.utility.UtilityFunction
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -38,23 +36,22 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.log
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     lateinit var binding: ActivityHomeBinding
-    lateinit var drawer_layout:DrawerLayout
-    lateinit var nav_view:NavigationView
-    lateinit var navHostFragment:NavHostFragment
+    lateinit var drawerLayout:DrawerLayout
+    lateinit var navView:NavigationView
+    private lateinit var navHostFragment:NavHostFragment
     private val viewModel: HomeActivityViewModel by viewModels()
 
     /*val myToolbarImage: ImageView
         get() = findViewById(R.id.toolbar_profile_image)*/
 
-    fun getToolbarMenuLayout(): ConstraintLayout {
+    /*fun getToolbarMenuLayout(): ConstraintLayout {
         return findViewById(R.id.fragment_home_toolbar_menu_layout)
-    }
+    }*/
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,25 +76,25 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
         headerView!!.setOnClickListener {
-            if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-                drawer_layout.closeDrawer(GravityCompat.START)
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START)
             }
             navHostFragment.findNavController().navigate(R.id.userProfileFragment)
         }
         setSupportActionBar(findViewById(R.id.toolbarHome))
 
-        drawer_layout = findViewById(R.id.drawer_layout)
-        nav_view = findViewById(R.id.nav_view)
+        drawerLayout = findViewById(R.id.drawer_layout)
+        navView = findViewById(R.id.nav_view)
 
         findViewById<ConstraintLayout>(R.id.fragment_home_toolbar_menu_layout).setOnClickListener {
-            drawer_layout.openDrawer(GravityCompat.START)
+            drawerLayout.openDrawer(GravityCompat.START)
         }
 
-        val toggle = ActionBarDrawerToggle(this, drawer_layout, findViewById(R.id.toolbarHome), R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        drawer_layout.addDrawerListener(toggle)
+        val toggle = ActionBarDrawerToggle(this, drawerLayout, findViewById(R.id.toolbarHome), R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
-        nav_view.setNavigationItemSelectedListener(this)
+        navView.setNavigationItemSelectedListener(this)
 
         displayScreen(-1)
 
@@ -118,7 +115,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             notificationManager.createNotificationChannel(channel)
         }
         MainScope().launch(Dispatchers.IO) {
-            val userQuery = fBase.getUserDataQuery()
+            val userQuery = FBase.getUserDataQuery()
             userQuery.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     snapshot.children.forEach {
@@ -140,7 +137,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             })
         }
-        viewModel._userData.observe(this){
+        viewModel.userData.observe(this){
             MainScope().launch(Dispatchers.IO) {
                 try {
                     withContext(Dispatchers.Main)
@@ -174,7 +171,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         }
                     }
                     else{
-                        val drawableResourceId = resources.getIdentifier("profilepic", "drawable", packageName)
+                        //val drawableResourceId = resources.getIdentifier("profilepic", "drawable", packageName)
+                        val drawableResourceId = R.drawable.profilepic
                         userImage!!.setImageResource(drawableResourceId)
                     }
                 }
@@ -195,8 +193,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     override fun onBackPressed() {
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.closeDrawer(GravityCompat.START)
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
         }
@@ -209,13 +207,13 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }*/
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_settings -> return true
-            else -> return super.onOptionsItemSelected(item)
+        return when (item.itemId) {
+            R.id.action_settings -> true
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
-    fun loadFragment()
+    private fun loadFragment()
     {
         appBarConfiguration = AppBarConfiguration.Builder(
             setOf(
@@ -226,7 +224,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 R.id.medicineStockFragment,
                 R.id.userProfileFragment,
                 R.id.aboutUsFragment,
-                R.id.updateProfileImageFragment
+                R.id.updateProfileImageFragment,
+                R.id.notificationFragment
             )
         ).build()
 
@@ -235,7 +234,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
     }
 
-    fun displayScreen(id: Int){
+    private fun displayScreen(id: Int){
 
         // val fragment =  when (id){
 
@@ -283,7 +282,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         displayScreen(item.itemId)
-        drawer_layout.closeDrawer(GravityCompat.START)
+        drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
 

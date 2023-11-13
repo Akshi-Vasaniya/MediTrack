@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.meditrack.R
 import com.example.meditrack.dataModel.dataClasses.SearchItemData
+import java.util.*
 
 class SearchItemAdapter(private var itemsList: List<SearchItemData?>) : RecyclerView.Adapter<SearchItemAdapter.ViewHolder>() {
 
@@ -24,7 +25,7 @@ class SearchItemAdapter(private var itemsList: List<SearchItemData?>) : Recycler
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        holder.itemName.text = itemsList[position]!!.Name.toUpperCase()
+        holder.itemName.text = itemsList[position]!!.Name.uppercase(Locale.getDefault())
         holder.itemDesc.text = itemsList[position]!!.Document
         holder.itemScore.text = itemsList[position]!!.Score.toString()
 

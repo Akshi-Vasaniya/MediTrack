@@ -1,42 +1,31 @@
 package com.example.meditrack.homeActivity.medicine.medicineStock
 
 import android.app.AlertDialog
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.meditrack.R
 import com.example.meditrack.adapter.MedicineStockItemAdapter
 import com.example.meditrack.dataModel.ItemsViewModel
 import com.example.meditrack.databinding.FragmentMedicineStockBinding
-import com.example.meditrack.firebase.fBase
-import com.example.meditrack.homeActivity.medicine.addMedicine.AddMedicineViewModel
+import com.example.meditrack.firebase.FBase
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.google.android.material.textfield.TextInputEditText
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
 import com.google.firebase.firestore.FirebaseFirestore
-import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 class MedicineStockFragment : Fragment() {
-    private lateinit var auth: FirebaseAuth
-    private lateinit var databaseReference: DatabaseReference
     private lateinit var medicineAdapter: MedicineStockItemAdapter
     private val medicineList = ArrayList<ItemsViewModel>()
     private lateinit var dialog: View
     private lateinit var dropDown: Spinner
-    val TAG = "MedicineStockfragment"
+    private val tAG = "MedicineStockfragment"
     private lateinit var customAdapter: ArrayAdapter<String>
     private var selectedFilter: MedicineFilter = MedicineFilter.INVENTORY
 
@@ -110,9 +99,9 @@ class MedicineStockFragment : Fragment() {
     }
 
     private fun addMedicineInRecycleView(filter: MedicineFilter){
-        Log.i(TAG, "addMedicineInRecycleView: id ${fBase.getUserId()}")
+        Log.i(tAG, "addMedicineInRecycleView: id ${FBase.getUserId()}")
         val db = FirebaseFirestore.getInstance()
-        val medicineDataRef = db.collection("user_medicines").document(fBase.getUserId()).collection("medicine_data")
+        val medicineDataRef = db.collection("user_medicines").document(FBase.getUserId()).collection("medicine_data")
         medicineList.clear()
         medicineAdapter.notifyDataSetChanged()
         medicineDataRef.get()
@@ -159,7 +148,7 @@ class MedicineStockFragment : Fragment() {
 
     private fun updateRecyclerView(dataList: List<ItemsViewModel>) {
         Log.d("TAG", "updateRecyclerView: $dataList")
-        medicineAdapter = MedicineStockItemAdapter(requireContext(), dataList)
+        medicineAdapter = MedicineStockItemAdapter(dataList)
         binding.medicineListView.adapter = medicineAdapter
 
         medicineAdapter.setOnItemClickListener(object : MedicineStockItemAdapter.OnItemClickListener {
@@ -195,7 +184,7 @@ class MedicineStockFragment : Fragment() {
     private fun handleDeleteButtonClick(medicineId: String) {
         val db = FirebaseFirestore.getInstance()
         val medicineDataRef =
-            db.collection("user_medicines").document(fBase.getUserId()).collection("medicine_data")
+            db.collection("user_medicines").document(FBase.getUserId()).collection("medicine_data")
 
         medicineDataRef.document(medicineId).update("mediDeleted", "Yes")
             .addOnSuccessListener {
@@ -241,7 +230,7 @@ class MedicineStockFragment : Fragment() {
     private fun editMedicinDetail(medicineId: String, medicineName: String, medicineDosage: String, medicineQuantity: String){
         val db = FirebaseFirestore.getInstance()
         val medicineDataRef =
-            db.collection("user_medicines").document(fBase.getUserId()).collection("medicine_data")
+            db.collection("user_medicines").document(FBase.getUserId()).collection("medicine_data")
 
         if(medicineName.isNotEmpty() && medicineDosage.isNotEmpty() && medicineQuantity.isNotEmpty()){
             medicineDataRef.document(medicineId).update("medName", medicineName)

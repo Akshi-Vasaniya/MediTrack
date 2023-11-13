@@ -5,8 +5,8 @@ class ListPattern {
         private const val emailRegex = "^[A-Za-z\\d._%+-]+@[A-Za-z\\d.-]+\\.[A-Za-z]{2,4}$"
         private const val nameRegex = "^[A-Za-z]{2,30}$"
         private const val passwordRegex = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,16}$"
-        private const val medNameRegex = "^[a-zA-Z0-9.,&()\\- \\[\\]_]+$"
-        private const val doctorContactRegex = "^[6789][0-9]{9}\$"
+        //private const val medNameRegex = "^[a-zA-Z0-9.,&()\\- \\[\\]_]+$"
+        private const val doctorContactRegex = "^[6789]\\d{9}\$"
         private const val doctorNameRegex = "^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*\$"
 
         fun getNameRegex():Regex
@@ -22,10 +22,10 @@ class ListPattern {
             return emailRegex.toRegex()
         }
 
-        fun getMedNameRegex():Regex
+        /*fun getMedNameRegex():Regex
         {
             return medNameRegex.toRegex()
-        }
+        }*/
 
         fun getDoctorContactRegex():Regex
         {

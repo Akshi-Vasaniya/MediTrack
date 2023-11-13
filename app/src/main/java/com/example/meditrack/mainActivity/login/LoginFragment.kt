@@ -1,6 +1,5 @@
 package com.example.meditrack.mainActivity.login
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -9,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -18,7 +16,7 @@ import com.example.meditrack.dataModel.EmailAvailabilityCallback
 import com.example.meditrack.dataModel.dataClasses.UserData
 import com.example.meditrack.databinding.FragmentLoginBinding
 import com.example.meditrack.exception.HandleException
-import com.example.meditrack.firebase.fBase
+import com.example.meditrack.firebase.FBase
 import com.example.meditrack.homeActivity.HomeActivity
 import com.example.meditrack.regularExpression.ListPattern
 import com.example.meditrack.regularExpression.MatchPattern.Companion.validate
@@ -47,7 +45,7 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
-    override fun onResume() {
+    /*override fun onResume() {
         super.onResume()
         (activity as AppCompatActivity?)!!.supportActionBar!!.hide()
     }
@@ -55,7 +53,7 @@ class LoginFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         (activity as AppCompatActivity?)!!.supportActionBar!!.show()
-    }
+    }*/
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -128,8 +126,8 @@ class LoginFragment : Fragment() {
                                 progressDialog.stop()
 //                                val snackbar = Snackbar.make(view, "Email is exist", Snackbar.LENGTH_LONG)
 //                                snackbar.show()
-                                fBase.getFireBaseAuth().setLanguageCode("en")
-                                fBase.getFireBaseAuth().sendPasswordResetEmail(viewModel.inputEmail!!).addOnCompleteListener {
+                                FBase.getFireBaseAuth().setLanguageCode("en")
+                                FBase.getFireBaseAuth().sendPasswordResetEmail(viewModel.inputEmail!!).addOnCompleteListener {
                                     progressDialog.stop()
                                     val snackbar = Snackbar.make(view, "Reset Password email has been sent successfully", Snackbar.LENGTH_LONG)
                                     snackbar.show()
@@ -158,10 +156,10 @@ class LoginFragment : Fragment() {
                     viewModel.inputEmail=viewModel.inputEmail!!.trim()
                     viewModel.inputPassword=viewModel.inputPassword!!.trim()
                     progressDialog.start("Loading...")
-                    fBase.getFireBaseAuth().signInWithEmailAndPassword(viewModel.inputEmail!!,viewModel.inputPassword!!).addOnCompleteListener {
+                    FBase.getFireBaseAuth().signInWithEmailAndPassword(viewModel.inputEmail!!,viewModel.inputPassword!!).addOnCompleteListener {
                         if(it.isSuccessful)
                         {
-                            if(!fBase.getCurrentUser()!!.isEmailVerified)
+                            if(!FBase.getCurrentUser()!!.isEmailVerified)
                             {
                                 progressDialog.stop()
                                 Toast.makeText(requireContext(),"Please Verify your email", Toast.LENGTH_SHORT).show()
@@ -172,7 +170,7 @@ class LoginFragment : Fragment() {
                                     {
                                     }
                                 }*/
-                                if(fBase.getCurrentUser()!=null)
+                                if(FBase.getCurrentUser()!=null)
                                 {
                                     /*viewModel.fetchUserData()*/
                                     progressDialog.stop()

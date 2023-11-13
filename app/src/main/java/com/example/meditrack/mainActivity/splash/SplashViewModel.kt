@@ -11,7 +11,7 @@ import kotlinx.coroutines.withContext
 class SplashViewModel : ViewModel() {
     // TODO: Implement the ViewModel
 
-    var svg:SVG?=null
+    private var svg:SVG?=null
 
     fun getAppSVG(resources:Resources): SVG? {
         return if(svg!=null) {

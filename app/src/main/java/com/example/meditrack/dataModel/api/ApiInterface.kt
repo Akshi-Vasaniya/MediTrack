@@ -2,8 +2,6 @@ package com.example.meditrack.dataModel.api
 
 import com.example.meditrack.dataModel.dataClasses.SearchItemData
 import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path

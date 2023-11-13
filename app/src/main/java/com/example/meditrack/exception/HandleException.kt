@@ -7,7 +7,6 @@ import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
-import com.google.firebase.database.DatabaseError
 
 class HandleException {
     companion object{
@@ -69,7 +68,7 @@ class HandleException {
                     val errorCode = exception.message
                     if (errorCode == "An internal error has occurred. [ INVALID_LOGIN_CREDENTIALS ]") {
                         // Handle the specific error for invalid login credentials here
-                        Toast.makeText(context,"INVALID_LOGIN_CREDENTIALS", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context,"Invalid Credentials", Toast.LENGTH_SHORT).show()
                     } else {
                         // Handle other FirebaseAuthException errors
                         // You can log or display a generic error message
@@ -84,7 +83,7 @@ class HandleException {
             }
         }
         
-        fun firebaseDatabaseExceptions(context: Context,databaseError: DatabaseError,TAG:String){
+        /*fun firebaseDatabaseExceptions(context: Context,databaseError: DatabaseError,TAG:String){
             when (databaseError.code) {
                 DatabaseError.PERMISSION_DENIED -> {
                     // Permission denied (e.g., write operation denied by security rules)
@@ -113,6 +112,6 @@ class HandleException {
                     // Handle the error accordingly
                 }
             }
-        }
+        }*/
     }
 }

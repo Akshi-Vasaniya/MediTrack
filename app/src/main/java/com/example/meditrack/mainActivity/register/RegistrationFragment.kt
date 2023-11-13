@@ -1,6 +1,5 @@
 package com.example.meditrack.mainActivity.register
 
-import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -16,34 +15,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.meditrack.R
-import com.example.meditrack.dataModel.dataClasses.MedicineData
 import com.example.meditrack.dataModel.dataClasses.UserData
-import com.example.meditrack.dataModel.enumClasses.medicine.MedicineFrequency
-import com.example.meditrack.dataModel.enumClasses.medicine.MedicineTimeOfDayType1
 import com.example.meditrack.databinding.FragmentRegistrationBinding
 import com.example.meditrack.exception.HandleException
-import com.example.meditrack.firebase.fBase
+import com.example.meditrack.firebase.FBase
 import com.example.meditrack.homeActivity.medicine.addMedicine.AddMedicineFragment
-import com.example.meditrack.homeActivity.reminder.notification.MedicineReminderDialog
 import com.example.meditrack.regularExpression.ListPattern
 import com.example.meditrack.regularExpression.MatchPattern.Companion.validate
-import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.example.meditrack.utility.UtilityFunction
-import com.example.meditrack.utility.UtilityFunction.Companion.bitmapToBase64
 import com.example.meditrack.utility.UtilityFunction.Companion.uriToBitmap
+import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
 
 
 class RegistrationFragment : Fragment() {
@@ -70,7 +62,7 @@ class RegistrationFragment : Fragment() {
         return binding.root
     }
 
-    override fun onResume() {
+    /*override fun onResume() {
         super.onResume()
         (activity as AppCompatActivity?)!!.supportActionBar!!.hide()
     }
@@ -78,7 +70,7 @@ class RegistrationFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         (activity as AppCompatActivity?)!!.supportActionBar!!.show()
-    }
+    }*/
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -237,7 +229,7 @@ class RegistrationFragment : Fragment() {
                     viewModel.inputName = viewModel.inputName!!.trim().uppercase()
                     viewModel.inputSurname = viewModel.inputSurname!!.trim().uppercase()
                     progressDialog.start("Loading...")
-                    fBase.getFireBaseAuth().createUserWithEmailAndPassword(viewModel.inputEmail!!,viewModel.inputPassword!!).addOnCompleteListener {
+                    FBase.getFireBaseAuth().createUserWithEmailAndPassword(viewModel.inputEmail!!,viewModel.inputPassword!!).addOnCompleteListener {
                         if(it.isSuccessful)
                         {
                             MainScope().launch(Dispatchers.IO) {
@@ -253,8 +245,8 @@ class RegistrationFragment : Fragment() {
                                             override fun onUploadSuccess(downloadUrl: String) {
                                                 try {
                                                     val user = UserData(viewModel.inputName!!, viewModel.inputSurname!!, viewModel.inputEmail!!,downloadUrl)
-                                                    fBase.getUserReference().child(it.result?.user!!.uid).setValue(user).addOnSuccessListener {
-                                                        fBase.getCurrentUser()?.sendEmailVerification()?.addOnSuccessListener {
+                                                    FBase.getUserReference().child(it.result?.user!!.uid).setValue(user).addOnSuccessListener {
+                                                        FBase.getCurrentUser()?.sendEmailVerification()?.addOnSuccessListener {
                                                             progressDialog.stop()
                                                             Toast.makeText(requireContext(),"Verify Your Email",Toast.LENGTH_SHORT).show()
                                                             findNavController().navigate(R.id.loginFragment)
@@ -348,8 +340,8 @@ class RegistrationFragment : Fragment() {
         }
     }
 
-    fun uploadImageToFirebaseStorage(uid:String,imageUri: Uri, callback: AddMedicineFragment.UploadCallback) {
-        val storageRef = fBase.getStorageReference()
+    private fun uploadImageToFirebaseStorage(uid:String, imageUri: Uri, callback: AddMedicineFragment.UploadCallback) {
+        val storageRef = FBase.getStorageReference()
         val imagesRef = storageRef.child("userProfileImage/${uid}")
         val uploadTask = imagesRef.putFile(imageUri)
 

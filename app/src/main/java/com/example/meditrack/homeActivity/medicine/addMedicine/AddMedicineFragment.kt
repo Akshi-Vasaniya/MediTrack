@@ -1,8 +1,6 @@
 package com.example.meditrack.homeActivity.medicine.addMedicine
 
 import android.app.Dialog
-import android.graphics.Bitmap
-import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -26,9 +24,11 @@ import com.example.meditrack.R
 import com.example.meditrack.adapter.MedicineTypeItemAdapter
 import com.example.meditrack.dataModel.api.ApiInstance
 import com.example.meditrack.dataModel.dataClasses.MedicineData
-import com.example.meditrack.dataModel.enumClasses.medicine.*
+import com.example.meditrack.dataModel.enumClasses.medicine.MedicineFrequency
+import com.example.meditrack.dataModel.enumClasses.medicine.MedicineTimeOfDayType1
+import com.example.meditrack.dataModel.enumClasses.medicine.MedicineType
 import com.example.meditrack.databinding.FragmentAddMedicineBinding
-import com.example.meditrack.firebase.fBase
+import com.example.meditrack.firebase.FBase
 import com.example.meditrack.homeActivity.reminder.notification.MedicineReminderDialog
 import com.example.meditrack.regularExpression.ListPattern
 import com.example.meditrack.regularExpression.MatchPattern.Companion.validate
@@ -40,15 +40,12 @@ import com.example.meditrack.utility.UtilityFunction.Companion.stringNormalize
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.example.meditrack.utility.ownDialogs.MonthYearPickerDialog
 import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.google.gson.JsonElement
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.*
 
 
 class AddMedicineFragment : Fragment() {
@@ -59,11 +56,11 @@ class AddMedicineFragment : Fragment() {
 
     private lateinit var viewModel: AddMedicineViewModel
     private lateinit var binding: FragmentAddMedicineBinding
-    private val calendar = Calendar.getInstance()
-    private val db = fBase.getFireStoreInstance()
-    private val TAG = "AddMedicineFragment"
+    //private val calendar = Calendar.getInstance()
+    private val db = FBase.getFireStoreInstance()
+    private val tAG = "AddMedicineFragment"
     /*private lateinit var homeActivity: HomeActivity*/
-    private val REQUEST_IMAGE_CAPTURE = 1
+    //private val REQUEST_IMAGE_CAPTURE = 1
     private lateinit var progressDialog: CustomProgressDialog
     private lateinit var hiddenView: LinearLayout
     private lateinit var cardView: CardView
@@ -140,48 +137,42 @@ class AddMedicineFragment : Fragment() {
         cardView = binding.additionalView
         hiddenView = binding.hiddenView
 
-        try{
-            // Get the Bundle from arguments
-            val bundle = arguments
 
-            // Retrieve the bitmap from the Bundle
-            viewModel.bimapMedImage = bundle?.getParcelable<Bitmap>("bitmap")
-
-            // Retrieve the ArrayList from the Bundle
-            viewModel.selectedTextArray = bundle?.getSerializable("arrayList") as ArrayList<Pair<Rect,String>>?
-        }catch(e:Exception){
-            e.printStackTrace()
-        }
 
 
 
         binding.apply {
             fillChipGroup()
+            MainScope().launch {
+                try{
+                    // Get the Bundle from arguments
+                    val bundle = arguments
 
-            if(viewModel.bimapMedImage!=null)
-            {
-                medicineImage.setImageBitmap(viewModel.bimapMedImage)
-            }
-            try {
-                viewModel.medName=""
-                viewModel.selectedTextArray!!.forEach {
-                    viewModel.medName += it.second
+                    viewModel.selectedMedNameText = bundle!!.getString("ocrMedNameString")
+                    if(viewModel.selectedMedNameText!=null && viewModel.selectedMedNameText != "")
+                    {
+                        viewModel.medName = viewModel.selectedMedNameText
+                        fragmentMedicineNameTextInputEditText.setText(viewModel.medName)
+                        fragmentMedicineNameTextInputLayout.helperText=null
+                    }
+                    // Retrieve the bitmap from the Bundle
+                    val scanImageByteArray = bundle.getByteArray("scanImageByteArray")
+                    viewModel.bimapMedImage = UtilityFunction.byteArrayToBitmap(scanImageByteArray!!)
+                    medicineImage.setImageBitmap(viewModel.bimapMedImage)
+
+                }catch(e:Exception){
+                    viewModel.medName = null
+                    e.printStackTrace()
                 }
-                viewModel.medName = viewModel.medName!!.trim()
-                viewModel.medName = viewModel.medName!!.replace("\n"," ")
-                fragmentMedicineNameTextInputEditText.setText(viewModel.medName)
-                fragmentMedicineNameTextInputLayout.helperText=null
-            }catch (e:java.lang.NullPointerException)
-            {
-                viewModel.medName=null
-                e.printStackTrace()
+
             }
+
 
 
             /*homeActivity.getToolbarMenuLayout().visibility = View.GONE*/
 
 
-            loadTypeInfoDialod()
+            loadTypeInfoDialog()
 
 
             fragmentMedicineStartdateTextInputEditText.setOnClickListener {
@@ -206,7 +197,7 @@ class AddMedicineFragment : Fragment() {
                             binding.fragmentMedicineStartdateTextInputLayout.helperText=null
                         }
                     }
-                    it.show(requireFragmentManager(), "MonthYearPickerDialog")
+                    it.show(childFragmentManager, "MonthYearPickerDialog")
                 }
                 //mfgDatePicker()
             }
@@ -233,17 +224,17 @@ class AddMedicineFragment : Fragment() {
                             binding.fragmentMedicineExpirydateTextInputLayout.helperText=null
                         }
                     }
-                    it.show(requireFragmentManager(), "MonthYearPickerDialog")
+                    it.show(childFragmentManager, "MonthYearPickerDialog")
                 }
                 /*expiryDatePickerDialog()*/
             }
 
             fixedLayout.setOnClickListener {
-                showAditionalDetails()
+                showAdditionalDetails()
             }
 
             arrowButton.setOnClickListener {
-                showAditionalDetails()
+                showAdditionalDetails()
             }
 
             medicineImage.setOnClickListener {
@@ -254,7 +245,7 @@ class AddMedicineFragment : Fragment() {
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
 
                     viewModel.medName = s.toString()
-                    Log.i(TAG,viewModel.medName.toString())
+                    Log.i(tAG,viewModel.medName.toString())
                     if(viewModel.medName.toString()=="")
                     {
                         viewModel.medName=null
@@ -414,12 +405,12 @@ class AddMedicineFragment : Fragment() {
                         response.enqueue(object : Callback<JsonElement> {
                             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                                 progressDialog.stop()
-                                val res_jsonObject = response.body()!!.asJsonObject
-                                Log.i("JSOnDATA","${res_jsonObject}")
-                                if(res_jsonObject.has("success"))
+                                val resJsonObject = response.body()!!.asJsonObject
+                                Log.i("JSOnDATA","$resJsonObject")
+                                if(resJsonObject.has("success"))
                                 {
-                                    fragmentMedicineNameTextInputEditText.setText(res_jsonObject.get("success").asString)
-                                    viewModel.medName = res_jsonObject.get("success").asString
+                                    fragmentMedicineNameTextInputEditText.setText(resJsonObject.get("success").asString)
+                                    viewModel.medName = resJsonObject.get("success").asString
                                 }
                             }
 
@@ -435,6 +426,7 @@ class AddMedicineFragment : Fragment() {
             }
 
             fragmentMedicineAddButton.setOnClickListener {
+                //clearForm()
                 MainScope().launch(Dispatchers.IO) {
                     if(validateInput())
                     {
@@ -533,7 +525,7 @@ class AddMedicineFragment : Fragment() {
                                         {
                                             progressDialog.stop()
                                             //Toast.makeText(requireContext(),"Medicine and Reminder Successfully Added",Toast.LENGTH_SHORT).show()
-                                            Log.d(TAG, "DocumentSnapshot added with ID: $docName")
+                                            Log.d(tAG, "DocumentSnapshot added with ID: $docName")
 
                                             progressDialog.start("Server Increase Medicine Dataset...")
                                         }
@@ -542,16 +534,19 @@ class AddMedicineFragment : Fragment() {
                                             val response = ApiInstance.api.insertDocument(medicineData!!.medName)
                                             response.enqueue(insertDocumentFlaskPython)
                                         }
-
+                                        val takeTimeList: ArrayList<MedicineTimeOfDayType1>? = medicineData?.takeTime as? ArrayList<MedicineTimeOfDayType1>
                                         // Medicine Taking Reminder
-                                        for(item in medicineData!!.takeTime as ArrayList<MedicineTimeOfDayType1>)
+                                        if(takeTimeList!=null)
                                         {
-                                            var hour = item.time.split(":")
-                                            Log.i(TAG, "onUploadSuccess: ${hour[0]}")
-                                            if(medicineData!!.medFreq == MedicineFrequency.DAILY) {
-                                                dialog.scheduleNotifications(medicineData!!.medName, mutableListOf(0, 1, 2, 3, 4, 5, 6),  hour[0].toInt(), 0)
-                                            }else{
-                                                dialog.scheduleNotifications(medicineData!!.medName, medicineData!!.weekDay as MutableList<Int>,  hour[0].toInt(), 0)
+                                            for(item in takeTimeList)
+                                            {
+                                                val hour = item.time.split(":")
+                                                Log.i(tAG, "onUploadSuccess: ${hour[0]}")
+                                                if(medicineData!!.medFreq == MedicineFrequency.DAILY) {
+                                                    dialog.scheduleNotifications(medicineData!!.medName, mutableListOf(0, 1, 2, 3, 4, 5, 6),  hour[0].toInt(), 0)
+                                                }else{
+                                                    dialog.scheduleNotifications(medicineData!!.medName, medicineData!!.weekDay as MutableList<Int>,  hour[0].toInt(), 0)
+                                                }
                                             }
                                         }
 
@@ -567,7 +562,7 @@ class AddMedicineFragment : Fragment() {
                             override fun onFailure(exception: Exception) {
                                 progressDialog.stop()
                                 Toast.makeText(requireContext(),"addOnFailureListener: Error",Toast.LENGTH_SHORT).show()
-                                Log.w(TAG, "Error adding document", exception)
+                                Log.w(tAG, "Error adding document", exception)
                             }
 
                         }
@@ -582,7 +577,7 @@ class AddMedicineFragment : Fragment() {
                                             dosage = viewModel.dosage!!,
                                             mfgDate = viewModel.mfgDate!!,
                                             expDate = viewModel.expDate!!,
-                                            medFreq = viewModel.selectedfreqTags!!,
+                                            medFreq = viewModel.selectedFreqTags!!,
                                             weekDay = viewModel.selectedWeekDayItem,
                                             takeTime = medicineTime,
                                             instruction = viewModel.medInstruction.toString().trim(),
@@ -594,16 +589,16 @@ class AddMedicineFragment : Fragment() {
                                             getCurrentDate(),
                                             getCurrentTime()
                                         )
-                                        Log.i(TAG, "onUploadSuccess: ${medicineData!!.medName}")
-                                        Log.i(TAG, "onUploadSuccess: ${medicineData!!.medicineType}")
-                                        Log.i(TAG, "onUploadSuccess: ${medicineData!!.medFreq}")
-                                        Log.i(TAG, "onUploadSuccess: ${medicineData!!.weekDay}")
-                                        Log.i(TAG, "onUploadSuccess: ${medicineData!!.takeTime}")
-                                        Log.i(TAG, "onUploadSuccess: ${medicineData!!.notes}")
-                                        Log.i(TAG, "onUploadSuccess: ${medicineData!!.totalQuantity}")
+                                        Log.i(tAG, "onUploadSuccess: ${medicineData!!.medName}")
+                                        Log.i(tAG, "onUploadSuccess: ${medicineData!!.medicineType}")
+                                        Log.i(tAG, "onUploadSuccess: ${medicineData!!.medFreq}")
+                                        Log.i(tAG, "onUploadSuccess: ${medicineData!!.weekDay}")
+                                        Log.i(tAG, "onUploadSuccess: ${medicineData!!.takeTime}")
+                                        Log.i(tAG, "onUploadSuccess: ${medicineData!!.notes}")
+                                        Log.i(tAG, "onUploadSuccess: ${medicineData!!.totalQuantity}")
 
 
-                                        db.collection("user_medicines").document(fBase.getUserId()).collection("medicine_data")
+                                        db.collection("user_medicines").document(FBase.getUserId()).collection("medicine_data")
                                             .document(docName)
                                             .set(medicineData!!)
                                             .addOnSuccessListener {
@@ -615,7 +610,7 @@ class AddMedicineFragment : Fragment() {
                                     }
                                     catch (ex:java.lang.Exception)
                                     {
-                                        Log.w("$TAG : uploadImageToFirebaseStorage", "Error uploadImageToFirebaseStorage", ex)
+                                        Log.w("$tAG : uploadImageToFirebaseStorage", "Error uploadImageToFirebaseStorage", ex)
                                     }
                                 }
 
@@ -623,7 +618,7 @@ class AddMedicineFragment : Fragment() {
 
                             override fun onUploadFailure(exception: Exception) {
                                 progressDialog.stop()
-                                Log.w("$TAG : onUploadFailure", "Error adding document", exception)
+                                Log.w("$tAG : onUploadFailure", "Error adding document", exception)
                                 Toast.makeText(requireContext(),"onUploadFailure: Error",Toast.LENGTH_SHORT).show()
                             }
 
@@ -645,7 +640,7 @@ class AddMedicineFragment : Fragment() {
                         }
 
                         val medicineDataDocRef = db.collection("user_medicines")
-                            .document(fBase.getUserId())
+                            .document(FBase.getUserId())
                             .collection("medicine_data")
                             .document(docName)
                         medicineDataDocRef.get()
@@ -698,7 +693,7 @@ class AddMedicineFragment : Fragment() {
         fun onUploadFailure(exception: Exception)
     }
 
-    fun loadTypeInfoDialod()
+    private fun loadTypeInfoDialog()
     {
         binding.apply {
             val dialog = Dialog(requireContext())
@@ -730,7 +725,7 @@ class AddMedicineFragment : Fragment() {
         }
     }
 
-    fun showAditionalDetails()
+    private fun showAdditionalDetails()
     {
         if(hiddenView.visibility == View.GONE){
             TransitionManager.beginDelayedTransition(cardView, AutoTransition())
@@ -745,14 +740,14 @@ class AddMedicineFragment : Fragment() {
     }
 
 
-    fun fillChipGroup(){
+    private fun fillChipGroup(){
         binding.apply {
             for (tag in viewModel.weekDayItems) {
                 val chip = Chip(requireContext())
                 chip.text = tag.name
                 chip.isCheckable = true
                 chip.isClickable = true
-                chip.setOnCheckedChangeListener { compoundButton, isChecked ->
+                chip.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
                         val selectedChip = Chip(requireContext())
                         selectedChip.text = tag.name
@@ -780,7 +775,7 @@ class AddMedicineFragment : Fragment() {
                 chip.text = tag.name
                 chip.isCheckable = true
                 chip.isClickable = true
-                chip.setOnCheckedChangeListener { compoundButton, isChecked ->
+                chip.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
                         val selectedChip = Chip(requireContext())
                         selectedChip.text = tag.name
@@ -788,8 +783,8 @@ class AddMedicineFragment : Fragment() {
                         selectedChip.setOnCloseIconClickListener {
                             selectedChip.isChecked = false
                         }
-                        viewModel.selectedfreqTags = tag
-                        if(viewModel.selectedfreqTags == MedicineFrequency.WEEKLY)
+                        viewModel.selectedFreqTags = tag
+                        if(viewModel.selectedFreqTags == MedicineFrequency.WEEKLY)
                         {
                             weekDaysChipGroupLayout.visibility = View.VISIBLE
                             //binding.fragmentWeekDaysTextInputLayout.visibility=View.VISIBLE
@@ -800,7 +795,7 @@ class AddMedicineFragment : Fragment() {
                         }
                     }
                     else{
-                        viewModel.selectedfreqTags=null
+                        viewModel.selectedFreqTags=null
                         weekDaysChipGroupLayout.visibility = View.GONE
                         //binding.fragmentWeekDaysTextInputLayout.visibility=View.GONE
                     }
@@ -814,7 +809,7 @@ class AddMedicineFragment : Fragment() {
                 chip.text = tag.description
                 chip.isCheckable = true
                 chip.isClickable = true
-                chip.setOnCheckedChangeListener { compoundButton, isChecked ->
+                chip.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
                         val selectedChip = Chip(requireContext())
                         selectedChip.text = tag.description
@@ -842,7 +837,7 @@ class AddMedicineFragment : Fragment() {
                 chip.text = tag.description
                 chip.isCheckable = true
                 chip.isClickable = true
-                chip.setOnCheckedChangeListener { compoundButton, isChecked ->
+                chip.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
                         val selectedChip = Chip(requireContext())
                         selectedChip.text = tag.description
@@ -870,7 +865,7 @@ class AddMedicineFragment : Fragment() {
                 chip.text = tag.description
                 chip.isCheckable = true
                 chip.isClickable = true
-                chip.setOnCheckedChangeListener { compoundButton, isChecked ->
+                chip.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
                         val selectedChip = Chip(requireContext())
                         selectedChip.text = tag.description
@@ -898,7 +893,7 @@ class AddMedicineFragment : Fragment() {
                 chip.text = tag.name
                 chip.isCheckable = true
                 chip.isClickable = true
-                chip.setOnCheckedChangeListener { compoundButton, isChecked ->
+                chip.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
                         val selectedChip = Chip(requireContext())
                         selectedChip.text = tag.name
@@ -934,7 +929,7 @@ class AddMedicineFragment : Fragment() {
                 chip.text = tag.description
                 chip.isCheckable = true
                 chip.isClickable = true
-                chip.setOnCheckedChangeListener { compoundButton, isChecked ->
+                chip.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
                         val selectedChip = Chip(requireContext())
                         selectedChip.text = tag.description
@@ -974,7 +969,7 @@ class AddMedicineFragment : Fragment() {
             viewModel.expDate = null
             viewModel.doctorName = null
             viewModel.doctorContact = null
-            viewModel.selectedfreqTags = null
+            viewModel.selectedFreqTags = null
             viewModel.selectedMedicineTimeOfDayType1 = ArrayList()
             viewModel.selectedMedicineTimeOfDayType2 = ArrayList()
             viewModel.selectedMedTypeTags = null
@@ -990,11 +985,11 @@ class AddMedicineFragment : Fragment() {
                 fragmentDoctorNameTextInputEditText.setText("")
                 fragmentSpecialInstructionTextInputEditText.setText("")
                 fragmentNotesOrCommentsTextInputEditText.setText("")
-                val drawableResourceId = resources.getIdentifier("round_medication_24", "drawable", requireContext().packageName)
+                //val drawableResourceId = resources.getIdentifier("round_medication_24", "drawable", requireContext().packageName)
+                val drawableResourceId = R.drawable.round_medication_24
                 medicineImage.setImageResource(drawableResourceId)
 
-                // Iterate over the child views of the ChipGroup
-                for (i in 0 until medTypeChipGroup.childCount) {
+                /*for (i in 0 until medTypeChipGroup.childCount) {
                     val childView = medTypeChipGroup.getChildAt(i)
 
                     // Check if the child view is a Chip
@@ -1016,6 +1011,7 @@ class AddMedicineFragment : Fragment() {
                         if(childView.isChecked)
                         {
                             childView.isChecked = false
+
                         }
                     }
                 }
@@ -1032,6 +1028,7 @@ class AddMedicineFragment : Fragment() {
                         }
                     }
                 }
+
 
                 for (i in 0 until breakFastChipGroup.childCount) {
                     val childView = breakFastChipGroup.getChildAt(i)
@@ -1072,6 +1069,7 @@ class AddMedicineFragment : Fragment() {
                     }
                 }
 
+
                 for (i in 0 until medicineTimeofDayType2ChipGroup.childCount) {
                     val childView = medicineTimeofDayType2ChipGroup.getChildAt(i)
 
@@ -1083,17 +1081,52 @@ class AddMedicineFragment : Fragment() {
                             childView.isChecked = false
                         }
                     }
-                }
+                }*/
+
+                // Launch coroutines for each ChipGroup in parallel
+                val jobMedType = async { uncheckChipsInGroup(medTypeChipGroup) }
+                val jobFreq = async { uncheckChipsInGroup(freqChipGroup) }
+                val jobWeekDays = async { uncheckChipsInGroup(weekDaysChipGroup) }
+                val jobBreakfast = async { uncheckChipsInGroup(breakFastChipGroup) }
+                val jobLunch = async { uncheckChipsInGroup(launchChipGroup) }
+                val jobDinner = async { uncheckChipsInGroup(dinnerChipGroup) }
+                val jobMedicineTimeOfDay = async { uncheckChipsInGroup(medicineTimeofDayType2ChipGroup) }
+
+                // Wait for all coroutines to finish
+                jobMedType.await()
+                jobFreq.await()
+                jobWeekDays.await()
+                jobBreakfast.await()
+                jobLunch.await()
+                jobDinner.await()
+                jobMedicineTimeOfDay.await()
+
             }
 
         }
     }
 
+    suspend fun uncheckChipsInGroup(chipGroup: ChipGroup) = coroutineScope {
+        val jobs = (0 until chipGroup.childCount).map { i ->
+            async(Dispatchers.Default) {
+                val childView = chipGroup.getChildAt(i)
+                if (childView is Chip && childView.isChecked) {
+                    withContext(Dispatchers.Main)
+                    {
+                        childView.isChecked = false
+                    }
+
+                }
+            }
+        }
+        jobs.awaitAll()
+    }
+
 
     // Function to upload an image to Firebase Storage and provide the result via callback
     fun uploadImageToFirebaseStorage(imageUri: Uri, callback: UploadCallback) {
-        val storageRef = fBase.getStorageReference()
-        val imagesRef = storageRef.child("user_medicine_images/${fBase.getUserId()}/${stringNormalize(viewModel.medName!!)}")
+        val storageRef = FBase.getStorageReference()
+        val imagesRef = storageRef.child("user_medicine_images/${FBase.getUserId()}/${stringNormalize(viewModel.medName!!)}")
         val uploadTask = imagesRef.putFile(imageUri)
 
         uploadTask.continueWithTask { task ->
@@ -1114,7 +1147,7 @@ class AddMedicineFragment : Fragment() {
         }
     }
 
-    fun validateInput():Boolean{
+    private fun validateInput():Boolean{
         return binding.fragmentMedicineNameTextInputLayout.helperText==null &&
                 binding.fragmentMedicineStartdateTextInputLayout.helperText==null &&
                 binding.fragmentMedicineExpirydateTextInputLayout.helperText==null &&
@@ -1130,7 +1163,7 @@ class AddMedicineFragment : Fragment() {
                         ((viewModel.selectedMedTypeTags!= MedicineType.Drops && viewModel.selectedMedTypeTags!= MedicineType.Topical)
                                 && viewModel.selectedMedicineTimeOfDayType1.isNotEmpty()))
                 &&
-                (viewModel.selectedfreqTags== MedicineFrequency.DAILY || (viewModel.selectedfreqTags== MedicineFrequency.WEEKLY && viewModel.selectedWeekDayItem.isNotEmpty()))
+                (viewModel.selectedFreqTags== MedicineFrequency.DAILY || (viewModel.selectedFreqTags== MedicineFrequency.WEEKLY && viewModel.selectedWeekDayItem.isNotEmpty()))
     }
 
     /*fun expiryDatePickerDialog() {

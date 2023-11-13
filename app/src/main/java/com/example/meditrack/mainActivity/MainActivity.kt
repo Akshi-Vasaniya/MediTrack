@@ -6,8 +6,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.meditrack.R
 import com.example.meditrack.databinding.ActivityMainBinding
 
@@ -22,11 +20,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(findViewById(R.id.toolbar))
+        //setSupportActionBar(findViewById(R.id.toolbar))
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        this.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        //supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container_main) as NavHostFragment
@@ -40,8 +36,8 @@ class MainActivity : AppCompatActivity() {
         ).build()
 
         navController = navHostFragment.findNavController()
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
+        //setupActionBarWithNavController(navController, appBarConfiguration)
+        //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
     }
 
     override fun onSupportNavigateUp(): Boolean {

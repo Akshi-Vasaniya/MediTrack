@@ -8,6 +8,7 @@
     tools:context=".homeActivity.ocr.OCRFragment">
 
 
+
     <androidx.camera.view.PreviewView
         android:id="@+id/viewFinder"
         android:layout_width="match_parent"
@@ -16,6 +17,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/torchImage"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:contentDescription="@string/torch_button"
+        android:src="@drawable/ic_flashlight_on"
+        android:padding="10dp"
+        android:elevation="50dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="20dp"
+        app:tint="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <ImageView
         android:id="@+id/previewImage"
@@ -98,38 +114,18 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/torchButton"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="10dp"
-        app:cardCornerRadius="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:backgroundTint="@color/transparent">
 
-        <ImageView
-            android:id="@+id/torchImage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="10dp"
-            android:contentDescription="@string/torch_button"
-            android:src="@drawable/ic_flashlight_on"
-            app:tint="@color/white"
-            android:background="?attr/selectableItemBackgroundBorderless"/>
-
-    </com.google.android.material.card.MaterialCardView>
 
     <Button
         android:id="@+id/extractTextButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_marginBottom="50dp"
         android:elevation="2dp"
-        android:padding="10dp"
         android:text="Fetch"
         android:textAllCaps="false"
+        app:backgroundTint="@null"
+        android:background="@drawable/button_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/ocr_camera"
         app:layout_constraintEnd_toStartOf="@id/save_med_name"/>
@@ -137,11 +133,12 @@
     <Button
         android:id="@+id/save_med_name"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:elevation="2dp"
-        android:padding="10dp"
         android:text="Save"
         android:textAllCaps="false"
+        app:backgroundTint="@null"
+        android:background="@drawable/button_background"
         app:layout_constraintBottom_toBottomOf="@id/extractTextButton"
         app:layout_constraintTop_toTopOf="@id/extractTextButton"
         app:layout_constraintStart_toEndOf="@id/extractTextButton"
@@ -187,6 +184,7 @@
             android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:contentDescription="@string/share_text"
+
             android:src="@drawable/ic_photo_camera" />
 
     </com.google.android.material.card.MaterialCardView>

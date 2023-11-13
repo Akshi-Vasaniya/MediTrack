@@ -1,22 +1,17 @@
 package com.example.meditrack.homeActivity.about
 
-import android.os.Binder
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.text.HtmlCompat
-import androidx.lifecycle.MutableLiveData
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.meditrack.R
 import com.example.meditrack.databinding.FragmentAboutUsBinding
-import com.example.meditrack.databinding.FragmentAddMedicineBinding
-import com.example.meditrack.firebase.fBase
-import com.example.meditrack.homeActivity.medicine.addMedicine.AddMedicineViewModel
+import com.example.meditrack.firebase.FBase
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -45,7 +40,7 @@ class AboutUsFragment : Fragment() {
         binding.apply {
 
             MainScope().launch(Dispatchers.IO) {
-                val firebaseStorageInstance = fBase.getFireStoreInstance()
+                val firebaseStorageInstance = FBase.getFireStoreInstance()
                 val aboutUsCollectionRef = firebaseStorageInstance.collection("about_us")
                 val aboutProjectDetailsDocument = aboutUsCollectionRef.document("about_project_details")
                 val collegeDetailsDocument = aboutUsCollectionRef.document("college_details")
@@ -103,13 +98,13 @@ class AboutUsFragment : Fragment() {
 
                 withContext(Dispatchers.Main)
                 {
-                    viewModel._aboutProjectDetails.observe(viewLifecycleOwner){
+                    viewModel.aboutProjectDetails.observe(viewLifecycleOwner){
                         projectDetailsTextView.text = HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
                     }
-                    viewModel._collegeDetails.observe(viewLifecycleOwner){
+                    viewModel.collegeDetails.observe(viewLifecycleOwner){
                         collegeDetailsTextView.text = HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
                     }
-                    viewModel._teamMemberDetails.observe(viewLifecycleOwner){
+                    viewModel.teamMemberDetails.observe(viewLifecycleOwner){
                         teamDetailsTextView.text = HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
                     }
                 }

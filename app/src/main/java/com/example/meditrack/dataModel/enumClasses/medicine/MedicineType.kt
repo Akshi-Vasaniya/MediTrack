@@ -3,7 +3,7 @@ package com.example.meditrack.dataModel.enumClasses.medicine
 import android.content.Context
 import com.example.meditrack.R
 
-enum class MedicineType(val stringResourceId: Int) {
+enum class MedicineType(private val stringResourceId: Int) {
     Topical(R.string.Topical_Dec),
     Drops(R.string.Drops_Dec),
     Inhaler(R.string.Inhaler_Dec),

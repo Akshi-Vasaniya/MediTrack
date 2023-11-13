@@ -9,7 +9,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
-object fBase {
+object FBase {
     fun getFireBaseAuth(): FirebaseAuth {
         return FirebaseAuth.getInstance()
     }

@@ -2,33 +2,33 @@ package com.example.meditrack.homeActivity.ocr
 
 import android.content.Context
 import android.graphics.*
-import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 class OverlayView(context: Context) : View(context) {
 
     var overlaySelectionListener: OverlaySelectionListener? = null
 
-//    private var rectPaint: Paint = Paint().apply {
-//        color = Color.RED
-//        style = Paint.Style.STROKE
-//        strokeWidth = 5f
-//    }
+    /*private var rectPaint: Paint = Paint().apply {
+        color = Color.RED
+        style = Paint.Style.STROKE
+        strokeWidth = 5f
+    }*/
     interface OverlaySelectionListener {
         fun onRectSelected(rect: ArrayList<Pair<Rect, String>>)
     }
 
-    var selectedItemColor = Color.argb(204, 173, 216, 230) // Light Blue color with 60% transparency
-    var unselectedItemColor = Color.argb(128, 255, 255, 255) // White color with 50% transparency
+    private var selectedItemColor = Color.argb(204, 173, 216, 230) // Light Blue color with 60% transparency
+    private var unselectedItemColor = Color.argb(128, 255, 255, 255) // White color with 50% transparency
     private var rectPaint: Paint = Paint().apply {
         style = Paint.Style.FILL
         color = unselectedItemColor
         pathEffect = CornerPathEffect(10f)
     }
 
-    private var selectedRectPaint: Paint = Paint().apply {
+    /*private var selectedRectPaint: Paint = Paint().apply {
         style = Paint.Style.FILL
         color = selectedItemColor
         pathEffect = CornerPathEffect(10f) // Adjust the corner radius as needed
@@ -38,54 +38,16 @@ class OverlayView(context: Context) : View(context) {
         style = Paint.Style.FILL
         color = unselectedItemColor
         pathEffect = CornerPathEffect(10f) // Adjust the corner radius as needed
-    }
+    }*/
 
     private var boundingRects: ArrayList<Pair<Rect, String>>? = null
     private var selectedRects: ArrayList<Pair<Rect, String>> = ArrayList()
+
 
     fun setBoundingRects(rects: ArrayList<Pair<Rect, String>>) {
         boundingRects = rects
         selectedRects.clear()
         invalidate()
-    }
-    fun setBoundingRects(rects: ArrayList<Pair<Rect, String>>, sensorRotation: Int) {
-        // Adjust the rectangles based on the sensor rotation
-        val adjustedRects = adjustRectsForOrientation(rects, sensorRotation)
-
-        // Set the adjusted rectangles for drawing
-        boundingRects = adjustedRects
-        selectedRects.clear()
-        invalidate()
-    }
-
-    private fun adjustRectsForOrientation(rects: ArrayList<Pair<Rect, String>>, sensorRotation: Int): ArrayList<Pair<Rect, String>> {
-        // Adjust the rectangle coordinates based on the sensor rotation
-        val adjustedRects = ArrayList<Pair<Rect, String>>()
-        for ((rect, text) in rects) {
-            val adjustedRect = when (sensorRotation) {
-                90 -> Rect(
-                    rect.top,
-                    height - rect.right,
-                    rect.bottom,
-                    height - rect.left
-                )
-                180 -> Rect(
-                    width - rect.right,
-                    height - rect.bottom,
-                    width - rect.left,
-                    height - rect.top
-                )
-                270 -> Rect(
-                    width - rect.bottom,
-                    rect.left,
-                    width - rect.top,
-                    rect.right
-                )
-                else -> Rect(rect)
-            }
-            adjustedRects.add(Pair(adjustedRect, text))
-        }
-        return adjustedRects
     }
 
     fun clearOverlay() {
@@ -94,15 +56,18 @@ class OverlayView(context: Context) : View(context) {
         invalidate()
     }
 
+
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        boundingRects?.forEach { (rect, text) ->
-            if (selectedRects.contains(Pair(rect, text))) {
+
+        boundingRects?.forEach {
+            if (selectedRects.contains(it)) {
                 rectPaint.color = selectedItemColor
             } else {
                 rectPaint.color = unselectedItemColor
             }
-            canvas.drawRect(rect, rectPaint)
+            canvas.drawRect(it.first, rectPaint)
         }
         /*selectedRects.forEach { (rect, text) ->
             val x = rect.left.toFloat()
@@ -112,6 +77,8 @@ class OverlayView(context: Context) : View(context) {
             canvas.drawText(text, x, y - 10, rectPaint)
             Log.i("OverlayView", "Selected Text: $text")
         }*/
+
+
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
