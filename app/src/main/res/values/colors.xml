@@ -40,13 +40,13 @@
     <color name="registerHeadTextDarkThemeTint">@color/greentype</color>
 
     <color name="splashTextLightThemeTint">@color/prusianblue</color>
-    <color name="splashTextDarkThemeTint">@color/greentype</color>
+    <color name="splashTextDarkThemeTint">#A0A0A0</color>
 
     <color name="textBoxTextLightThemeColor">@color/prusianblue</color>
     <color name="textBoxTextDarkThemeColor">@color/white</color>
 
     <color name="helperTextLightThemeColor">@color/prusianblue</color>
-    <color name="helperTextDarkThemeColor">@color/greentype</color>
+    <color name="helperTextDarkThemeColor">#A0A0A0</color>
 
     <color name="textBoxHeadingLightThemeColor">@color/prusianblue</color>
     <color name="textBoxHeadingDarkThemeColor">@color/white</color>

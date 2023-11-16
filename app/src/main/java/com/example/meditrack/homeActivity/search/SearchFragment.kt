@@ -47,7 +47,6 @@ class SearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
-            outputText.text = ""
             fragmentSearchButton.setOnClickListener {
                 val searchText = fragmentSearchTextTextInputEditText.text.toString()
                 MainScope().launch(Dispatchers.IO) {

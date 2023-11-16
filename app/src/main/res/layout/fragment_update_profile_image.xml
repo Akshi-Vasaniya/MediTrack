@@ -30,6 +30,7 @@
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_image"
+            style="@style/AdditionalDetailsDownArrow"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/btnRemoveImage"
             app:layout_constraintStart_toStartOf="parent"
@@ -43,15 +44,15 @@
             app:layout_constraintTop_toTopOf="@id/btnSelectImage"
             app:layout_constraintStart_toEndOf="@id/btnSelectImage"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/btnSelectImage"/>
+            app:layout_constraintBottom_toBottomOf="@id/btnSelectImage"
+            app:tint="#FF3A41" />
 
         <Button
             android:id="@+id/btnSave"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="Save"
             android:layout_marginEnd="20dp"
             android:layout_marginTop="10dp"
+            style="@style/GeneralUsedButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
