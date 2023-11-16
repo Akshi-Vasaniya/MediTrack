@@ -8,5 +8,5 @@
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
     android:textSize="18sp"
-    android:textColor="#000000"
+    style="@style/StockSpinnerItemTextView"
 />

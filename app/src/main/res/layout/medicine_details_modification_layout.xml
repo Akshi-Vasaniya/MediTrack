@@ -9,13 +9,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        style="@style/normalTextBox">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/addMedi_name_modified_txtInpEditTxt"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="@string/medicinename"
-            android:textColor="@color/prusianblue"
+            style="@style/FormTextBox"
             android:drawablePadding="10dp"
             android:textSize="@dimen/_10sdp"
             android:inputType="textEmailAddress"
@@ -28,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        style="@style/normalTextBox">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/dosage_modified_txtInputEditText"
             android:layout_width="match_parent"
@@ -38,7 +38,7 @@
             android:fontFamily="@font/comfortaa_regular"
             android:hint="@string/dosageinfo"
             android:inputType="numberDecimal"
-            android:textColor="@color/prusianblue"
+            style="@style/FormTextBox"
             android:padding="10dp"
             android:textSize="@dimen/_10sdp" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -47,7 +47,7 @@
         android:id="@+id/medicine_quantity_modified_TextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/normalTextBox"
         android:layout_margin="12dp"
         android:layout_marginTop="@dimen/_12sdp">
         <com.google.android.material.textfield.TextInputEditText
@@ -55,9 +55,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="@string/medicinequantity"
-            android:textColor="@color/prusianblue"
+            style="@style/FormTextBox"
             android:drawableStart="@drawable/ic_add_medicine"
-            android:drawableTint="@color/prusianblue"
             android:drawablePadding="10dp"
             android:textSize="@dimen/_10sdp"
             android:padding="10dp"

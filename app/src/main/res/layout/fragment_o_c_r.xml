@@ -118,27 +118,19 @@
 
     <Button
         android:id="@+id/extractTextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
         android:layout_marginBottom="50dp"
         android:elevation="2dp"
         android:text="Fetch"
-        android:textAllCaps="false"
-        app:backgroundTint="@null"
-        android:background="@drawable/button_background"
+        style="@style/GeneralUsedButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/ocr_camera"
         app:layout_constraintEnd_toStartOf="@id/save_med_name"/>
 
     <Button
         android:id="@+id/save_med_name"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
         android:elevation="2dp"
         android:text="Save"
-        android:textAllCaps="false"
-        app:backgroundTint="@null"
-        android:background="@drawable/button_background"
+        style="@style/GeneralUsedButton"
         app:layout_constraintBottom_toBottomOf="@id/extractTextButton"
         app:layout_constraintTop_toTopOf="@id/extractTextButton"
         app:layout_constraintStart_toEndOf="@id/extractTextButton"
@@ -199,7 +191,7 @@
         app:layout_constraintTop_toTopOf="@id/extractTextButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/save_med_name"
-        android:visibility="invisible">
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="match_parent"

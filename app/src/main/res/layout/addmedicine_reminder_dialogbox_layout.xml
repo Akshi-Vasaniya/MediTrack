@@ -11,16 +11,15 @@
         android:layout_height="wrap_content"
         app:helperTextEnabled="true"
         app:helperText="Required"
-        app:helperTextTextColor="@color/prusianblue"
         android:layout_margin="12dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        style="@style/normalTextBox">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/add_medi_name_editText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="@string/medicinename"
-            android:textColor="@color/prusianblue"
             android:drawablePadding="10dp"
+            style="@style/FormTextBox"
             android:textSize="@dimen/_10sdp"
             android:inputType="textEmailAddress"
             android:padding="10dp"

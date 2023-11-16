@@ -12,8 +12,11 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.core.widget.ImageViewCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -64,6 +67,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val userName = headerView?.findViewById<TextView>(R.id.user_name_menu_header)
         val userEmail = headerView?.findViewById<TextView>(R.id.user_email_menu_header)
         val userImage = headerView?.findViewById<ImageView>(R.id.user_image_menu_header)
+
 
 
 

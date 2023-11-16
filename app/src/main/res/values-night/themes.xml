@@ -11,5 +11,53 @@
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
+    <style name="SplashWelcomeMessage">
+        <item name="android:textColor">@color/splashTextDarkThemeTint</item>
+    </style>
 
+    <style name="AppBarMenuImage">
+        <item name="android:src">@drawable/menu_icon_dark</item>
+    </style>
+
+    <style name="PasswordInfo">
+        <item name="android:background">@color/passwordFormatBackgroundDarkThemeTint</item>
+    </style>
+
+    <style name="LoginHead">
+        <item name="android:textColor">@color/loginHeadTextDarkThemeTint</item>
+    </style>
+
+    <style name="LoginSubHead">
+        <item name="android:textColor">@color/loginSubHeadTextDarkThemeTint</item>
+    </style>
+
+    <style name="FormTextBox">
+        <item name="android:textColor">@color/textBoxTextDarkThemeColor</item>
+        <item name="android:drawableTint">@color/helperTextDarkThemeColor</item>
+    </style>
+
+    <style name="normalTextBox" parent="Base.Widget.MaterialComponents.TextInputLayout">
+        <item name="helperTextTextColor">@color/helperTextDarkThemeColor</item>
+        <item name="materialThemeOverlay">
+            @style/ThemeOverlay.MaterialComponents.TextInputEditText.OutlinedBox
+        </item>
+        <item name="boxCollapsedPaddingTop">0dp</item>
+        <item name="passwordToggleTint">@color/helperTextDarkThemeColor</item>
+    </style>
+
+    <style name="TextBoxHeading">
+        <item name="android:textColor">@color/textBoxHeadingDarkThemeColor</item>
+    </style>
+
+    <style name="AdditionalDetailsDownArrow">
+        <item name="tint">@color/greentype</item>
+    </style>
+
+    <style name="StockItemMedicineName">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="StockSpinnerItemTextView">
+        <item name="android:textColor">@color/white</item>
+    </style>
 </resources>

@@ -72,6 +72,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var overlayView: OverlayView
     private lateinit var progressDialog: CustomProgressDialog
+    private lateinit var imageAnalysis:ImageAnalysis
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

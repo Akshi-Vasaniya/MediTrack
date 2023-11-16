@@ -60,7 +60,7 @@
                         android:text="@string/addmedicine"
                         android:textSize="@dimen/_25sdp"
                         android:fontFamily="@font/comfortaa_bold"
-                        android:textColor="@color/prusianblue"/>
+                        style="@style/LoginHead"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -69,7 +69,7 @@
                         android:text="@string/fragment_addmedicine_subtitle"
                         android:textSize="@dimen/_10sdp"
                         android:fontFamily="@font/comfortaa_regular"
-                        android:textColor="@color/lightblack"/>
+                        style="@style/LoginSubHead"/>
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/profile_image_layout"
@@ -100,32 +100,27 @@
                         android:id="@+id/fragment_medicine_name_TextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         app:helperTextEnabled="true"
                         app:helperText="Required"
-                        app:helperTextTextColor="@color/prusianblue">
+                        style="@style/normalTextBox">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/fragment_medicine_name_TextInputEditText"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:drawableStart="@drawable/ic_capulase"
                             android:drawablePadding="10dp"
+                            style="@style/FormTextBox"
                             android:fontFamily="@font/comfortaa_regular"
                             android:hint="@string/medicinename"
                             android:inputType="textEmailAddress"
-                            android:textColor="@color/prusianblue"
                             android:padding="10dp"
                             android:textSize="@dimen/_10sdp" />
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnCorrectSpell"
-                            android:layout_width="wrap_content"
-                            android:layout_height="40dp"
                             android:text="Correct Spell"
-                            android:textAllCaps="false"
                             android:layout_marginTop="5dp"
-                            app:backgroundTint="@null"
-                            android:background="@drawable/button_background"
-                            android:layout_marginBottom="10dp"/>
+                            android:layout_marginBottom="10dp"
+                            style="@style/GeneralUsedButton"/>
                     </com.google.android.material.textfield.TextInputLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -142,7 +137,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Type *"
-                                android:textColor="@color/prusianblue"/>
+                                style="@style/TextBoxHeading"/>
                             <ImageView
                                 android:id="@+id/medTypeInfo"
                                 android:layout_width="16dp"
@@ -168,20 +163,19 @@
                         android:id="@+id/fragment_dosage_info_TextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         app:helperTextEnabled="true"
                         app:helperText="Required"
-                        app:helperTextTextColor="@color/prusianblue">
+                        style="@style/normalTextBox">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/fragment_dosage_info_TextInputEditText"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:drawableStart="@drawable/dropper_dosage_svgrepo_com"
                             android:drawablePadding="10dp"
+                            style="@style/FormTextBox"
                             android:fontFamily="@font/comfortaa_regular"
                             android:hint="@string/dosageinfo"
                             android:inputType="numberDecimal"
-                            android:textColor="@color/prusianblue"
                             android:padding="10dp"
                             android:textSize="@dimen/_10sdp" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -205,10 +199,9 @@
                             android:id="@+id/fragment_medicine_startdate_TextInputLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            style="@style/normalTextBox"
                             app:helperTextEnabled="true"
                             app:helperText="Required"
-                            app:helperTextTextColor="@color/prusianblue"
                             android:layout_marginTop="@dimen/_3sdp"
                             android:layout_weight="1">
 
@@ -218,12 +211,12 @@
                                 android:layout_height="match_parent"
                                 android:drawableStart="@drawable/round_date_range_24"
                                 android:drawablePadding="10dp"
+                                style="@style/FormTextBox"
                                 android:fontFamily="@font/comfortaa_regular"
                                 android:hint="@string/medicinemfgdate"
                                 android:inputType="none"
                                 android:focusable="false"
                                 android:clickable="true"
-                                android:textColor="@color/prusianblue"
                                 android:padding="10dp"
                                 android:textSize="@dimen/_10sdp" />
                         </com.google.android.material.textfield.TextInputLayout>
@@ -232,10 +225,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="5dp"
-                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             app:helperTextEnabled="true"
                             app:helperText="Required"
-                            app:helperTextTextColor="@color/prusianblue"
+                            style="@style/normalTextBox"
                             android:layout_marginTop="@dimen/_3sdp"
                             android:layout_weight="1">
 
@@ -245,12 +237,12 @@
                                 android:layout_height="match_parent"
                                 android:drawableStart="@drawable/round_date_range_24"
                                 android:drawablePadding="10dp"
+                                style="@style/FormTextBox"
                                 android:fontFamily="@font/comfortaa_regular"
                                 android:hint="@string/medicineexpirydate"
                                 android:inputType="none"
                                 android:focusable="false"
                                 android:clickable="true"
-                                android:textColor="@color/prusianblue"
                                 android:padding="10dp"
                                 android:textSize="@dimen/_10sdp" />
                         </com.google.android.material.textfield.TextInputLayout>
@@ -275,7 +267,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/frequency"
-                            android:textColor="@color/prusianblue" />
+                            style="@style/TextBoxHeading" />
 
                         <com.google.android.material.chip.ChipGroup
                             android:id="@+id/freqChipGroup"
@@ -344,7 +336,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/administrationtime"
-                            android:textColor="@color/prusianblue"/>
+                            style="@style/TextBoxHeading"/>
 
                         <com.google.android.material.chip.ChipGroup
                             android:id="@+id/breakFastChipGroup"
@@ -431,13 +423,14 @@
                                         android:layout_gravity="center_vertical"
                                         android:text="@string/additionaldetailtext"
                                         android:fontFamily="@font/comfortaa_bold"
-                                        android:textColor="@color/prusianblue"/>
+                                        style="@style/TextBoxHeading"/>
                                     <ImageButton
                                         android:id="@+id/arrow_button"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:src="@drawable/round_keyboard_arrow_down_24"
                                         android:background="@color/transparent"
+                                        style="@style/AdditionalDetailsDownArrow"
                                         android:layout_gravity="end|center_vertical"/>
                                 </LinearLayout>
                                 <LinearLayout
@@ -445,23 +438,22 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:orientation="vertical"
-                                    android:visibility="gone">
+                                    android:visibility="gone"
+                                    >
                                     <com.google.android.material.textfield.TextInputLayout
                                         android:id="@+id/fragment_special_instruction_TextInputLayout"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                                         app:helperTextEnabled="true"
-                                        app:helperTextTextColor="@color/prusianblue"
+                                        style="@style/normalTextBox"
                                         android:layout_marginTop="@dimen/_3sdp">
                                         <com.google.android.material.textfield.TextInputEditText
                                             android:id="@+id/fragment_special_instruction_TextInputEditText"
                                             android:layout_width="match_parent"
                                             android:layout_height="match_parent"
                                             android:hint="@string/specialinstruction"
-                                            android:textColor="@color/prusianblue"
                                             android:drawableStart="@drawable/ic_add_medicine"
-                                            android:drawableTint="@color/prusianblue"
+                                            style="@style/FormTextBox"
                                             android:drawablePadding="10dp"
                                             android:textSize="@dimen/_10sdp"
                                             android:padding="10dp"
@@ -473,18 +465,16 @@
                                         android:id="@+id/fragment_doctor_name_TextInputLayout"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                                        style="@style/normalTextBox"
                                         app:helperTextEnabled="true"
-                                        app:helperTextTextColor="@color/prusianblue"
                                         android:layout_marginTop="@dimen/_3sdp">
                                         <com.google.android.material.textfield.TextInputEditText
                                             android:id="@+id/fragment_doctor_name_TextInputEditText"
                                             android:layout_width="match_parent"
                                             android:layout_height="match_parent"
                                             android:hint="@string/doctorinfo"
-                                            android:textColor="@color/prusianblue"
                                             android:drawableStart="@drawable/doctor_svgrepo_com"
-                                            android:drawableTint="@color/prusianblue"
+                                            style="@style/FormTextBox"
                                             android:drawablePadding="10dp"
                                             android:textSize="@dimen/_10sdp"
                                             android:padding="10dp"
@@ -496,18 +486,16 @@
                                         android:id="@+id/fragment_doctor_contact_TextInputLayout"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                                        style="@style/normalTextBox"
                                         app:helperTextEnabled="true"
-                                        app:helperTextTextColor="@color/prusianblue"
                                         android:layout_marginTop="@dimen/_3sdp">
                                         <com.google.android.material.textfield.TextInputEditText
                                             android:id="@+id/fragment_doctor_contact_TextInputEditText"
                                             android:layout_width="match_parent"
                                             android:layout_height="match_parent"
                                             android:hint="Doctor Contact"
-                                            android:textColor="@color/prusianblue"
                                             android:drawableStart="@drawable/ic_contact"
-                                            android:drawableTint="@color/prusianblue"
+                                            style="@style/FormTextBox"
                                             android:drawablePadding="10dp"
                                             android:textSize="@dimen/_10sdp"
                                             android:padding="10dp"
@@ -519,9 +507,8 @@
                                         android:id="@+id/fragment_notes_or_comments_TextInputLayout"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                                         app:helperTextEnabled="true"
-                                        app:helperTextTextColor="@color/prusianblue"
+                                        style="@style/normalTextBox"
                                         android:layout_marginTop="@dimen/_3sdp">
                                         <com.google.android.material.textfield.TextInputEditText
                                             android:id="@+id/fragment_notes_or_comments_TextInputEditText"
@@ -529,9 +516,8 @@
                                             android:layout_height="match_parent"
                                             android:hint="@string/notesorcomments"
                                             android:gravity="top"
-                                            android:textColor="@color/prusianblue"
                                             android:drawableStart="@drawable/round_notes_24"
-                                            android:drawableTint="@color/prusianblue"
+                                            style="@style/FormTextBox"
                                             android:drawablePadding="10dp"
                                             android:textSize="@dimen/_10sdp"
                                             android:padding="10dp"
@@ -551,19 +537,17 @@
                         android:id="@+id/fragment_medicine_quantity_TextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         app:helperTextEnabled="true"
                         app:helperText="Required"
-                        app:helperTextTextColor="@color/prusianblue"
+                        style="@style/normalTextBox"
                         android:layout_marginTop="@dimen/_12sdp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/fragment_medicine_quantity_TextInputEditText"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:hint="@string/medicinequantity"
-                            android:textColor="@color/prusianblue"
                             android:drawableStart="@drawable/ic_add_medicine"
-                            android:drawableTint="@color/prusianblue"
+                            style="@style/FormTextBox"
                             android:drawablePadding="10dp"
                             android:textSize="@dimen/_10sdp"
                             android:padding="10dp"

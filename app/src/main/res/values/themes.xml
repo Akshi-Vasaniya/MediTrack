@@ -8,11 +8,75 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/white</item>
         <item name="android:windowLightStatusBar">true</item>
+
+
     </style>
 
     <style name="CustomDialogTheme">
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
+    <style name="SplashWelcomeMessage">
+        <item name="android:textColor">@color/splashTextLightThemeTint</item>
+    </style>
 
+    <style name="AppBarMenuImage">
+        <item name="android:src">@drawable/menu_icon</item>
+    </style>
+
+
+    <style name="PasswordInfo">
+        <item name="android:background">@color/passwordFormatBackgroundLightThemeTint</item>
+    </style>
+
+    <style name="LoginHead">
+        <item name="android:textColor">@color/loginHeadTextLightThemeTint</item>
+    </style>
+
+    <style name="LoginSubHead">
+        <item name="android:textColor">@color/loginSubHeadTextLightThemeTint</item>
+    </style>
+
+    <style name="FormTextBox">
+        <item name="android:textColor">@color/textBoxTextLightThemeColor</item>
+        <item name="android:drawableTint">@color/helperTextLightThemeColor</item>
+    </style>
+
+    <style name="normalTextBox" parent="Base.Widget.MaterialComponents.TextInputLayout">
+        <item name="helperTextTextColor">@color/helperTextLightThemeColor</item>
+        <item name="materialThemeOverlay">
+            @style/ThemeOverlay.MaterialComponents.TextInputEditText.OutlinedBox
+        </item>
+        <item name="boxCollapsedPaddingTop">0dp</item>
+        <item name="passwordToggleTint">@color/helperTextLightThemeColor</item>
+    </style>
+
+    <style name="TextBoxHeading">
+        <item name="android:textColor">@color/textBoxHeadingLightThemeColor</item>
+    </style>
+
+    <style name="AdditionalDetailsDownArrow">
+        <item name="tint">@color/prusianblue</item>
+    </style>
+
+    <style name="ProfileTextBox">
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxBackgroundColor">@android:color/transparent</item>
+    </style>
+
+    <style name="StockItemMedicineName">
+        <item name="android:textColor">@color/prusianblue</item>
+    </style>
+
+    <style name="GeneralUsedButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="backgroundTint">@null</item>
+        <item name="android:background">@drawable/button_background</item>
+    </style>
+
+    <style name="StockSpinnerItemTextView">
+        <item name="android:textColor">@color/prusianblue</item>
+    </style>
 </resources>

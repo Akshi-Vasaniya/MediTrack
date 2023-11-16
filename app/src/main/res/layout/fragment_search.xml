@@ -12,7 +12,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/fragment_search_text_TextInputLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            style="@style/normalTextBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -30,7 +30,7 @@
                 android:hint="Search"
                 android:inputType="textEmailAddress"
                 android:padding="10dp"
-                android:textColor="@color/prusianblue"
+                style="@style/FormTextBox"
                 android:textSize="@dimen/_10sdp" />
         </com.google.android.material.textfield.TextInputLayout>
 

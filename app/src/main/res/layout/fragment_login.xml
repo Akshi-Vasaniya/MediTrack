@@ -56,7 +56,7 @@
                     android:textSize="@dimen/_30sdp"
                     android:textStyle="bold"
                     android:fontFamily="@font/comfortaa_bold"
-                    android:textColor="@color/prusianblue"/>
+                    style="@style/LoginHead"/>
                 <TextView
                     android:id="@+id/fragment_login_subtitle"
                     android:layout_width="wrap_content"
@@ -66,7 +66,7 @@
                     android:text="@string/fragment_login_subtitle"
                     android:textSize="@dimen/_10sdp"
                     android:fontFamily="@font/comfortaa_regular"
-                    android:textColor="@color/lightblack"/>
+                    style="@style/LoginSubHead"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -82,15 +82,14 @@
                     android:layout_height="wrap_content"
                     app:helperTextEnabled="true"
                     app:helperText="Required"
-                    app:helperTextTextColor="@color/prusianblue"
                     android:layout_marginTop="20dp"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    style="@style/normalTextBox">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/fragment_login_email_TextInputEditText"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:hint="@string/email"
-                        android:textColor="@color/prusianblue"
+                        style="@style/FormTextBox"
                         android:drawableStart="@drawable/round_mail_24"
                         android:drawablePadding="10dp"
                         android:textSize="@dimen/_10sdp"
@@ -104,18 +103,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:passwordToggleEnabled="true"
-                    app:passwordToggleTint="@color/prusianblue"
                     app:helperTextEnabled="true"
                     app:helperText="Required"
-                    app:helperTextTextColor="@color/prusianblue"
                     android:layout_marginTop="20dp"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    style="@style/normalTextBox">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/fragment_login_password_TextInputEditText"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:hint="@string/password"
-                        android:textColor="@color/prusianblue"
+                        style="@style/FormTextBox"
                         android:drawableStart="@drawable/round_password_24"
                         android:drawablePadding="10dp"
                         android:textSize="@dimen/_10sdp"
@@ -167,7 +164,7 @@
                 android:padding="10dp"
                 android:layout_gravity="center"
                 android:layout_marginBottom="@dimen/_10sdp"
-                android:background="#E4E4E4">
+                style="@style/PasswordInfo">
 
                 <TextView
                     android:id="@+id/instructionTitleTextView"

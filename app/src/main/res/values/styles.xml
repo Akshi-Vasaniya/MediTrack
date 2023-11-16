@@ -3,10 +3,10 @@
     <style name="CustomOutlinedTextInputLayout" parent="">
         <item name="boxStrokeColor">@color/darkblue</item> <!-- Change this to your desired color -->
     </style>
-    <style name="CustomOutlinedBox" parent="">
+    <!--<style name="CustomOutlinedBox" parent="">
         <item name="boxStrokeWidth">0dp</item>
         <item name="boxBackgroundColor">@android:color/transparent</item>
-    </style>
+    </style>-->
     <style name="CardViewWithoutShadow" parent="Base.CardView">
         <item name="cardBackgroundColor">@android:color/transparent</item>
         <item name="cardElevation">0dp</item>
