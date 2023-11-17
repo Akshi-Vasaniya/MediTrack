@@ -289,7 +289,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Week Day *"
-                            android:textColor="@color/prusianblue"/>
+                            style="@style/TextBoxHeading"/>
                         <com.google.android.material.chip.ChipGroup
                             android:id="@+id/weekDaysChipGroup"
                             android:layout_width="match_parent"

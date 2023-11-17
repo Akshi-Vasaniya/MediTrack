@@ -119,6 +119,7 @@ class UserProfileFragment : Fragment(), CustomDialog.CustomDialogListener {
         viewModel.userData.observe(viewLifecycleOwner){
             MainScope().launch(Dispatchers.IO) {
                 try {
+                    userProfileImgUrl = it.profileImage!!
                     withContext(Dispatchers.Main)
                     {
                         binding.fragmentUserProfileNameTextInputEditText.setText(it.name)
@@ -129,7 +130,7 @@ class UserProfileFragment : Fragment(), CustomDialog.CustomDialogListener {
                     if(it?.profileImage != null && it.profileImage!!.isNotEmpty() && it.profileImage!!.isNotBlank() && it.profileImage!="null")
                     {
                         //val bitmap = UtilityFunction.decodeBase64ToBitmap(it?.profileImage!!)
-                        userProfileImgUrl = it.profileImage!!
+
                         withContext(Dispatchers.Main)
                         {
                             Glide.with(requireActivity())

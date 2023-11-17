@@ -1,6 +1,8 @@
 package com.example.meditrack.homeActivity.userprofile.updateprofileimage
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -11,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -40,6 +43,7 @@ class UpdateProfileImageFragment : Fragment() {
     private var profileImageUri:Uri? = null
     private var imageDeleted:Boolean = false
     private lateinit var progressDialog: CustomProgressDialog
+    private var changesMade = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,7 +53,12 @@ class UpdateProfileImageFragment : Fragment() {
         binding = FragmentUpdateProfileImageBinding.bind(view)
         viewModel = ViewModelProvider(this)[UpdateProfileImageViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
-
+        val onBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                showDiscardChangesDialog()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackPressedCallback)
         return binding.root
     }
 
@@ -68,7 +77,7 @@ class UpdateProfileImageFragment : Fragment() {
                 }
                 else{
                     profileImageUri=null
-                    imageDeleted=false
+                    imageDeleted=true
                 }
 
                 // Do something with the data
@@ -104,10 +113,11 @@ class UpdateProfileImageFragment : Fragment() {
                 if (!imageDeleted)
                 {
                     //val drawableResourceId = resources.getIdentifier("profilepic", "drawable", requireContext().packageName)
-                    val drawableResourceId = R.drawable.profilepic
-                    imageViewProfile.setImageResource(drawableResourceId)
-                    profileImageUri = null
-                    imageDeleted = true
+                    //val drawableResourceId = R.drawable.profilepic
+                    //imageViewProfile.setImageResource(drawableResourceId)
+                    //profileImageUri = null
+                    //imageDeleted = true
+                    showConfirmationDialog()
                 }
 
                 //profileImageUri = getImageUriFromImageView(binding.imageViewProfile)
@@ -197,6 +207,7 @@ class UpdateProfileImageFragment : Fragment() {
                                 val bimapImage = UtilityFunction.uriToBitmap(requireActivity(), selectedImageUri)
                                 withContext(Dispatchers.Main){
                                     binding.imageViewProfile.setImageBitmap(bimapImage)
+                                    changesMade = true
                                     imageDeleted = false
                                 }
                             }
@@ -318,4 +329,60 @@ class UpdateProfileImageFragment : Fragment() {
     }
 
 
+    private fun showConfirmationDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+
+        builder.setTitle("Confirmation")
+        builder.setMessage("Are you sure you want to delete your profile picture?")
+
+        builder.setPositiveButton("Yes") { _: DialogInterface, _: Int ->
+            // Handle deletion logic here
+            deleteProfilePic()
+        }
+
+        builder.setNegativeButton("No") { dialog: DialogInterface, _: Int ->
+            dialog.dismiss()
+        }
+
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
+    private fun deleteProfilePic() {
+        //val drawableResourceId = resources.getIdentifier("profilepic", "drawable", requireContext().packageName)
+        val drawableResourceId = R.drawable.profilepic
+        binding.imageViewProfile.setImageResource(drawableResourceId)
+        changesMade=true
+        profileImageUri = null
+        imageDeleted = true
+    }
+
+    private fun showDiscardChangesDialog() {
+        if (changesMade) {
+            val builder = AlertDialog.Builder(requireContext())
+
+            builder.setTitle("Discard Changes")
+            builder.setMessage("Do you want to discard changes to your profile picture?")
+
+            builder.setPositiveButton("Discard") { _: DialogInterface, _: Int ->
+                // Handle discard logic here
+                findNavController().popBackStack()
+            }
+
+            builder.setNegativeButton("Save") { _: DialogInterface, _: Int ->
+                // Handle save logic here
+                binding.btnSave.performClick()
+            }
+
+            builder.setNeutralButton("Cancel") { dialog: DialogInterface, _: Int ->
+                dialog.dismiss()
+            }
+
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+        } else {
+            // If no changes are made, allow normal back press behavior
+            findNavController().popBackStack()
+        }
+    }
 }

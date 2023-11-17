@@ -1,6 +1,7 @@
 package com.example.meditrack.homeActivity.medicine.addMedicine
 
 import android.app.Dialog
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -77,6 +78,7 @@ class AddMedicineFragment : Fragment() {
         }
     }*/
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -85,6 +87,7 @@ class AddMedicineFragment : Fragment() {
         binding = FragmentAddMedicineBinding.bind(view)
         viewModel = ViewModelProvider(this)[AddMedicineViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
+
 
         /*val autoCompleteTextView = view.findViewById<AutoCompleteTextView>(R.id.fragment_week_days_TextInputEditText)
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, viewModel.weekDayItems)
@@ -747,6 +750,7 @@ class AddMedicineFragment : Fragment() {
                 chip.text = tag.name
                 chip.isCheckable = true
                 chip.isClickable = true
+                chip.isChecked = viewModel.selectedWeekDayItem.contains(tag)
                 chip.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
                         val selectedChip = Chip(requireContext())
@@ -775,6 +779,7 @@ class AddMedicineFragment : Fragment() {
                 chip.text = tag.name
                 chip.isCheckable = true
                 chip.isClickable = true
+                chip.isChecked = tag == viewModel.selectedFreqTags
                 chip.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
                         val selectedChip = Chip(requireContext())
@@ -804,11 +809,22 @@ class AddMedicineFragment : Fragment() {
                 freqChipGroup.addView(chip)
             }
 
+            if(viewModel.selectedFreqTags == MedicineFrequency.WEEKLY)
+            {
+                weekDaysChipGroupLayout.visibility = View.VISIBLE
+                //binding.fragmentWeekDaysTextInputLayout.visibility=View.VISIBLE
+            }
+            else{
+                weekDaysChipGroupLayout.visibility = View.GONE
+                //binding.fragmentWeekDaysTextInputLayout.visibility=View.GONE
+            }
+
             for (tag in viewModel.dinnerTags) {
                 val chip = Chip(requireContext())
                 chip.text = tag.description
                 chip.isCheckable = true
                 chip.isClickable = true
+                chip.isChecked = viewModel.selectedMedicineTimeOfDayType1.contains(tag)
                 chip.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
                         val selectedChip = Chip(requireContext())
@@ -837,6 +853,7 @@ class AddMedicineFragment : Fragment() {
                 chip.text = tag.description
                 chip.isCheckable = true
                 chip.isClickable = true
+                chip.isChecked = viewModel.selectedMedicineTimeOfDayType1.contains(tag)
                 chip.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
                         val selectedChip = Chip(requireContext())
@@ -865,6 +882,7 @@ class AddMedicineFragment : Fragment() {
                 chip.text = tag.description
                 chip.isCheckable = true
                 chip.isClickable = true
+                chip.isChecked = viewModel.selectedMedicineTimeOfDayType1.contains(tag)
                 chip.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
                         val selectedChip = Chip(requireContext())
@@ -893,6 +911,7 @@ class AddMedicineFragment : Fragment() {
                 chip.text = tag.name
                 chip.isCheckable = true
                 chip.isClickable = true
+                chip.isChecked = viewModel.selectedMedTypeTags == tag
                 chip.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
                         val selectedChip = Chip(requireContext())
@@ -929,6 +948,7 @@ class AddMedicineFragment : Fragment() {
                 chip.text = tag.description
                 chip.isCheckable = true
                 chip.isClickable = true
+                chip.isChecked = viewModel.selectedMedicineTimeOfDayType2.contains(tag)
                 chip.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
                         val selectedChip = Chip(requireContext())

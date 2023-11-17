@@ -1,13 +1,15 @@
 package com.example.meditrack.homeActivity.medicine.addMedicine
 
 import android.graphics.Bitmap
-import android.graphics.Rect
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.meditrack.dataModel.enumClasses.medicine.*
+import com.google.android.material.chip.Chip
+
 
 class AddMedicineViewModel : ViewModel() {
     // TODO: Implement the ViewModel
-
     var medName: String? = null
     var medImage: String? = null
     var bimapMedImage:Bitmap? = null
@@ -26,13 +28,16 @@ class AddMedicineViewModel : ViewModel() {
     val medicineTimeOfDayType2 = MedicineTimeOfDayType2.values()
     val breakFastTags = arrayOf(
         MedicineTimeOfDayType1.BEFORE_BREAKFAST,
-        MedicineTimeOfDayType1.AFTER_BREAKFAST,)
+        MedicineTimeOfDayType1.AFTER_BREAKFAST,
+    )
     val launchTags = arrayOf(
         MedicineTimeOfDayType1.BEFORE_LUNCH,
-        MedicineTimeOfDayType1.AFTER_LUNCH,)
+        MedicineTimeOfDayType1.AFTER_LUNCH,
+    )
     val dinnerTags = arrayOf(
         MedicineTimeOfDayType1.BEFORE_DINNER,
-        MedicineTimeOfDayType1.AFTER_DINNER,)
+        MedicineTimeOfDayType1.AFTER_DINNER,
+    )
 
     var selectedFreqTags: MedicineFrequency? = null
     var selectedMedicineTimeOfDayType1: ArrayList<MedicineTimeOfDayType1> = ArrayList()
