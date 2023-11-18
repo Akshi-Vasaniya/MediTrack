@@ -2,51 +2,55 @@
     <!-- Base application theme. -->
     <style name="Theme.MediTrack" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item>
-        <item name="colorPrimaryVariant">@color/prusianblue</item>
+        <item name="colorPrimary">@color/greentype</item>
+        <item name="colorPrimaryVariant">@color/greentype</item>
         <item name="colorOnPrimary">@color/black</item>
     </style>
 
     <style name="CustomDialogTheme">
-        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowBackground">@color/transparent</item>
     </style>
 
     <style name="SplashWelcomeMessage">
-        <item name="android:textColor">@color/splashTextDarkThemeTint</item>
+        <item name="android:textColor">@color/splashText</item>
     </style>
 
     <style name="AppBarMenuImage">
-        <item name="android:src">@drawable/menu_icon_dark</item>
+        <item name="tint">@color/appBarImage</item>
+    </style>
+
+    <style name="ProgressBar">
+        <item name="android:indeterminateTint">@color/progressBarColor</item>
     </style>
 
     <style name="PasswordInfo">
-        <item name="android:background">@color/passwordFormatBackgroundDarkThemeTint</item>
+        <item name="android:background">@color/passwordFormatBackground</item>
     </style>
 
     <style name="LoginHead">
-        <item name="android:textColor">@color/loginHeadTextDarkThemeTint</item>
+        <item name="android:textColor">@color/loginHeadText</item>
     </style>
 
     <style name="LoginSubHead">
-        <item name="android:textColor">@color/loginSubHeadTextDarkThemeTint</item>
+        <item name="android:textColor">@color/loginSubHeadText</item>
     </style>
 
     <style name="FormTextBox">
-        <item name="android:textColor">@color/textBoxTextDarkThemeColor</item>
-        <item name="android:drawableTint">@color/helperTextDarkThemeColor</item>
+        <item name="android:textColor">@color/textBoxText</item>
+        <item name="android:drawableTint">@color/helperText</item>
     </style>
 
     <style name="normalTextBox" parent="Base.Widget.MaterialComponents.TextInputLayout">
-        <item name="helperTextTextColor">@color/helperTextDarkThemeColor</item>
+        <item name="helperTextTextColor">@color/helperText</item>
         <item name="materialThemeOverlay">
             @style/ThemeOverlay.MaterialComponents.TextInputEditText.OutlinedBox
         </item>
         <item name="boxCollapsedPaddingTop">0dp</item>
-        <item name="passwordToggleTint">@color/helperTextDarkThemeColor</item>
+        <item name="passwordToggleTint">@color/helperText</item>
     </style>
 
     <style name="TextBoxHeading">
-        <item name="android:textColor">@color/textBoxHeadingDarkThemeColor</item>
+        <item name="android:textColor">@color/textBoxHeading</item>
     </style>
 
     <style name="AdditionalDetailsDownArrow">

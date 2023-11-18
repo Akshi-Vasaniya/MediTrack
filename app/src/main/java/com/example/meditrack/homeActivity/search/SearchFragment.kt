@@ -1,6 +1,7 @@
 package com.example.meditrack.homeActivity.search
 
 import android.content.Context
+import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.meditrack.R
 import com.example.meditrack.adapter.SearchItemAdapter
@@ -47,10 +49,24 @@ class SearchFragment : Fragment() {
         return binding.root
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        viewModel.setValueSearchItemsList(viewModel._dataList.value!!)
+        super.onConfigurationChanged(newConfig)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
+            viewModel._dataList.observe(viewLifecycleOwner) { newDataList ->
+                // Update the RecyclerView with the new data
+                if(newDataList!=null)
+                {
+                    binding.rvCombineImage.adapter = SearchItemAdapter(newDataList)
+                }
+
+            }
+
             fragmentSearchButton.setOnClickListener {
                 val searchText = fragmentSearchTextTextInputEditText.text.toString()
                 MainScope().launch(Dispatchers.IO) {
@@ -68,7 +84,7 @@ class SearchFragment : Fragment() {
                                 try {
                                     Log.i("Search", "onResponse: ${response.body()!!}")
                                     val res = response.body()!!
-                                    binding.rvCombineImage.adapter = SearchItemAdapter(res)
+                                    viewModel.setValueSearchItemsList(res)
                                     progressDialog.stop()
                                 }
                                 catch (ex:Exception)

@@ -2,7 +2,6 @@ package com.example.meditrack.homeActivity.medicine.addMedicine
 
 import android.app.Dialog
 import android.content.Context
-import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle

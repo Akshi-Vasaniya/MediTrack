@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="mainColor">#053F5C</color>
-    <color name="progressBarColor">@color/coffeetype</color>
+    <color name="mainColor">#009245</color>
+    <color name="progressBarColor">@color/greentype</color>
     <color name="black">#FF000000</color>
     <color name="lightblack">#83000000</color>
     <color name="white">#FFFFFFFF</color>
@@ -18,19 +18,19 @@
     <color name="grey">#50FFFFFF</color>
     <color name="dialogBackground">#60000000</color>
 
-    <color name="appBarImage">@color/black</color>
+    <color name="appBarImage">@color/white</color>
 
-    <color name="passwordFormatBackground">#E4E4E4</color>
+    <color name="passwordFormatBackground">#60000000</color>
 
-    <color name="loginSubHeadText">#83000000</color>
+    <color name="loginSubHeadText">@color/white</color>
 
-    <color name="loginHeadText">@color/prusianblue</color>
+    <color name="loginHeadText">@color/greentype</color>
 
-    <color name="splashText">@color/prusianblue</color>
+    <color name="splashText">#A0A0A0</color>
 
-    <color name="textBoxText">@color/prusianblue</color>
+    <color name="textBoxText">@color/white</color>
 
-    <color name="helperText">@color/prusianblue</color>
+    <color name="helperText">#A0A0A0</color>
 
-    <color name="textBoxHeading">@color/prusianblue</color>
+    <color name="textBoxHeading">@color/white</color>
 </resources>
