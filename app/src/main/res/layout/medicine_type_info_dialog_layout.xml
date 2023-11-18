@@ -13,7 +13,8 @@
         android:layout_alignParentEnd="true"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="Close Button"
-        android:src="@drawable/ic_close" />
+        android:src="@drawable/ic_close"
+        style="@style/AdditionalDetailsDownArrow"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
