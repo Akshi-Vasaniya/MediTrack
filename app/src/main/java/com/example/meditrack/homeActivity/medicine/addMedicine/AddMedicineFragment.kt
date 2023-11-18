@@ -1,7 +1,9 @@
 package com.example.meditrack.homeActivity.medicine.addMedicine
 
 import android.app.Dialog
+import android.content.Context
 import android.content.res.Configuration
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -43,10 +45,14 @@ import com.example.meditrack.utility.ownDialogs.MonthYearPickerDialog
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.gson.JsonElement
+import com.google.gson.JsonIOException
+import com.google.gson.JsonParseException
+import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
 
 
 class AddMedicineFragment : Fragment() {
@@ -404,25 +410,66 @@ class AddMedicineFragment : Fragment() {
                 {
                     progressDialog.start("Checking Spell...")
                     MainScope().launch(Dispatchers.IO) {
-                        val response = ApiInstance.api.spellCorrect(viewModel.medName)
-                        response.enqueue(object : Callback<JsonElement> {
-                            override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-                                progressDialog.stop()
-                                val resJsonObject = response.body()!!.asJsonObject
-                                Log.i("JSOnDATA","$resJsonObject")
-                                if(resJsonObject.has("success"))
-                                {
-                                    fragmentMedicineNameTextInputEditText.setText(resJsonObject.get("success").asString)
-                                    viewModel.medName = resJsonObject.get("success").asString
+                        try{
+                            val response = ApiInstance.api.spellCorrect(viewModel.medName)
+                            response.enqueue(object : Callback<JsonElement> {
+                                override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                                    try {
+                                        progressDialog.stop()
+                                        val resJsonObject = response.body()!!.asJsonObject
+                                        Log.i("JSOnDATA","$resJsonObject")
+                                        if(resJsonObject.has("success"))
+                                        {
+                                            fragmentMedicineNameTextInputEditText.setText(resJsonObject.get("success").asString)
+                                            viewModel.medName = resJsonObject.get("success").asString
+                                        }
+                                    }
+                                    catch (e: JsonSyntaxException) {
+                                        showToast("JSON syntax error")
+                                    } catch (e: JsonIOException) {
+                                        showToast("JSON I/O error")
+                                    } catch (e: JsonParseException) {
+                                        showToast("JSON parsing error")
+                                    }
+                                    catch (e:NullPointerException){
+                                        showToast("server unavailable or respond null")
+                                    }
+                                    catch (e: Exception) {
+                                        Log.e("JSOnDATA", "Error processing the JSON response", e)
+                                        showToast("An unexpected error occurred")
+                                    }
                                 }
+
+                                override fun onFailure(call: Call<JsonElement>, t: Throwable) {
+                                    progressDialog.stop()
+                                    Log.i("onFailure: ",t.message.toString())
+                                }
+
+                            })
+                        }
+                        catch (e: IOException) {
+                            if(isNetworkAvailable(requireContext()))
+                            {
+                                withContext(Dispatchers.Main)
+                                {
+                                    showToast("server unavailable")
+                                }
+
+                            }
+                            else{
+                                withContext(Dispatchers.Main)
+                                {
+                                    showToast("Network issue")
+                                }
+
                             }
 
-                            override fun onFailure(call: Call<JsonElement>, t: Throwable) {
-                                progressDialog.stop()
-                                Log.i("onFailure: ",t.message.toString())
+                        } catch (e: Exception) {
+                            withContext(Dispatchers.Main)
+                            {
+                                showToast("An unexpected error occurred")
                             }
-
-                        })
+                        }
                     }
                 }
 
@@ -456,7 +503,8 @@ class AddMedicineFragment : Fragment() {
                             viewModel.selectedMedicineTimeOfDayType2.forEach {
                                 Log.i("MedicineData", "Medicine Time of Day Type 2 : ${it.description}")
                             }
-                        }else{
+                        }
+                        else{
                             medicineTime = viewModel.selectedMedicineTimeOfDayType1
                             viewModel.selectedMedicineTimeOfDayType1.forEach {
                                 Log.i("MedicineData", "Medicine Time of Day Type 1 : ${it.description}")
@@ -494,174 +542,188 @@ class AddMedicineFragment : Fragment() {
                             progressDialog.start("Loading...")
                         }
                         val docName = stringNormalize(viewModel.medName!!)
-                        val insertDocumentFlaskPython = object : Callback<JsonElement>{
-                            override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-                                progressDialog.stop()
-                                val res = response.body()!!.asJsonObject
-                                var toastMessage = ""
-                                if(res.has("success") || res.has("info"))
-                                {
-                                    toastMessage = "Success"
-                                }
-                                else if(res.has("error"))
-                                {
-                                    toastMessage = res.get("error").toString()
-                                }
-                                clearForm()
-                                Toast.makeText(requireContext(),toastMessage,Toast.LENGTH_SHORT).show()
-
-                            }
-
-                            override fun onFailure(call: Call<JsonElement>, t: Throwable) {
-                                progressDialog.stop()
-                                Log.i("onFailure: ",t.message.toString())
-                                Toast.makeText(requireContext(),"Request Error",Toast.LENGTH_SHORT).show()
-                            }
-
-                        }
-                        val insertMedicineDataFirebaseCallback = object : InsertMedicineDataFirebaseCallback{
-                            override fun onSuccess() {
-                                MainScope().launch(Dispatchers.IO) {
+                        try{
+                            val insertDocumentFlaskPython = object : Callback<JsonElement>{
+                                override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                                     try {
-                                        val dialog = MedicineReminderDialog()
-                                        withContext(Dispatchers.Main)
+                                        progressDialog.stop()
+                                        val res = response.body()!!.asJsonObject
+                                        var toastMessage = ""
+                                        if(res.has("success") || res.has("info"))
                                         {
-                                            progressDialog.stop()
-                                            //Toast.makeText(requireContext(),"Medicine and Reminder Successfully Added",Toast.LENGTH_SHORT).show()
-                                            Log.d(tAG, "DocumentSnapshot added with ID: $docName")
-
-                                            progressDialog.start("Server Increase Medicine Dataset...")
+                                            toastMessage = "Success"
                                         }
-
-                                        MainScope().launch(Dispatchers.IO) {
-                                            val response = ApiInstance.api.insertDocument(medicineData!!.medName)
-                                            response.enqueue(insertDocumentFlaskPython)
-                                        }
-                                        val takeTimeList: ArrayList<MedicineTimeOfDayType1>? = medicineData?.takeTime as? ArrayList<MedicineTimeOfDayType1>
-                                        // Medicine Taking Reminder
-                                        if(takeTimeList!=null)
+                                        else if(res.has("error"))
                                         {
-                                            for(item in takeTimeList)
+                                            toastMessage = res.get("error").toString()
+                                        }
+                                        clearForm()
+                                        Toast.makeText(requireContext(),toastMessage,Toast.LENGTH_SHORT).show()
+                                    }
+                                    catch (ex:Exception){
+                                        showToast("Unexpected Error")
+                                    }
+
+
+                                }
+
+                                override fun onFailure(call: Call<JsonElement>, t: Throwable) {
+                                    progressDialog.stop()
+                                    Log.i("onFailure: ",t.message.toString())
+                                    Toast.makeText(requireContext(),"Request Error",Toast.LENGTH_SHORT).show()
+                                }
+
+                            }
+                            val insertMedicineDataFirebaseCallback = object : InsertMedicineDataFirebaseCallback{
+                                override fun onSuccess() {
+                                    MainScope().launch(Dispatchers.IO) {
+                                        try {
+                                            val dialog = MedicineReminderDialog()
+                                            withContext(Dispatchers.Main)
                                             {
-                                                val hour = item.time.split(":")
-                                                Log.i(tAG, "onUploadSuccess: ${hour[0]}")
-                                                if(medicineData!!.medFreq == MedicineFrequency.DAILY) {
-                                                    dialog.scheduleNotifications(medicineData!!.medName, mutableListOf(0, 1, 2, 3, 4, 5, 6),  hour[0].toInt(), 0)
-                                                }else{
-                                                    dialog.scheduleNotifications(medicineData!!.medName, medicineData!!.weekDay as MutableList<Int>,  hour[0].toInt(), 0)
+                                                progressDialog.stop()
+                                                //Toast.makeText(requireContext(),"Medicine and Reminder Successfully Added",Toast.LENGTH_SHORT).show()
+                                                Log.d(tAG, "DocumentSnapshot added with ID: $docName")
+
+                                                progressDialog.start("Server Increase Medicine Dataset...")
+                                            }
+
+                                            MainScope().launch(Dispatchers.IO) {
+                                                val response = ApiInstance.api.insertDocument(medicineData!!.medName)
+                                                response.enqueue(insertDocumentFlaskPython)
+                                            }
+                                            val takeTimeList: ArrayList<MedicineTimeOfDayType1>? = medicineData?.takeTime as? ArrayList<MedicineTimeOfDayType1>
+                                            // Medicine Taking Reminder
+                                            if(takeTimeList!=null)
+                                            {
+                                                for(item in takeTimeList)
+                                                {
+                                                    val hour = item.time.split(":")
+                                                    Log.i(tAG, "onUploadSuccess: ${hour[0]}")
+                                                    if(medicineData!!.medFreq == MedicineFrequency.DAILY) {
+                                                        dialog.scheduleNotifications(medicineData!!.medName, mutableListOf(0, 1, 2, 3, 4, 5, 6),  hour[0].toInt(), 0)
+                                                    }else{
+                                                        dialog.scheduleNotifications(medicineData!!.medName, medicineData!!.weekDay as MutableList<Int>,  hour[0].toInt(), 0)
+                                                    }
                                                 }
                                             }
+
                                         }
+                                        catch (ex:Exception)
+                                        {
+                                            showToast("Unexpected Error")
+                                            Log.e("addOnSuccessListener","${ex.message}")
+                                        }
+                                    }
 
-                                    }
-                                    catch (ex:Exception)
-                                    {
-                                        Log.e("addOnSuccessListener","${ex.message}")
-                                    }
                                 }
 
-                            }
-
-                            override fun onFailure(exception: Exception) {
-                                progressDialog.stop()
-                                Toast.makeText(requireContext(),"addOnFailureListener: Error",Toast.LENGTH_SHORT).show()
-                                Log.w(tAG, "Error adding document", exception)
-                            }
-
-                        }
-                        val imageUploadCallback = object : UploadCallback{
-                            override fun onUploadSuccess(downloadUrl: String) {
-                                MainScope().launch(Dispatchers.IO) {
-                                    try {
-                                        medicineData = MedicineData(
-                                            medImage = downloadUrl,
-                                            medName = viewModel.medName!!.trim(),
-                                            medicineType = viewModel.selectedMedTypeTags!!,
-                                            dosage = viewModel.dosage!!,
-                                            mfgDate = viewModel.mfgDate!!,
-                                            expDate = viewModel.expDate!!,
-                                            medFreq = viewModel.selectedFreqTags!!,
-                                            weekDay = viewModel.selectedWeekDayItem,
-                                            takeTime = medicineTime,
-                                            instruction = viewModel.medInstruction.toString().trim(),
-                                            doctorName = viewModel.doctorName.toString().trim(),
-                                            doctorContact = viewModel.doctorContact.toString().trim(),
-                                            notes = viewModel.medNotes.toString().trim(),
-                                            totalQuantity = viewModel.medQuantity!!,
-                                            mediDeleted = "No",
-                                            getCurrentDate(),
-                                            getCurrentTime()
-                                        )
-                                        Log.i(tAG, "onUploadSuccess: ${medicineData!!.medName}")
-                                        Log.i(tAG, "onUploadSuccess: ${medicineData!!.medicineType}")
-                                        Log.i(tAG, "onUploadSuccess: ${medicineData!!.medFreq}")
-                                        Log.i(tAG, "onUploadSuccess: ${medicineData!!.weekDay}")
-                                        Log.i(tAG, "onUploadSuccess: ${medicineData!!.takeTime}")
-                                        Log.i(tAG, "onUploadSuccess: ${medicineData!!.notes}")
-                                        Log.i(tAG, "onUploadSuccess: ${medicineData!!.totalQuantity}")
-
-
-                                        db.collection("user_medicines").document(FBase.getUserId()).collection("medicine_data")
-                                            .document(docName)
-                                            .set(medicineData!!)
-                                            .addOnSuccessListener {
-                                                insertMedicineDataFirebaseCallback.onSuccess()
-                                            }
-                                            .addOnFailureListener { e ->
-                                                insertMedicineDataFirebaseCallback.onFailure(e)
-                                            }
-                                    }
-                                    catch (ex:java.lang.Exception)
-                                    {
-                                        Log.w("$tAG : uploadImageToFirebaseStorage", "Error uploadImageToFirebaseStorage", ex)
-                                    }
-                                }
-
-                            }
-
-                            override fun onUploadFailure(exception: Exception) {
-                                progressDialog.stop()
-                                Log.w("$tAG : onUploadFailure", "Error adding document", exception)
-                                Toast.makeText(requireContext(),"onUploadFailure: Error",Toast.LENGTH_SHORT).show()
-                            }
-
-                        }
-                        val medicineExistsFirebaseCallback = object : MedicineExistsFirebaseCallback{
-                            override fun onSuccess(status: Boolean) {
-                                if(status)
-                                {
-                                    uploadImageToFirebaseStorage(imageUri, imageUploadCallback)
-                                }
-                                else{
-                                    Toast.makeText(requireContext(),"Medicine Already Exists",Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                            override fun onFailure(exception: Exception) {
-
-                            }
-
-                        }
-
-                        val medicineDataDocRef = db.collection("user_medicines")
-                            .document(FBase.getUserId())
-                            .collection("medicine_data")
-                            .document(docName)
-                        medicineDataDocRef.get()
-                            .addOnSuccessListener { document ->
-                                if (document.exists()) {
+                                override fun onFailure(exception: Exception) {
                                     progressDialog.stop()
-                                    // Document with the same custom name already exists, skip insertion
-                                    // Handle this case if needed
-                                    medicineExistsFirebaseCallback.onSuccess(false)
+                                    Toast.makeText(requireContext(),"addOnFailureListener: Error",Toast.LENGTH_SHORT).show()
+                                    Log.w(tAG, "Error adding document", exception)
+                                }
 
-                                } else {
-                                    medicineExistsFirebaseCallback.onSuccess(true)
+                            }
+                            val imageUploadCallback = object : UploadCallback{
+                                override fun onUploadSuccess(downloadUrl: String) {
+                                    MainScope().launch(Dispatchers.IO) {
+                                        try {
+                                            medicineData = MedicineData(
+                                                medImage = downloadUrl,
+                                                medName = viewModel.medName!!.trim(),
+                                                medicineType = viewModel.selectedMedTypeTags!!,
+                                                dosage = viewModel.dosage!!,
+                                                mfgDate = viewModel.mfgDate!!,
+                                                expDate = viewModel.expDate!!,
+                                                medFreq = viewModel.selectedFreqTags!!,
+                                                weekDay = viewModel.selectedWeekDayItem,
+                                                takeTime = medicineTime,
+                                                instruction = viewModel.medInstruction.toString().trim(),
+                                                doctorName = viewModel.doctorName.toString().trim(),
+                                                doctorContact = viewModel.doctorContact.toString().trim(),
+                                                notes = viewModel.medNotes.toString().trim(),
+                                                totalQuantity = viewModel.medQuantity!!,
+                                                mediDeleted = "No",
+                                                getCurrentDate(),
+                                                getCurrentTime()
+                                            )
+                                            Log.i(tAG, "onUploadSuccess: ${medicineData!!.medName}")
+                                            Log.i(tAG, "onUploadSuccess: ${medicineData!!.medicineType}")
+                                            Log.i(tAG, "onUploadSuccess: ${medicineData!!.medFreq}")
+                                            Log.i(tAG, "onUploadSuccess: ${medicineData!!.weekDay}")
+                                            Log.i(tAG, "onUploadSuccess: ${medicineData!!.takeTime}")
+                                            Log.i(tAG, "onUploadSuccess: ${medicineData!!.notes}")
+                                            Log.i(tAG, "onUploadSuccess: ${medicineData!!.totalQuantity}")
+
+
+                                            db.collection("user_medicines").document(FBase.getUserId()).collection("medicine_data")
+                                                .document(docName)
+                                                .set(medicineData!!)
+                                                .addOnSuccessListener {
+                                                    insertMedicineDataFirebaseCallback.onSuccess()
+                                                }
+                                                .addOnFailureListener { e ->
+                                                    insertMedicineDataFirebaseCallback.onFailure(e)
+                                                }
+                                        }
+                                        catch (ex:java.lang.Exception)
+                                        {
+                                            Log.w("$tAG : uploadImageToFirebaseStorage", "Error uploadImageToFirebaseStorage", ex)
+                                        }
+                                    }
 
                                 }
+
+                                override fun onUploadFailure(exception: Exception) {
+                                    progressDialog.stop()
+                                    Log.w("$tAG : onUploadFailure", "Error adding document", exception)
+                                    Toast.makeText(requireContext(),"onUploadFailure: Error",Toast.LENGTH_SHORT).show()
+                                }
+
                             }
-                            .addOnFailureListener { e ->
-                                medicineExistsFirebaseCallback.onFailure(e)
+                            val medicineExistsFirebaseCallback = object : MedicineExistsFirebaseCallback{
+                                override fun onSuccess(status: Boolean) {
+                                    if(status)
+                                    {
+                                        uploadImageToFirebaseStorage(imageUri, imageUploadCallback)
+                                    }
+                                    else{
+                                        Toast.makeText(requireContext(),"Medicine Already Exists",Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                                override fun onFailure(exception: Exception) {
+
+                                }
+
                             }
+
+                            val medicineDataDocRef = db.collection("user_medicines")
+                                .document(FBase.getUserId())
+                                .collection("medicine_data")
+                                .document(docName)
+                            medicineDataDocRef.get()
+                                .addOnSuccessListener { document ->
+                                    if (document.exists()) {
+                                        progressDialog.stop()
+                                        // Document with the same custom name already exists, skip insertion
+                                        // Handle this case if needed
+                                        medicineExistsFirebaseCallback.onSuccess(false)
+
+                                    } else {
+                                        medicineExistsFirebaseCallback.onSuccess(true)
+
+                                    }
+                                }
+                                .addOnFailureListener { e ->
+                                    medicineExistsFirebaseCallback.onFailure(e)
+                                }
+                        }
+                        catch (ex:Exception)
+                        {
+                            showToast("Unexpected Error")
+                        }
+
 
 
                         /*db.collection("user_medicines").document(MediTrackUserReference.getUserId()).collection("medicine_data")
@@ -1184,6 +1246,17 @@ class AddMedicineFragment : Fragment() {
                                 && viewModel.selectedMedicineTimeOfDayType1.isNotEmpty()))
                 &&
                 (viewModel.selectedFreqTags== MedicineFrequency.DAILY || (viewModel.selectedFreqTags== MedicineFrequency.WEEKLY && viewModel.selectedWeekDayItem.isNotEmpty()))
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo?.isConnectedOrConnecting == true
     }
 
     /*fun expiryDatePickerDialog() {

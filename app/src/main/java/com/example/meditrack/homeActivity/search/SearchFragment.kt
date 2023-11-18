@@ -1,10 +1,13 @@
 package com.example.meditrack.homeActivity.search
 
+import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.meditrack.R
@@ -20,6 +23,7 @@ import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
 
 
 class SearchFragment : Fragment() {
@@ -54,34 +58,60 @@ class SearchFragment : Fragment() {
                         progressDialog.start("Searching...")
                     }
 
-                    val response = ApiInstance.api.listDocument(searchText)
-                    response!!.enqueue(object : Callback<List<SearchItemData?>?> {
-                        override fun onResponse(
-                            call: Call<List<SearchItemData?>?>,
-                            response: Response<List<SearchItemData?>?>
-                        ) {
-                            try {
-                                Log.i("Search", "onResponse: ${response.body()!!}")
-                                val res = response.body()!!
-                                binding.rvCombineImage.adapter = SearchItemAdapter(res)
+                    try {
+                        val response = ApiInstance.api.listDocument(searchText)
+                        response!!.enqueue(object : Callback<List<SearchItemData?>?> {
+                            override fun onResponse(
+                                call: Call<List<SearchItemData?>?>,
+                                response: Response<List<SearchItemData?>?>
+                            ) {
+                                try {
+                                    Log.i("Search", "onResponse: ${response.body()!!}")
+                                    val res = response.body()!!
+                                    binding.rvCombineImage.adapter = SearchItemAdapter(res)
+                                    progressDialog.stop()
+                                }
+                                catch (ex:Exception)
+                                {
+                                    progressDialog.stop()
+                                    showToast("An unexpected error occurred")
+                                }
+                            }
+
+                            override fun onFailure(call: Call<List<SearchItemData?>?>, t: Throwable) {
+
+                                Log.i("Search", "onResponse: ${t.message}")
                                 progressDialog.stop()
                             }
-                            catch (ex:Exception)
-                            {
-                                progressDialog.stop()
-                            }
+                        })
+                    }
+                    catch (e: IOException) {
+                        if(isNetworkAvailable(requireContext()))
+                        {
+                            showToast("server unavailable")
+                        }
+                        else{
+                            showToast("Network issue")
                         }
 
-                        override fun onFailure(call: Call<List<SearchItemData?>?>, t: Throwable) {
+                    } catch (e: Exception) {
+                        showToast("An unexpected error occurred")
+                    }
 
-                            Log.i("Search", "onResponse: ${t.message}")
-                            progressDialog.stop()
-                        }
-                    })
                 }
             }
 
         }
+    }
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo?.isConnectedOrConnecting == true
     }
 
 }
