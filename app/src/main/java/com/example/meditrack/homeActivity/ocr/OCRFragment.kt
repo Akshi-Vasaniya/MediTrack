@@ -4,21 +4,33 @@ import android.Manifest
 import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.Context
+import android.content.Context.CAMERA_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.graphics.Rect
+import android.graphics.RectF
+import android.hardware.camera2.CameraAccessException
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.util.SparseIntArray
 import android.view.LayoutInflater
+import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -28,10 +40,11 @@ import com.example.meditrack.databinding.FragmentOCRBinding
 import com.example.meditrack.homeActivity.medicine.addMedicine.AddMedicineFragment
 import com.example.meditrack.utility.UtilityFunction
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
-import com.google.android.gms.vision.Frame.*
 import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.Text.Line
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -43,6 +56,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.lang.Math.cos
+import java.lang.Math.sin
+import java.lang.StrictMath.atan2
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -51,15 +67,25 @@ import java.util.concurrent.Executors
 class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallback,
     OverlayView.OverlaySelectionListener {
 
+    private val ORIENTATIONS = SparseIntArray()
+
+    init {
+        ORIENTATIONS.append(Surface.ROTATION_0, 0)
+        ORIENTATIONS.append(Surface.ROTATION_90, 90)
+        ORIENTATIONS.append(Surface.ROTATION_180, 180)
+        ORIENTATIONS.append(Surface.ROTATION_270, 270)
+    }
+
     companion object {
         fun newInstance() = OCRFragment()
     }
 
     private lateinit var viewModel: OCRViewModel
-    private lateinit var binding:FragmentOCRBinding
+    private lateinit var binding: FragmentOCRBinding
     private lateinit var recognizer: TextRecognizer
     private val tAG = "Testing"
     private val savedTestTag = "SavedText"
+    private var currentRotation: Float = 0f
 
 
     //private val SAVED_IMAGE_BITMAP = "SavedImage"
@@ -72,7 +98,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var overlayView: OverlayView
     private lateinit var progressDialog: CustomProgressDialog
-    private lateinit var imageAnalysis:ImageAnalysis
+    private lateinit var imageAnalysis: ImageAnalysis
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -85,7 +111,8 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
 
         overlayView = OverlayView(requireContext())
         overlayView.overlaySelectionListener = this
-        val frameLayout: ViewGroup = view!!.findViewById(R.id.camera_fragment_layout) // Replace with your layout id
+        val frameLayout: ViewGroup =
+            view!!.findViewById(R.id.camera_fragment_layout) // Replace with your layout id
         frameLayout.addView(overlayView)
 
         return binding.root
@@ -110,13 +137,13 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
         }
         binding.apply {
             torchImage.setOnClickListener {
-                Log.i(tAG,"torchButton.setOnClickListener: true")
+                Log.i(tAG, "torchButton.setOnClickListener: true")
                 try {
                     camera.apply {
                         //torchImage.setBackgroundColor(resources.getColor(R.color.purple_200))
-                        Log.i(tAG,"camera.apply: true")
+                        Log.i(tAG, "camera.apply: true")
                         if (cameraInfo.hasFlashUnit()) {
-                            Log.i(tAG,"cameraInfo.hasFlashUnit(): ${cameraInfo.hasFlashUnit()}")
+                            Log.i(tAG, "cameraInfo.hasFlashUnit(): ${cameraInfo.hasFlashUnit()}")
                             cameraControl.enableTorch(cameraInfo.torchState.value == TorchState.OFF)
                         } else {
                             showToast(getString(R.string.torch_not_available_msg))
@@ -130,9 +157,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
                             }
                         }
                     }
-                }
-                catch (e:Exception)
-                {
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
 
@@ -144,11 +169,11 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
         init()
 
         binding.ocrCamera.setOnClickListener {
-            if(!allPermissionsGranted()){
+            if (!allPermissionsGranted()) {
                 requestPermissions()
             } else {
                 overlayView.clearOverlay()
-                binding.viewFinder.visibility=View.VISIBLE
+                binding.viewFinder.visibility = View.VISIBLE
                 binding.previewImage.visibility = View.GONE
                 binding.textInImageLayout.visibility = View.GONE
                 savedBitmap = null
@@ -161,36 +186,35 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
         }
 
         binding.saveMedName.setOnClickListener {
-            if(viewModel.listSelectedMedName.isEmpty())
-            {
-                Toast.makeText(requireContext(),"Please Select Medicine Name",Toast.LENGTH_SHORT).show()
-            }
-            else{
+            if (viewModel.listSelectedMedName.isEmpty()) {
+                Toast.makeText(requireContext(), "Please Select Medicine Name", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
                 // Create a Bundle
                 val bundle = Bundle()
                 MainScope().launch(Dispatchers.IO) {
-                    withContext(Dispatchers.Main){
+                    withContext(Dispatchers.Main) {
                         progressDialog.start("Saving...")
                     }
-                   val scanImageByteArray= UtilityFunction.bitmapToByteArray(savedBitmap!!)
+                    val scanImageByteArray = UtilityFunction.bitmapToByteArray(savedBitmap!!)
 
                     // Add the bitmap to the Bundle
                     bundle.putByteArray("scanImageByteArray", scanImageByteArray)
 
-                    var medName=""
+                    var medName = ""
                     viewModel.listSelectedMedName.forEach {
                         medName += it.second
                     }
                     medName = medName.trim()
-                    medName = medName.replace("\n"," ")
+                    medName = medName.replace("\n", " ")
 
                     // Add the ArrayList to the Bundle
                     bundle.putString("ocrMedNameString", medName)
 
-                    withContext(Dispatchers.Main){
+                    withContext(Dispatchers.Main) {
                         progressDialog.stop()
-                        findNavController().popBackStack(R.id.addMedicineFragment,true)
-                        findNavController().navigate(R.id.addMedicineFragment,bundle)
+                        findNavController().popBackStack(R.id.addMedicineFragment, true)
+                        findNavController().navigate(R.id.addMedicineFragment, bundle)
                     }
 
 
@@ -212,7 +236,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
 
 
 
-        recognizer = TextRecognition.getClient()
+        recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
         // Request camera permissions
         if (allPermissionsGranted()) {
@@ -269,23 +293,20 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
 
     }
 
-    private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        try {
-            if(uri!=null)
-            {
-                CropImage.activity(uri)
-                    .setGuidelines(CropImageView.Guidelines.ON)
-                    .setAllowRotation(true)
-                    .setMultiTouchEnabled(true)
-                    .start(requireActivity(),this)
+    private val getContent =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            try {
+                if (uri != null) {
+                    CropImage.activity(uri)
+                        .setGuidelines(CropImageView.Guidelines.ON)
+                        .setAllowRotation(true)
+                        .setMultiTouchEnabled(true)
+                        .start(requireActivity(), this)
+                }
+            } catch (ex: Exception) {
+                Log.i("OCR Select Image", "${ex.message}")
             }
         }
-        catch (ex:Exception)
-        {
-            Log.i("OCR Select Image","${ex.message}")
-        }
-    }
-
 
 
     @Deprecated("Deprecated in Java")
@@ -301,45 +322,47 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
                         setImageURI(result.uri)
                     }
                 } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                    Log.i("OCR Crop Image","$requestCode")
+                    Log.i("OCR Crop Image", "$requestCode")
                 }
-            }
-            catch (ex:Exception)
-            {
+            } catch (ex: Exception) {
                 showToast("Error")
-                Log.i("OCR","${ex.message}")
+                Log.i("OCR", "${ex.message}")
             }
 
         }
     }
 
     private fun runTextRecognition(bitmap: Bitmap) {
-
-        val inputImage = InputImage.fromBitmap(bitmap, 0)
+        val inputImage = InputImage.fromBitmap(bitmap,0)
 
         recognizer
             .process(inputImage)
             .addOnSuccessListener { text ->
                 viewModel.listSelectedMedName = ArrayList()
-                val rectList: ArrayList<Pair<Rect, String>> = ArrayList()
+                val rectList: ArrayList<Pair<RectF, String>> = ArrayList()
                 Log.d(tAG, "Text is: " + text.text)
                 for (textBlock in text.textBlocks) {
-                    //rectList.add(Pair(textBlock.boundingBox!!, textBlock.text))
                     Log.d(tAG, "TextBlock text is: " + textBlock.text)
                     Log.d(tAG, "TextBlock boundingbox is: " + textBlock.boundingBox)
-                    Log.d(tAG, "TextBlock cornerpoint is: " + Arrays.toString(textBlock.cornerPoints))
+                    Log.d(
+                        tAG,
+                        "TextBlock cornerpoint is: " + Arrays.toString(textBlock.cornerPoints)
+                    )
                     for (line in textBlock.lines) {
-                        rectList.add(Pair(line.boundingBox!!, line.text))
+
+                        val box = RectF(line.boundingBox ?: continue)
+                        val txt = line.text
+                        rectList.add(Pair(box, txt))
                         Log.d(tAG, "Line text is: " + line.text)
                         Log.d(tAG, "Line boundingbox is: " + line.boundingBox)
                         Log.d(tAG, "Line cornerpoint is: " + Arrays.toString(line.cornerPoints))
-                        //Log.d(TAG, "Line confidence is: " + line.confidence)
-                        //Log.d(TAG, "Line angle is: " + line.angle)
                         for (element in line.elements) {
-                            //rectList.add(Pair(element.boundingBox!!, element.text))
                             Log.d(tAG, "Element text is: " + element.text)
                             Log.d(tAG, "Element boundingbox is: " + element.boundingBox)
-                            Log.d(tAG, "Element cornerpoint is: " + Arrays.toString(element.cornerPoints))
+                            Log.d(
+                                tAG,
+                                "Element cornerpoint is: " + Arrays.toString(element.cornerPoints)
+                            )
                             Log.d(tAG, "Element language is: " + element.recognizedLanguage)
                         }
                     }
@@ -382,6 +405,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
             }
     }
 
+
     /*private fun processTextRecognitionResult(result: Text) {
         var finalText = ""
         for (block in result.textBlocks) {
@@ -420,6 +444,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
                 .also {
                     it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
                 }
+
 
             // Select back camera as a default
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
@@ -582,9 +607,10 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
         }*/
     }
 
-    override fun onRectSelected(rect: ArrayList<Pair<Rect, String>>) {
-        viewModel.listSelectedMedName=rect
-        Log.i("OCR Fragment",rect.toString())
+    override fun onRectSelected(rect: ArrayList<Pair<RectF, String>>) {
+        viewModel.listSelectedMedName = rect
+        Log.i("OCR Fragment", rect.toString())
     }
+
 
 }

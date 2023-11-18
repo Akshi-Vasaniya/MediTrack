@@ -17,7 +17,7 @@ class OverlayView(context: Context) : View(context) {
         strokeWidth = 5f
     }*/
     interface OverlaySelectionListener {
-        fun onRectSelected(rect: ArrayList<Pair<Rect, String>>)
+        fun onRectSelected(rect: ArrayList<Pair<RectF, String>>)
     }
 
     private var selectedItemColor = Color.argb(204, 173, 216, 230) // Light Blue color with 60% transparency
@@ -40,11 +40,12 @@ class OverlayView(context: Context) : View(context) {
         pathEffect = CornerPathEffect(10f) // Adjust the corner radius as needed
     }*/
 
-    private var boundingRects: ArrayList<Pair<Rect, String>>? = null
-    private var selectedRects: ArrayList<Pair<Rect, String>> = ArrayList()
+    private var boundingRects: ArrayList<Pair<RectF, String>>? = null
+    private var selectedRects: ArrayList<Pair<RectF, String>> = ArrayList()
 
 
-    fun setBoundingRects(rects: ArrayList<Pair<Rect, String>>) {
+
+    fun setBoundingRects(rects: ArrayList<Pair<RectF, String>>) {
         boundingRects = rects
         selectedRects.clear()
         invalidate()
@@ -81,11 +82,13 @@ class OverlayView(context: Context) : View(context) {
 
     }
 
+
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                val x = event.x.toInt()
-                val y = event.y.toInt()
+                val x = event.x
+                val y = event.y
                 val clickedPair = boundingRects?.find { it.first.contains(x, y) }
                 if (clickedPair != null) {
                     if (selectedRects.contains(clickedPair)) {
