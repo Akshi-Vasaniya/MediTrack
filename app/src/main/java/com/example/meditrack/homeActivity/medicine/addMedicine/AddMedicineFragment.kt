@@ -561,7 +561,7 @@ class AddMedicineFragment : Fragment() {
                                         Toast.makeText(requireContext(),toastMessage,Toast.LENGTH_SHORT).show()
                                     }
                                     catch (ex:Exception){
-                                        showToast("Unexpected Error")
+                                        showToast("Your Medicine added successfully, (No worry) Error at server side")
                                     }
 
 
