@@ -101,7 +101,7 @@ class MedicineStockFragment : Fragment() {
     private fun addMedicineInRecycleView(filter: MedicineFilter){
         Log.i(tAG, "addMedicineInRecycleView: id ${FBase.getUserId()}")
         val db = FirebaseFirestore.getInstance()
-        val medicineDataRef = db.collection("user_medicines").document(FBase.getUserId()).collection("medicine_data")
+        val medicineDataRef = db.collection("users_data").document(FBase.getUserId()).collection("medicine_data")
         medicineList.clear()
         medicineAdapter.notifyDataSetChanged()
         medicineDataRef.get()
@@ -184,7 +184,7 @@ class MedicineStockFragment : Fragment() {
     private fun handleDeleteButtonClick(medicineId: String) {
         val db = FirebaseFirestore.getInstance()
         val medicineDataRef =
-            db.collection("user_medicines").document(FBase.getUserId()).collection("medicine_data")
+            db.collection("users_data").document(FBase.getUserId()).collection("medicine_data")
 
         medicineDataRef.document(medicineId).update("mediDeleted", "Yes")
             .addOnSuccessListener {
@@ -230,7 +230,7 @@ class MedicineStockFragment : Fragment() {
     private fun editMedicinDetail(medicineId: String, medicineName: String, medicineDosage: String, medicineQuantity: String){
         val db = FirebaseFirestore.getInstance()
         val medicineDataRef =
-            db.collection("user_medicines").document(FBase.getUserId()).collection("medicine_data")
+            db.collection("users_data").document(FBase.getUserId()).collection("medicine_data")
 
         if(medicineName.isNotEmpty() && medicineDosage.isNotEmpty() && medicineQuantity.isNotEmpty()){
             medicineDataRef.document(medicineId).update("medName", medicineName)

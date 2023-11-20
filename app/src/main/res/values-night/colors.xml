@@ -33,4 +33,6 @@
     <color name="helperText">#A0A0A0</color>
 
     <color name="textBoxHeading">@color/white</color>
+
+    <color name="signOutDevicesFragment">#303030</color>
 </resources>

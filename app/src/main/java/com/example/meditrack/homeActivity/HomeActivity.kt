@@ -1,7 +1,9 @@
 package com.example.meditrack.homeActivity
 
+import android.app.AlertDialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -12,11 +14,8 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
-import androidx.core.widget.ImageViewCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -27,14 +26,19 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import com.bumptech.glide.Glide
 import com.example.meditrack.R
 import com.example.meditrack.dataModel.dataClasses.UserData
+import com.example.meditrack.dataModel.enumClasses.others.SessionStatus
 import com.example.meditrack.databinding.ActivityHomeBinding
 import com.example.meditrack.firebase.FBase
 import com.example.meditrack.mainActivity.MainActivity
+import com.example.meditrack.userSession.SessionSharedPreferencesManager
+import com.example.meditrack.utility.MediTrackNotificationManager
+import com.example.meditrack.utility.UtilityFunction.Companion.toUserSessionData
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.DocumentChange
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -48,6 +52,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var navView:NavigationView
     private lateinit var navHostFragment:NavHostFragment
     private val viewModel: HomeActivityViewModel by viewModels()
+    private lateinit var notificationManager: MediTrackNotificationManager
 
     /*val myToolbarImage: ImageView
         get() = findViewById(R.id.toolbar_profile_image)*/
@@ -67,6 +72,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val userName = headerView?.findViewById<TextView>(R.id.user_name_menu_header)
         val userEmail = headerView?.findViewById<TextView>(R.id.user_email_menu_header)
         val userImage = headerView?.findViewById<ImageView>(R.id.user_image_menu_header)
+
+        //notificationManager = MediTrackNotificationManager(this)
 
 
 
@@ -188,9 +195,98 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
 
+        val sessionCollectionRef = FBase.getUsersSessionsDataCollection()
+        val currentSessionID = SessionSharedPreferencesManager.fetchSessionId(this)
+
+        sessionCollectionRef.addSnapshotListener { snapshot, e ->
+
+            if (e != null) {
+                // Handle errors
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null) {
+                for (change in snapshot.documentChanges) {
+                    when (change.type) {
+                        // Document modified
+                        DocumentChange.Type.MODIFIED -> {
+                            val modifiedDocument = change.document
+                            val modifiedData = modifiedDocument.data
+                            if(currentSessionID==modifiedDocument.id && !SessionSharedPreferencesManager.isSessionAvailable(this))
+                            {
+                                val objData = modifiedData.toUserSessionData(modifiedDocument.id)
+                                if(objData.status==SessionStatus.LOGGED_OUT)
+                                {
+                                    showSignOutAlert()
+                                }
+                            }
+
+                            // Handle modified document
+                        }
+                        else -> {}
+                    }
+                }
+            }
+        }
+
     }
 
 
+    fun showSignOutAlert() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Sign Out")
+            .setMessage("Your account has been signed out.")
+            .setCancelable(false)
+            .setPositiveButton("OK") { _, _ ->
+                FBase.getFireBaseAuth().signOut()
+                SessionSharedPreferencesManager.deleteSharedPreferences(this@HomeActivity)
+                Intent(this, MainActivity::class.java).apply {
+                    startActivity(this)
+                }
+                this.finish()
+            }
+
+        val alertDialog = builder.create()
+        alertDialog.show()
+    }
+
+    private fun showSignOutConfirmationDialog() {
+        val builder = AlertDialog.Builder(this)
+
+        builder.setTitle("Confirmation")
+        builder.setMessage("Are you sure you want to sign out your account?")
+
+        builder.setPositiveButton("Yes") { _: DialogInterface, _: Int ->
+            // Handle deletion logic here
+            val sessionDocRef = FBase.getUsersSessionsDataCollection()
+                .document(SessionSharedPreferencesManager.fetchSessionId(this@HomeActivity)!!)
+
+            val updates = mapOf(
+                "status" to SessionStatus.LOGGED_OUT.name,
+                "logoutTimestamp" to com.example.meditrack.userSession.TimeUtils.getLogoutTimestamp()
+            )
+
+            sessionDocRef.update(updates)
+                .addOnSuccessListener {
+                    FBase.getFireBaseAuth().signOut()
+                    SessionSharedPreferencesManager.deleteSharedPreferences(this@HomeActivity)
+                    Intent(this, MainActivity::class.java).apply {
+                        startActivity(this)
+                    }
+                    this.finish()
+                }
+                .addOnFailureListener {
+
+                }
+        }
+
+        builder.setNegativeButton("No") { dialog: DialogInterface, _: Int ->
+            dialog.dismiss()
+        }
+
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
@@ -229,7 +325,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 R.id.userProfileFragment,
                 R.id.aboutUsFragment,
                 R.id.updateProfileImageFragment,
-                R.id.notificationFragment
+                R.id.notificationFragment,
+                R.id.devicesFragment
             )
         ).build()
 
@@ -258,6 +355,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //            }
 
             R.id.nav_notifications -> {
+                navController.popBackStack(R.id.homeFragment,false)
                 navController.navigate(R.id.notificationFragment)
             }
 
@@ -266,7 +364,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //            }
 
             R.id.nav_aboutUs -> {
-                navHostFragment.findNavController().navigate(R.id.aboutUsFragment)
+                navController.popBackStack(R.id.homeFragment,false)
+                navController.navigate(R.id.aboutUsFragment)
                 //Toast.makeText(this, "Clicked About Us", Toast.LENGTH_SHORT).show()
             }
 
@@ -275,11 +374,12 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //            }
 
             R.id.nav_sign_out->{
-                FirebaseAuth.getInstance().signOut()
-                Intent(this, MainActivity::class.java).apply {
-                    startActivity(this)
-                }
-                this.finish()
+
+                showSignOutConfirmationDialog()
+
+            }
+            R.id.nav_devices->{
+                navHostFragment.findNavController().navigate(R.id.devicesFragment)
             }
         }
     }

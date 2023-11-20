@@ -1,6 +1,7 @@
 package com.example.meditrack.homeActivity.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.caverock.androidsvg.SVG
 import com.example.meditrack.R
 import com.example.meditrack.databinding.FragmentHomeBinding
+import com.example.meditrack.firebase.FirestorePaginationManager
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -46,7 +48,6 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         //homeActivity.getToolbarMenuLayout().visibility = View.VISIBLE
 
@@ -297,4 +298,5 @@ class HomeFragment : Fragment() {
             }
         })
     }*/
+
 }

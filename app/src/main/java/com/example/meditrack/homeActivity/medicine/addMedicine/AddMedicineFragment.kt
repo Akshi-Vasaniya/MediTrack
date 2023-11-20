@@ -43,6 +43,7 @@ import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.example.meditrack.utility.ownDialogs.MonthYearPickerDialog
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.firebase.firestore.CollectionReference
 import com.google.gson.JsonElement
 import com.google.gson.JsonIOException
 import com.google.gson.JsonParseException
@@ -63,7 +64,6 @@ class AddMedicineFragment : Fragment() {
     private lateinit var viewModel: AddMedicineViewModel
     private lateinit var binding: FragmentAddMedicineBinding
     //private val calendar = Calendar.getInstance()
-    private val db = FBase.getFireStoreInstance()
     private val tAG = "AddMedicineFragment"
     /*private lateinit var homeActivity: HomeActivity*/
     //private val REQUEST_IMAGE_CAPTURE = 1
@@ -71,6 +71,7 @@ class AddMedicineFragment : Fragment() {
     private lateinit var hiddenView: LinearLayout
     private lateinit var cardView: CardView
     private var medicineData: MedicineData?=null
+    private lateinit var medicineDataDocRef:CollectionReference
 
 
     /*override fun onAttach(context: Context) {
@@ -92,7 +93,7 @@ class AddMedicineFragment : Fragment() {
         binding = FragmentAddMedicineBinding.bind(view)
         viewModel = ViewModelProvider(this)[AddMedicineViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
-
+        medicineDataDocRef = FBase.getUsersMedicineDataCollection()
 
         /*val autoCompleteTextView = view.findViewById<AutoCompleteTextView>(R.id.fragment_week_days_TextInputEditText)
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, viewModel.weekDayItems)
@@ -656,9 +657,7 @@ class AddMedicineFragment : Fragment() {
                                             Log.i(tAG, "onUploadSuccess: ${medicineData!!.totalQuantity}")
 
 
-                                            db.collection("user_medicines").document(FBase.getUserId()).collection("medicine_data")
-                                                .document(docName)
-                                                .set(medicineData!!)
+                                            medicineDataDocRef.document(docName).set(medicineData!!)
                                                 .addOnSuccessListener {
                                                     insertMedicineDataFirebaseCallback.onSuccess()
                                                 }
@@ -697,11 +696,8 @@ class AddMedicineFragment : Fragment() {
 
                             }
 
-                            val medicineDataDocRef = db.collection("user_medicines")
-                                .document(FBase.getUserId())
-                                .collection("medicine_data")
-                                .document(docName)
-                            medicineDataDocRef.get()
+
+                            medicineDataDocRef.document(docName).get()
                                 .addOnSuccessListener { document ->
                                     if (document.exists()) {
                                         progressDialog.stop()
@@ -725,7 +721,7 @@ class AddMedicineFragment : Fragment() {
 
 
 
-                        /*db.collection("user_medicines").document(MediTrackUserReference.getUserId()).collection("medicine_data")
+                        /*db.collection("users_data").document(MediTrackUserReference.getUserId()).collection("medicine_data")
                             .add(medicineData)
                             .addOnSuccessListener { documentReference ->
                                 progressDialog.stop()

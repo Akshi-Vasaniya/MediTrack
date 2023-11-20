@@ -5,6 +5,8 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -38,5 +40,21 @@ object FBase {
     fun getUserDataQuery(): Query {
         val userRef = getUserReference()
         return userRef.orderByChild("email").equalTo(getUserEmail())
+    }
+
+    fun getUsersDataCollection(): CollectionReference {
+        return getFireStoreInstance().collection("users_data")
+    }
+
+    fun getUsersDataDocument(): DocumentReference {
+        return getUsersDataCollection().document(getUserId())
+    }
+
+    fun getUsersMedicineDataCollection(): CollectionReference {
+        return getUsersDataDocument().collection("medicine_data")
+    }
+
+    fun getUsersSessionsDataCollection(): CollectionReference{
+        return getUsersDataDocument().collection("sessions_data")
     }
 }

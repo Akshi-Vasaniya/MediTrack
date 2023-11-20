@@ -87,4 +87,8 @@
     <style name="HomeCardViewText">
         <item name="android:textColor">@color/white</item>
     </style>
+
+    <style name="DevicesFragmentSignOut">
+        <item name="android:textColor">@color/signOutDevicesFragment</item>
+    </style>
 </resources>

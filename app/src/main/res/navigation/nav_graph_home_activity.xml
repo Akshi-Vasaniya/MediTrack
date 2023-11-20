@@ -34,6 +34,9 @@
         <action
             android:id="@+id/action_homeFragment_to_aboutUsFragment"
             app:destination="@id/aboutUsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_devicesFragment"
+            app:destination="@id/devicesFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -84,4 +87,9 @@
         android:name="com.example.meditrack.homeActivity.userprofile.updateprofileimage.UpdateProfileImageFragment"
         android:label="fragment_update_profile_image"
         tools:layout="@layout/fragment_update_profile_image" />
+    <fragment
+        android:id="@+id/devicesFragment"
+        android:name="com.example.meditrack.homeActivity.devices.DevicesFragment"
+        android:label="fragment_devices"
+        tools:layout="@layout/fragment_devices" />
 </navigation>

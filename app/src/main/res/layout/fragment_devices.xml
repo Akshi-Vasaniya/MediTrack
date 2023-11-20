@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".homeActivity.devices.DevicesFragment">
+
+    <TextView
+        android:id="@+id/txtTitleCurrentDevice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="@dimen/_8sdp"
+        android:textStyle="bold"
+        android:textColor="@color/mainColor"
+        android:text="Current Device"/>
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/currentDeviceSessionCardView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_100sdp"
+        android:elevation="10dp"
+        app:cardCornerRadius="10dp"
+        android:layout_margin="@dimen/_8sdp"
+        app:layout_constraintTop_toBottomOf="@id/txtTitleCurrentDevice"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:weightSum="100">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="20">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:src="@drawable/ic_android"
+                    app:tint="@color/greentype"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="80">
+                <TextView
+                    android:id="@+id/txtDeviceName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Device Name"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/_15sdp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="5dp"/>
+                <TextView
+                    android:id="@+id/txtLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    app:layout_constraintTop_toBottomOf="@id/txtDeviceName"
+                    app:layout_constraintStart_toStartOf="@id/txtDeviceName"
+                    android:text="Botad, Gujarat, India"
+                    android:textSize="@dimen/_10sdp"
+                    />
+
+                <TextView
+                    android:id="@+id/txtLoginTimeStamp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    app:layout_constraintTop_toBottomOf="@id/txtLocation"
+                    app:layout_constraintStart_toStartOf="@id/txtLocation"
+                    android:text="11-19-2023 5:58:48PM"
+                    android:textSize="@dimen/_10sdp"
+                    />
+
+                <TextView
+                    android:id="@+id/btnSignOut"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Sign Out"
+                    android:textAllCaps="false"
+                    android:textSize="@dimen/_12sdp"
+                    android:textStyle="bold"
+                    android:textAlignment="center"
+                    android:textColor="@color/mainColor"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/txtLoginTimeStamp"
+                    app:layout_constraintTop_toBottomOf="@id/txtLoginTimeStamp" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                >
+                <TextView
+                    android:id="@+id/txtDeviceVersion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="10 (API 29)"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:padding="5dp"
+                    android:textColor="@color/white"
+                    android:background="@color/prusianblue"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+    <TextView
+        android:id="@+id/txtTitleOtherDevices"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/currentDeviceSessionCardView"
+        android:layout_margin="@dimen/_8sdp"
+        android:textStyle="bold"
+        android:textColor="@color/mainColor"
+        android:text="Other Devices"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvDevices"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="10dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtTitleOtherDevices" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,9 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.ContextCompat
-import androidx.core.widget.ImageViewCompat
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -17,6 +15,9 @@ import com.example.meditrack.R
 import com.example.meditrack.databinding.FragmentSplashBinding
 import com.example.meditrack.firebase.FBase
 import com.example.meditrack.homeActivity.HomeActivity
+import com.example.meditrack.userSession.LocationUtils
+import com.example.meditrack.userSession.SessionManagementMediTrack
+import com.example.meditrack.userSession.SessionSharedPreferencesManager
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -31,7 +32,8 @@ class SplashFragment : Fragment() {
 
     private lateinit var viewModel: SplashViewModel
     private lateinit var binding: FragmentSplashBinding
-    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var locationUtils: LocationUtils
+    private lateinit var sessionManagementMediTrack: SessionManagementMediTrack
     //private val tAG="SplashFragment"
 
     /*override fun onResume() {
@@ -52,14 +54,13 @@ class SplashFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_splash, container, false)
         binding = FragmentSplashBinding.bind(view)
         viewModel = ViewModelProvider(this)[SplashViewModel::class.java]
-
+        locationUtils = LocationUtils(requireContext())
+        sessionManagementMediTrack = SessionManagementMediTrack(requireContext())
         return binding.root
 
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-        firebaseAuth=FBase.getFireBaseAuth()
 
         binding.mediIcon.setSVG(viewModel.getAppSVG(resources))
 
@@ -74,32 +75,32 @@ class SplashFragment : Fragment() {
             }
 
             override fun onAnimationEnd(animation: Animation?) {
-                // Code to be executed when the animation ends
-                // Place your code here that you want to execute after the animations
-                // e.g., call a function or perform any specific operation
-                // Your code here
 
-                if(firebaseAuth.currentUser!=null)
+                if(FBase.getCurrentUser()!=null)
                 {
-                    MainScope().launch {
-                        viewModel.delayAndNavigate(500L)
-                        Intent(requireActivity(),HomeActivity::class.java).apply {
-                            startActivity(this)
+                    MainScope().launch(Dispatchers.IO) {
+                        if(SessionSharedPreferencesManager.isSessionAvailable(requireContext())){
+                            val sessionID = SessionSharedPreferencesManager.fetchSessionId(requireContext())
+                            sessionManagementMediTrack.checkSession(FBase.getUserId(),sessionID!!) { sessionCheckResult ->
+                                if (sessionCheckResult) {
+                                    gotoHomeActivity()
+                                }
+                                else{
+                                    FBase.getFireBaseAuth().signOut()
+                                    gotoLoginFragment()
+                                }
+                            }
                         }
-                        requireActivity().finish()
+                        else{
+                            FBase.getFireBaseAuth().signOut()
+                            gotoLoginFragment()
+                        }
                     }
+
+
                 }
                 else{
-                    MainScope().launch(Dispatchers.Main)
-                    {
-                        viewModel.delayAndNavigate(500L)
-                        //val sharedPreferences = requireActivity().getSharedPreferences("UserData", Context.MODE_PRIVATE)
-                        //val editor = sharedPreferences.edit()
-                        //editor.clear()
-                        //editor.apply()
-                        findNavController().popBackStack()
-                        findNavController().navigate(R.id.loginFragment)
-                    }
+                    gotoLoginFragment()
                 }
             }
 
@@ -114,7 +115,29 @@ class SplashFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
+    private fun showToast(message: String) {
+        Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show()
+    }
 
+    private fun gotoLoginFragment(){
+        MainScope().launch(Dispatchers.Main)
+        {
+            viewModel.delayAndNavigate(500L)
+            //val sharedPreferences = requireActivity().getSharedPreferences("UserData", Context.MODE_PRIVATE)
+            //val editor = sharedPreferences.edit()
+            //editor.clear()
+            //editor.apply()
+            findNavController().popBackStack()
+            findNavController().navigate(R.id.loginFragment)
+        }
+    }
+
+    private fun gotoHomeActivity(){
+        Intent(requireActivity(), HomeActivity::class.java).apply {
+            startActivity(this)
+        }
+        requireActivity().finish()
+    }
 
 
 }

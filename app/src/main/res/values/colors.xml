@@ -33,4 +33,6 @@
     <color name="helperText">@color/prusianblue</color>
 
     <color name="textBoxHeading">@color/prusianblue</color>
+
+    <color name="signOutDevicesFragment">#AFAFAF</color>
 </resources>

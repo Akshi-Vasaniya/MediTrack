@@ -1,11 +1,18 @@
 package com.example.meditrack.utility
 
 import android.content.Context
+import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.graphics.*
 import android.net.Uri
+import android.os.Build
 import android.util.Base64
 import android.util.Log
+import android.widget.Toast
 import androidx.core.content.FileProvider
+import com.example.meditrack.dataModel.dataClasses.UserSessionData
+import com.example.meditrack.dataModel.dataClasses.UserSessionData2
+import com.example.meditrack.dataModel.enumClasses.others.SessionStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.*
@@ -247,6 +254,62 @@ class UtilityFunction {
                 e.printStackTrace()
                 null
             }
+        }
+
+        fun getDeviceInformation(context: Context): HashMap<String, String>? {
+            try {
+                val deviceInfo = HashMap<String, String>()
+
+                // Device ID or Name
+                deviceInfo["deviceId"] = Build.ID
+                deviceInfo["deviceName"] = Build.MODEL
+
+                // Device Type
+                val isTablet = context.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK >= Configuration.SCREENLAYOUT_SIZE_LARGE
+                deviceInfo["deviceType"] = if (isTablet) "Tablet" else "Phone"
+
+                // Device Operating System
+                deviceInfo["osVersion"] = Build.VERSION.RELEASE
+                deviceInfo["apiLevel"] = Build.VERSION.SDK_INT.toString()
+
+                // App Version
+                try {
+                    val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+                    deviceInfo["appVersion"] = packageInfo.versionName
+                } catch (e: PackageManager.NameNotFoundException) {
+                    e.printStackTrace()
+                }
+
+                return deviceInfo
+            }
+            catch (ex:Exception){
+                return null
+            }
+
+        }
+
+        fun Map<String, Any>.toUserSessionData(sId:String): UserSessionData2 {
+            return UserSessionData2(
+                sessionId = sId,
+                deviceId = this["deviceId"] as? String,
+                deviceName = this["deviceName"] as? String,
+                deviceType = this["deviceType"] as? String,
+                osVersion = this["osVersion"] as? String,
+                appVersion = this["appVersion"] as? String,
+                apiLevel = this["apiLevel"] as? String,
+                country = this["country"] as? String,
+                state = this["state"] as? String,
+                city = this["city"] as? String,
+                area = this["area"] as? String,
+                loginTimestamp = this["loginTimestamp"] as String,
+                logoutTimestamp = this["logoutTimestamp"] as? String,
+                status = SessionStatus.valueOf(this["status"] as String),
+                expiryTimestamp = this["expiryTimestamp"] as String
+            )
+        }
+
+        fun showToast(context: Context,message: String) {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         }
 
         // Function to get the Uri from ImageView

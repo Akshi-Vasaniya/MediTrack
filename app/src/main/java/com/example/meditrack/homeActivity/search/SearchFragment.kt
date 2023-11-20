@@ -17,6 +17,7 @@ import com.example.meditrack.adapter.SearchItemAdapter
 import com.example.meditrack.dataModel.api.ApiInstance
 import com.example.meditrack.dataModel.dataClasses.SearchItemData
 import com.example.meditrack.databinding.FragmentSearchBinding
+import com.example.meditrack.utility.UtilityFunction.Companion.showToast
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -90,7 +91,7 @@ class SearchFragment : Fragment() {
                                 catch (ex:Exception)
                                 {
                                     progressDialog.stop()
-                                    showToast("An unexpected error occurred")
+                                    showToast(requireContext(),"An unexpected error occurred")
                                 }
                             }
 
@@ -104,14 +105,14 @@ class SearchFragment : Fragment() {
                     catch (e: IOException) {
                         if(isNetworkAvailable(requireContext()))
                         {
-                            showToast("server unavailable")
+                            showToast(requireContext(),"server unavailable")
                         }
                         else{
-                            showToast("Network issue")
+                            showToast(requireContext(),"Network issue")
                         }
 
                     } catch (e: Exception) {
-                        showToast("An unexpected error occurred")
+                        showToast(requireContext(),"An unexpected error occurred")
                     }
 
                 }
@@ -119,9 +120,7 @@ class SearchFragment : Fragment() {
 
         }
     }
-    private fun showToast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-    }
+
 
     private fun isNetworkAvailable(context: Context): Boolean {
         val connectivityManager =
