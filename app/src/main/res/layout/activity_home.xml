@@ -40,6 +40,6 @@
         app:menu="@menu/activity_main_drawer"
         app:itemBackground="@drawable/empty_selector"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

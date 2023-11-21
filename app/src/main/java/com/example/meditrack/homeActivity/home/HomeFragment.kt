@@ -12,6 +12,7 @@ import com.caverock.androidsvg.SVG
 import com.example.meditrack.R
 import com.example.meditrack.databinding.FragmentHomeBinding
 import com.example.meditrack.firebase.FirestorePaginationManager
+import com.example.meditrack.homeActivity.HomeActivity
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -42,7 +43,7 @@ class HomeFragment : Fragment() {
         binding = FragmentHomeBinding.bind(view)
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
-
+        (activity as? HomeActivity)?.setNavigationDrawerSelection(R.id.nav_home)
         return binding.root
     }
 
@@ -298,5 +299,10 @@ class HomeFragment : Fragment() {
             }
         })
     }*/
+
+    override fun onPause() {
+        super.onPause()
+        (activity as? HomeActivity)?.clearNavigationDrawerSelection(R.id.nav_home)
+    }
 
 }

@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.meditrack.R
 import com.example.meditrack.databinding.FragmentNotificationBinding
+import com.example.meditrack.homeActivity.HomeActivity
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -66,6 +67,16 @@ class NotificationFragment : Fragment() {
 //                dialog.show(childFragmentManager, "MedicineReminderDialog")
 //            }
 //        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        (activity as? HomeActivity)?.clearNavigationDrawerSelection(R.id.nav_notifications)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (activity as? HomeActivity)?.setNavigationDrawerSelection(R.id.nav_notifications)
     }
 
 

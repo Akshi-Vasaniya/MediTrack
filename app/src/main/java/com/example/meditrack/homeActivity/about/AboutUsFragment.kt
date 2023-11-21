@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.meditrack.R
 import com.example.meditrack.databinding.FragmentAboutUsBinding
 import com.example.meditrack.firebase.FBase
+import com.example.meditrack.homeActivity.HomeActivity
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -126,7 +127,5 @@ class AboutUsFragment : Fragment() {
 
         return binding.root
     }
-
-
 
 }

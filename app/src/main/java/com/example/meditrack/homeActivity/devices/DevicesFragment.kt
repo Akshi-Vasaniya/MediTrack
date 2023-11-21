@@ -20,6 +20,7 @@ import com.example.meditrack.dataModel.enumClasses.others.SessionStatus
 import com.example.meditrack.databinding.FragmentDevicesBinding
 import com.example.meditrack.firebase.FBase
 import com.example.meditrack.firebase.FirestorePaginationManager
+import com.example.meditrack.homeActivity.HomeActivity
 import com.example.meditrack.mainActivity.MainActivity
 import com.example.meditrack.userSession.SessionSharedPreferencesManager
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
@@ -342,6 +343,16 @@ class DevicesFragment : Fragment() {
             recyclerViewAdapter.notifyDataSetChanged()
             isLoading = false
         }, 2000)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (activity as? HomeActivity)?.setNavigationDrawerSelection(R.id.nav_devices)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        (activity as? HomeActivity)?.clearNavigationDrawerSelection(R.id.nav_devices)
     }
 
 }

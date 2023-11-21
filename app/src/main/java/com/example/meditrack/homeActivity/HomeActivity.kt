@@ -357,7 +357,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //            }
 
             R.id.nav_notifications -> {
-                navController.popBackStack(R.id.homeFragment,false)
+                navController.popBackStack(R.id.notificationFragment,false)
                 navController.navigate(R.id.notificationFragment)
             }
 
@@ -366,7 +366,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //            }
 
             R.id.nav_aboutUs -> {
-                navController.popBackStack(R.id.homeFragment,false)
+                navController.popBackStack(R.id.aboutUsFragment,true)
                 navController.navigate(R.id.aboutUsFragment)
                 //Toast.makeText(this, "Clicked About Us", Toast.LENGTH_SHORT).show()
             }
@@ -381,7 +381,32 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
             R.id.nav_devices->{
+                navController.popBackStack(R.id.devicesFragment,true)
                 navHostFragment.findNavController().navigate(R.id.devicesFragment)
+            }
+        }
+    }
+
+    fun clearNavigationDrawerSelection(itemIdToFind:Int) {
+        val menu = binding.navView.menu
+        val index = (0 until menu.size()).indexOfFirst { menu.getItem(it).itemId == itemIdToFind }
+        if(index!=-1)
+        {
+            if(menu.getItem(index).isChecked)
+            {
+                menu.getItem(index).isChecked = false
+            }
+        }
+    }
+
+    fun setNavigationDrawerSelection(itemIdToFind:Int) {
+        val menu = binding.navView.menu
+        val index = (0 until menu.size()).indexOfFirst { menu.getItem(it).itemId == itemIdToFind }
+        if(index!=-1)
+        {
+            if(!menu.getItem(index).isChecked)
+            {
+                menu.getItem(index).isChecked = true
             }
         }
     }
