@@ -30,7 +30,7 @@ import com.example.meditrack.firebase.FBase
 import com.example.meditrack.homeActivity.HomeActivity
 import com.example.meditrack.regularExpression.ListPattern
 import com.example.meditrack.regularExpression.MatchPattern.Companion.validate
-import com.example.meditrack.userSession.SessionManagementMediTrack
+import com.example.meditrack.userSession.SessMan
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -50,7 +50,7 @@ class LoginFragment : Fragment() {
     private lateinit var binding: FragmentLoginBinding
     private val tag="LoginFragment"
     private lateinit var progressDialog: CustomProgressDialog
-    private lateinit var sessionManagementMediTrack: SessionManagementMediTrack
+    private lateinit var sessMan: SessMan
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,7 +60,7 @@ class LoginFragment : Fragment() {
         binding = FragmentLoginBinding.bind(view)
         viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
         progressDialog= CustomProgressDialog(requireActivity())
-        sessionManagementMediTrack = SessionManagementMediTrack(requireContext())
+        sessMan = SessMan(requireContext())
         return binding.root
     }
 
@@ -210,7 +210,7 @@ class LoginFragment : Fragment() {
                                 if(FBase.getCurrentUser()!=null)
                                 {
                                     /*viewModel.fetchUserData()*/
-                                    sessionManagementMediTrack.createSession { sessionID ->
+                                    sessMan.createSession { sessionID ->
                                         progressDialog.stop()
                                         if(sessionID!=null){
                                             Intent(requireActivity(),HomeActivity::class.java).apply {

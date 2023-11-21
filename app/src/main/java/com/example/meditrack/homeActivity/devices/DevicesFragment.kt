@@ -14,15 +14,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.meditrack.R
 import com.example.meditrack.adapter.RecyclerViewAdapter
-import com.example.meditrack.dataModel.dataClasses.UserSessionData2
-import com.example.meditrack.dataModel.dataClasses.UserSessionData2.Companion.toUserSessionData
-import com.example.meditrack.dataModel.enumClasses.others.SessionStatus
+import com.example.meditrack.dataModel.dataClasses.SessData2
+import com.example.meditrack.dataModel.dataClasses.SessData2.Companion.toUserSessionData
+import com.example.meditrack.dataModel.enumClasses.others.SessStatus
 import com.example.meditrack.databinding.FragmentDevicesBinding
 import com.example.meditrack.firebase.FBase
 import com.example.meditrack.firebase.FirestorePaginationManager
 import com.example.meditrack.homeActivity.HomeActivity
 import com.example.meditrack.mainActivity.MainActivity
-import com.example.meditrack.userSession.SessionSharedPreferencesManager
+import com.example.meditrack.userSession.LocalSession
+import com.example.meditrack.userSession.SessionUtils
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentChange
@@ -38,10 +39,10 @@ class DevicesFragment : Fragment() {
     private lateinit var progressDialog: CustomProgressDialog
     private lateinit var firestorePaginationManager: FirestorePaginationManager
     private lateinit var recyclerViewAdapter: RecyclerViewAdapter
-    private var rowsArrayList = ArrayList<UserSessionData2?>()
+    private var rowsArrayList = ArrayList<SessData2?>()
     private lateinit var sessionCollectionRef:CollectionReference
     private lateinit var currectSessionID : String
-    private var currentSessionData: UserSessionData2?=null
+    private var currentSessionData: SessData2?=null
     private var isLoading = false
     private val tAG = "DevicesFragment"
 
@@ -54,7 +55,7 @@ class DevicesFragment : Fragment() {
         viewModel = ViewModelProvider(this)[DevicesViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
         firestorePaginationManager = FirestorePaginationManager()
-        currectSessionID = SessionSharedPreferencesManager.fetchSessionId(requireContext())!!
+        currectSessionID = LocalSession.getSession(requireContext())!!
         sessionCollectionRef = FBase.getUsersSessionsDataCollection()
         return view
     }
@@ -72,7 +73,7 @@ class DevicesFragment : Fragment() {
                     currentSessionData!!.apply {
                         txtDeviceName.text = deviceName
                         txtLoginTimeStamp.text = loginTimestamp
-                        if(status!=SessionStatus.LOGGED_IN){
+                        if(status!=SessStatus.LOGGED_IN){
                             btnSignOut.setTextAppearance(R.style.DevicesFragmentSignOut)
                             btnSignOut.isEnabled=false
                         }
@@ -205,11 +206,11 @@ class DevicesFragment : Fragment() {
                 .document(currectSessionID)
 
             val updates = mapOf(
-                "status" to SessionStatus.LOGGED_OUT.name,
-                "logoutTimestamp" to com.example.meditrack.userSession.TimeUtils.getLogoutTimestamp()
+                "status" to SessStatus.LOGGED_OUT.name,
+                "logoutTimestamp" to SessionUtils.getLogoutTimestamp()
             )
             FBase.getFireBaseAuth().signOut()
-            SessionSharedPreferencesManager.deleteSharedPreferences(requireContext())
+            LocalSession.deleteSession(requireContext())
             sessionDocRef.update(updates)
                 .addOnSuccessListener {
                     Intent(requireContext(), MainActivity::class.java).apply {
@@ -246,13 +247,13 @@ class DevicesFragment : Fragment() {
                     .document(rowsArrayList[position]!!.sessionId)
 
                 val updates = mapOf(
-                    "status" to SessionStatus.LOGGED_OUT.name,
-                    "logoutTimestamp" to com.example.meditrack.userSession.TimeUtils.getLogoutTimestamp()
+                    "status" to SessStatus.LOGGED_OUT.name,
+                    "logoutTimestamp" to SessionUtils.getLogoutTimestamp()
                 )
 
                 sessionDocRef.update(updates)
                     .addOnSuccessListener {
-                        rowsArrayList[position]!!.status = SessionStatus.LOGGED_OUT
+                        rowsArrayList[position]!!.status = SessStatus.LOGGED_OUT
                         recyclerViewAdapter.notifyItemChanged(position)
                     }
                     .addOnFailureListener {
@@ -325,7 +326,7 @@ class DevicesFragment : Fragment() {
         })
     }
 
-    private fun loadMore(dataList:List<UserSessionData2>) {
+    private fun loadMore(dataList:List<SessData2>) {
 
         rowsArrayList.addAll(dataList)
         rowsArrayList.add(null)

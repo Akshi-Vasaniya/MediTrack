@@ -10,9 +10,6 @@ import android.util.Base64
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.FileProvider
-import com.example.meditrack.dataModel.dataClasses.UserSessionData
-import com.example.meditrack.dataModel.dataClasses.UserSessionData2
-import com.example.meditrack.dataModel.enumClasses.others.SessionStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.*
@@ -135,7 +132,7 @@ class UtilityFunction {
         }*/
 
         fun stringtobase64(inputString: String): String {
-            val trimmedLowerCaseString = inputString.trim().toLowerCase(Locale.getDefault())
+            val trimmedLowerCaseString = inputString.trim().lowercase(Locale.getDefault())
 
             return Base64.encodeToString(trimmedLowerCaseString.toByteArray(), Base64.DEFAULT)
         }

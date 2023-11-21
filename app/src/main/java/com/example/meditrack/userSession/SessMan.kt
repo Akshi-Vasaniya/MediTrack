@@ -2,12 +2,12 @@ package com.example.meditrack.userSession
 
 import android.content.Context
 import android.util.Log
-import com.example.meditrack.dataModel.dataClasses.UserSessionData
-import com.example.meditrack.dataModel.enumClasses.others.SessionStatus
+import com.example.meditrack.dataModel.dataClasses.SessData
+import com.example.meditrack.dataModel.enumClasses.others.SessStatus
 import com.example.meditrack.firebase.FBase
 import com.example.meditrack.utility.UtilityFunction
 
-class SessionManagementMediTrack(val mycontext: Context, private var locationUtils: LocationUtils = LocationUtils(mycontext)) {
+class SessMan(val mycontext: Context, private var locationUtils: LocationUtils = LocationUtils(mycontext)) {
 
 
     fun checkSession(sessionId: String, callback: (Boolean) -> Unit) {
@@ -19,15 +19,15 @@ class SessionManagementMediTrack(val mycontext: Context, private var locationUti
                         val status = documentSnapshot.getString("status")
                         val expiryTimestamp = documentSnapshot.getString("expiryTimestamp")
 
-                        if (status == SessionStatus.LOGGED_IN.name) {
+                        if (status == SessStatus.LOGGED_IN.name) {
                             if(!SessionUtils.isSessionExpired(expiryTimestamp!!))
                             {
                                 callback(true)
                             }
                             else{
                                 val updates = mapOf(
-                                    "status" to SessionStatus.LOGGED_OUT.name,
-                                    "logoutTimestamp" to TimeUtils.getLogoutTimestamp()
+                                    "status" to SessStatus.LOGGED_OUT.name,
+                                    "logoutTimestamp" to SessionUtils.getLogoutTimestamp()
                                 )
                                 sessionDocRef.document(sessionId).update(updates)
                                     .addOnSuccessListener {
@@ -64,7 +64,7 @@ class SessionManagementMediTrack(val mycontext: Context, private var locationUti
                 .addOnSuccessListener { documentReference ->
                     // Document added successfully
                     val documentId = documentReference.id
-                    SessionSharedPreferencesManager.createSharedPreferences(mycontext, documentId)
+                    LocalSession.createSession(mycontext, documentId)
                     // Use the documentId as needed
                     callback(documentId)
                 }
@@ -77,7 +77,7 @@ class SessionManagementMediTrack(val mycontext: Context, private var locationUti
             callback(null)
         }
     }
-    private fun collectSessionData(): UserSessionData {
+    private fun collectSessionData(): SessData {
         val deviseInfo = findDeviceInfo()
         val locInfo = findLocInfo()
         var deviceID ="null"
@@ -106,12 +106,12 @@ class SessionManagementMediTrack(val mycontext: Context, private var locationUti
             locationArea = locInfo.getOrDefault("area","null")
         }
 
-        val loginTimeStamp = TimeUtils.getLoginTimestamp()
+        val loginTimeStamp = SessionUtils.getLoginTimestamp()
         val logoutTimeStamp = "null"
         val expireTimeStamp = SessionUtils.getSevenDaysExpiryTimestamp()
-        val sessionStatus = SessionStatus.LOGGED_IN
+        val sessStatus = SessStatus.LOGGED_IN
 
-        val userSessionData = UserSessionData(
+        val sessData = SessData(
             deviceId = deviceID,
             deviceName = deviceName,
             deviceType = deviceType,
@@ -124,10 +124,10 @@ class SessionManagementMediTrack(val mycontext: Context, private var locationUti
             area = locationArea,
             loginTimestamp = loginTimeStamp,
             logoutTimestamp = logoutTimeStamp,
-            status = sessionStatus,
+            status = sessStatus,
             expiryTimestamp = expireTimeStamp
         )
-        return userSessionData
+        return sessData
     }
 
 

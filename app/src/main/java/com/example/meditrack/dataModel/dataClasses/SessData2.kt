@@ -1,8 +1,8 @@
 package com.example.meditrack.dataModel.dataClasses
 
-import com.example.meditrack.dataModel.enumClasses.others.SessionStatus
+import com.example.meditrack.dataModel.enumClasses.others.SessStatus
 
-data class UserSessionData2(
+data class SessData2(
     val sessionId:String,
     val deviceId: String?="null",
     val deviceName: String?="null",
@@ -16,13 +16,13 @@ data class UserSessionData2(
     val area: String?="null",
     val loginTimestamp: String,
     val logoutTimestamp: String?="null",
-    var status: SessionStatus,
+    var status: SessStatus,
     val expiryTimestamp: String
 )
 {
     companion object{
-        fun Map<String, Any>.toUserSessionData(sId:String): UserSessionData2 {
-            return UserSessionData2(
+        fun Map<String, Any>.toUserSessionData(sId:String): SessData2 {
+            return SessData2(
                 sessionId = sId,
                 deviceId = this["deviceId"] as? String,
                 deviceName = this["deviceName"] as? String,
@@ -36,7 +36,7 @@ data class UserSessionData2(
                 area = this["area"] as? String,
                 loginTimestamp = this["loginTimestamp"] as String,
                 logoutTimestamp = this["logoutTimestamp"] as? String,
-                status = SessionStatus.valueOf(this["status"] as String),
+                status = SessStatus.valueOf(this["status"] as String),
                 expiryTimestamp = this["expiryTimestamp"] as String
             )
         }

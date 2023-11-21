@@ -2,13 +2,13 @@ package com.example.meditrack.userSession
 
 import android.content.Context
 
-object SessionSharedPreferencesManager {
+object LocalSession {
 
     private const val PREF_NAME = "session_preferences"
     private const val SESSION_ID_KEY = "session_id"
 
     // Function to create SharedPreferences and store session ID
-    fun createSharedPreferences(context: Context, sessionId: String) {
+    fun createSession(context: Context, sessionId: String) {
         val sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putString(SESSION_ID_KEY, sessionId)
@@ -16,7 +16,7 @@ object SessionSharedPreferencesManager {
     }
 
     // Function to delete SharedPreferences
-    fun deleteSharedPreferences(context: Context) {
+    fun deleteSession(context: Context) {
         if(isSessionAvailable(context))
         {
             val sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
@@ -25,13 +25,13 @@ object SessionSharedPreferencesManager {
     }
 
     // Function to fetch session ID from SharedPreferences
-    fun fetchSessionId(context: Context): String? {
+    fun getSession(context: Context): String? {
         val sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
         return sharedPreferences.getString(SESSION_ID_KEY, null)
     }
 
     // Function to edit session ID in SharedPreferences
-    fun editSessionId(context: Context, newSessionId: String) {
+    fun editSession(context: Context, newSessionId: String) {
         val sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putString(SESSION_ID_KEY, newSessionId)

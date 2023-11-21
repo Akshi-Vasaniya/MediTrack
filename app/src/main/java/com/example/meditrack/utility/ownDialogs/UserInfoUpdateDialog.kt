@@ -13,8 +13,8 @@ import com.example.meditrack.R
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
-class CustomDialog(context: Context, private val listener: CustomDialogListener, private val initialText: String,
-                   private val fieldName:String) : Dialog(context) {
+class UserInfoUpdateDialog(context: Context, private val listener: CustomDialogListener, private val initialText: String,
+                           private val fieldName:String) : Dialog(context) {
 
     interface CustomDialogListener {
         fun onUpdateButtonClicked(text: String,fieldName:String)

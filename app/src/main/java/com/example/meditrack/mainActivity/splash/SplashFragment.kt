@@ -16,9 +16,8 @@ import com.example.meditrack.databinding.FragmentSplashBinding
 import com.example.meditrack.firebase.FBase
 import com.example.meditrack.homeActivity.HomeActivity
 import com.example.meditrack.userSession.LocationUtils
-import com.example.meditrack.userSession.SessionManagementMediTrack
-import com.example.meditrack.userSession.SessionSharedPreferencesManager
-import com.google.firebase.auth.FirebaseAuth
+import com.example.meditrack.userSession.SessMan
+import com.example.meditrack.userSession.LocalSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -33,7 +32,7 @@ class SplashFragment : Fragment() {
     private lateinit var viewModel: SplashViewModel
     private lateinit var binding: FragmentSplashBinding
     private lateinit var locationUtils: LocationUtils
-    private lateinit var sessionManagementMediTrack: SessionManagementMediTrack
+    private lateinit var sessMan: SessMan
     //private val tAG="SplashFragment"
 
     /*override fun onResume() {
@@ -55,7 +54,7 @@ class SplashFragment : Fragment() {
         binding = FragmentSplashBinding.bind(view)
         viewModel = ViewModelProvider(this)[SplashViewModel::class.java]
         locationUtils = LocationUtils(requireContext())
-        sessionManagementMediTrack = SessionManagementMediTrack(requireContext())
+        sessMan = SessMan(requireContext())
         return binding.root
 
     }
@@ -79,14 +78,14 @@ class SplashFragment : Fragment() {
                 if(FBase.getCurrentUser()!=null)
                 {
                     MainScope().launch(Dispatchers.IO) {
-                        if(SessionSharedPreferencesManager.isSessionAvailable(requireContext())){
-                            val sessionID = SessionSharedPreferencesManager.fetchSessionId(requireContext())
-                            sessionManagementMediTrack.checkSession(sessionID!!) { sessionCheckResult ->
+                        if(LocalSession.isSessionAvailable(requireContext())){
+                            val sessionID = LocalSession.getSession(requireContext())
+                            sessMan.checkSession(sessionID!!) { sessionCheckResult ->
                                 if (sessionCheckResult) {
                                     gotoHomeActivity()
                                 }
                                 else{
-                                    SessionSharedPreferencesManager.deleteSharedPreferences(requireContext())
+                                    LocalSession.deleteSession(requireContext())
                                     FBase.getFireBaseAuth().signOut()
                                     gotoLoginFragment()
                                 }

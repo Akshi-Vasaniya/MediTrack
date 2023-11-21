@@ -26,15 +26,15 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import com.bumptech.glide.Glide
 import com.example.meditrack.R
 import com.example.meditrack.dataModel.dataClasses.UserData
-import com.example.meditrack.dataModel.dataClasses.UserSessionData2.Companion.toUserSessionData
-import com.example.meditrack.dataModel.enumClasses.others.SessionStatus
+import com.example.meditrack.dataModel.dataClasses.SessData2.Companion.toUserSessionData
+import com.example.meditrack.dataModel.enumClasses.others.SessStatus
 import com.example.meditrack.databinding.ActivityHomeBinding
 import com.example.meditrack.firebase.FBase
 import com.example.meditrack.mainActivity.MainActivity
-import com.example.meditrack.userSession.SessionSharedPreferencesManager
+import com.example.meditrack.userSession.LocalSession
+import com.example.meditrack.userSession.SessionUtils
 import com.example.meditrack.utility.MediTrackNotificationManager
 import com.google.android.material.navigation.NavigationView
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -196,7 +196,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         val sessionCollectionRef = FBase.getUsersSessionsDataCollection()
-        val currentSessionID = SessionSharedPreferencesManager.fetchSessionId(this)
+        val currentSessionID = LocalSession.getSession(this)
 
         sessionCollectionRef.addSnapshotListener { snapshot, e ->
 
@@ -212,10 +212,10 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         DocumentChange.Type.MODIFIED -> {
                             val modifiedDocument = change.document
                             val modifiedData = modifiedDocument.data
-                            if(currentSessionID==modifiedDocument.id && SessionSharedPreferencesManager.isSessionAvailable(this))
+                            if(currentSessionID==modifiedDocument.id && LocalSession.isSessionAvailable(this))
                             {
                                 val objData = modifiedData.toUserSessionData(modifiedDocument.id)
-                                if(objData.status==SessionStatus.LOGGED_OUT)
+                                if(objData.status==SessStatus.LOGGED_OUT)
                                 {
                                     showSignOutAlert()
                                 }
@@ -239,7 +239,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .setCancelable(false)
             .setPositiveButton("OK") { _, _ ->
                 FBase.getFireBaseAuth().signOut()
-                SessionSharedPreferencesManager.deleteSharedPreferences(this@HomeActivity)
+                LocalSession.deleteSession(this@HomeActivity)
                 Intent(this, MainActivity::class.java).apply {
                     startActivity(this)
                 }
@@ -259,14 +259,14 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         builder.setPositiveButton("Yes") { _: DialogInterface, _: Int ->
             // Handle deletion logic here
             val sessionDocRef = FBase.getUsersSessionsDataCollection()
-                .document(SessionSharedPreferencesManager.fetchSessionId(this@HomeActivity)!!)
+                .document(LocalSession.getSession(this@HomeActivity)!!)
 
             val updates = mapOf(
-                "status" to SessionStatus.LOGGED_OUT.name,
-                "logoutTimestamp" to com.example.meditrack.userSession.TimeUtils.getLogoutTimestamp()
+                "status" to SessStatus.LOGGED_OUT.name,
+                "logoutTimestamp" to SessionUtils.getLogoutTimestamp()
             )
             FBase.getFireBaseAuth().signOut()
-            SessionSharedPreferencesManager.deleteSharedPreferences(this@HomeActivity)
+            LocalSession.deleteSession(this@HomeActivity)
             sessionDocRef.update(updates)
                 .addOnSuccessListener {
                     Intent(this, MainActivity::class.java).apply {

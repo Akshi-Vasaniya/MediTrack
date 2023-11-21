@@ -1,7 +1,7 @@
 package com.example.meditrack.firebase
 
-import com.example.meditrack.dataModel.dataClasses.UserSessionData2
-import com.example.meditrack.dataModel.dataClasses.UserSessionData2.Companion.toUserSessionData
+import com.example.meditrack.dataModel.dataClasses.SessData2
+import com.example.meditrack.dataModel.dataClasses.SessData2.Companion.toUserSessionData
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QueryDocumentSnapshot
 
@@ -15,7 +15,7 @@ class FirestorePaginationManager {
 
 
 
-    fun fetchNextBatch(currentDeviceSession:String, onSuccess: (List<UserSessionData2>) -> Unit, onFailure: (Exception) -> Unit) {
+    fun fetchNextBatch(currentDeviceSession:String, onSuccess: (List<SessData2>) -> Unit, onFailure: (Exception) -> Unit) {
         if (!isLoading) {
             isLoading = true
 
@@ -32,7 +32,7 @@ class FirestorePaginationManager {
                 if (!documents.isEmpty) {
                     // Update the lastVisibleDocument for the next query
                     lastVisibleDocument = documents.documents[documents.size() - 1] as QueryDocumentSnapshot?
-                    val dataList = mutableListOf<UserSessionData2>()
+                    val dataList = mutableListOf<SessData2>()
                     // Process the retrieved documents
                     for (document in documents) {
                         if(currentDeviceSession == document.id)

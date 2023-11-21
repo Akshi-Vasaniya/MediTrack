@@ -14,7 +14,7 @@ import com.example.meditrack.R
 import com.example.meditrack.dataModel.dataClasses.UserData
 import com.example.meditrack.databinding.FragmentUserProfileBinding
 import com.example.meditrack.firebase.FBase
-import com.example.meditrack.utility.ownDialogs.CustomDialog
+import com.example.meditrack.utility.ownDialogs.UserInfoUpdateDialog
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -24,7 +24,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class UserProfileFragment : Fragment(), CustomDialog.CustomDialogListener {
+class UserProfileFragment : Fragment(), UserInfoUpdateDialog.CustomDialogListener {
 
     companion object {
         fun newInstance() = UserProfileFragment()
@@ -68,12 +68,12 @@ class UserProfileFragment : Fragment(), CustomDialog.CustomDialogListener {
 
         binding.apply {
             editNameButton.setOnClickListener {
-                val customDialog = CustomDialog(requireContext(), this@UserProfileFragment,fragmentUserProfileNameTextInputEditText.text.toString(),"name")
-                customDialog.show()
+                val userInfoUpdateDialog = UserInfoUpdateDialog(requireContext(), this@UserProfileFragment,fragmentUserProfileNameTextInputEditText.text.toString(),"name")
+                userInfoUpdateDialog.show()
             }
             editSurnameButton.setOnClickListener {
-                val customDialog = CustomDialog(requireContext(), this@UserProfileFragment,fragmentUserProfileSurnameTextInputEditText.text.toString(),"surname")
-                customDialog.show()
+                val userInfoUpdateDialog = UserInfoUpdateDialog(requireContext(), this@UserProfileFragment,fragmentUserProfileSurnameTextInputEditText.text.toString(),"surname")
+                userInfoUpdateDialog.show()
             }
             userProfileImage.setOnClickListener {
                 val bundle = Bundle()

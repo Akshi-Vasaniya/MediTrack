@@ -1,7 +1,5 @@
 package com.example.meditrack.adapter
 
-import android.content.Intent
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,15 +7,10 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.meditrack.R
-import com.example.meditrack.dataModel.dataClasses.UserSessionData
-import com.example.meditrack.dataModel.dataClasses.UserSessionData2
-import com.example.meditrack.dataModel.enumClasses.others.SessionStatus
-import com.example.meditrack.firebase.FBase
-import com.example.meditrack.mainActivity.MainActivity
-import com.example.meditrack.userSession.SessionSharedPreferencesManager
-import com.google.android.material.button.MaterialButton
+import com.example.meditrack.dataModel.dataClasses.SessData2
+import com.example.meditrack.dataModel.enumClasses.others.SessStatus
 
-class RecyclerViewAdapter(private val mItemList: List<UserSessionData2?>, private val signOutClickListener:SignOutClickListener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class RecyclerViewAdapter(private val mItemList: List<SessData2?>, private val signOutClickListener:SignOutClickListener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val VIEW_TYPE_ITEM = 0
     private val VIEW_TYPE_LOADING = 1
@@ -72,7 +65,7 @@ class RecyclerViewAdapter(private val mItemList: List<UserSessionData2?>, privat
         val item = mItemList[position]
         viewHolder.txtDeviceName.text = item?.deviceName
         viewHolder.txtLoginTimeStamp.text = item?.loginTimestamp
-        if(item?.status==SessionStatus.LOGGED_OUT){
+        if(item?.status==SessStatus.LOGGED_OUT){
             viewHolder.btnSignOut.setTextAppearance(R.style.DevicesFragmentSignOut)
             viewHolder.btnSignOut.isEnabled=false
         }

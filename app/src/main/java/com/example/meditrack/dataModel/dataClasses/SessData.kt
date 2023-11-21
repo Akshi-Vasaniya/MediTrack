@@ -1,8 +1,8 @@
 package com.example.meditrack.dataModel.dataClasses
 
-import com.example.meditrack.dataModel.enumClasses.others.SessionStatus
+import com.example.meditrack.dataModel.enumClasses.others.SessStatus
 
-data class UserSessionData(
+data class SessData(
     val deviceId: String?="null",
     val deviceName: String?="null",
     val deviceType: String?="null",
@@ -15,6 +15,6 @@ data class UserSessionData(
     val area: String?="null",
     val loginTimestamp: String,
     val logoutTimestamp: String?="null",
-    var status: SessionStatus,
+    var status: SessStatus,
     val expiryTimestamp: String
 )

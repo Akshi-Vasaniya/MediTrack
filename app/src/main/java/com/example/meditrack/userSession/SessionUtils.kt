@@ -29,4 +29,20 @@ object SessionUtils {
             true // Consider expired if there is an exception (e.g., parsing error)
         }
     }
+
+    // Function to get the current timestamp in a specified format
+    private fun getCurrentTimestamp(): String {
+        val dateFormat = SimpleDateFormat(DATE_FORMAT, Locale.getDefault())
+        return dateFormat.format(Date())
+    }
+
+    // Function to get the login timestamp
+    fun getLoginTimestamp(): String {
+        return getCurrentTimestamp()
+    }
+
+    // Function to get the logout timestamp
+    fun getLogoutTimestamp(): String {
+        return getCurrentTimestamp()
+    }
 }
