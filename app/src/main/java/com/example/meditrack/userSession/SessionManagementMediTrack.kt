@@ -10,7 +10,7 @@ import com.example.meditrack.utility.UtilityFunction
 class SessionManagementMediTrack(val mycontext: Context, private var locationUtils: LocationUtils = LocationUtils(mycontext)) {
 
 
-    fun checkSession(userId: String, sessionId: String, callback: (Boolean) -> Unit) {
+    fun checkSession(sessionId: String, callback: (Boolean) -> Unit) {
         try {
             val sessionDocRef = FBase.getUsersSessionsDataCollection()
             sessionDocRef.document(sessionId).get()
@@ -31,52 +31,24 @@ class SessionManagementMediTrack(val mycontext: Context, private var locationUti
                                 )
                                 sessionDocRef.document(sessionId).update(updates)
                                     .addOnSuccessListener {
-                                        if (SessionSharedPreferencesManager.isSessionAvailable(
-                                                mycontext
-                                            )
-                                        ){
-                                            SessionSharedPreferencesManager.deleteSharedPreferences(
-                                                mycontext
-                                            )
-                                        }
                                         callback(false)
                                     }
                                     .addOnFailureListener { e ->
-                                        if (SessionSharedPreferencesManager.isSessionAvailable(
-                                                mycontext
-                                            )
-                                        ){
-                                            SessionSharedPreferencesManager.deleteSharedPreferences(
-                                                mycontext
-                                            )
-                                        }
                                         callback(false)
                                     }
                             }
                         } else {
-                            if (SessionSharedPreferencesManager.isSessionAvailable(mycontext)){
-                                SessionSharedPreferencesManager.deleteSharedPreferences(mycontext)
-                            }
                             callback(false)
                         }
                     } else {
-                        if (SessionSharedPreferencesManager.isSessionAvailable(mycontext)){
-                            SessionSharedPreferencesManager.deleteSharedPreferences(mycontext)
-                        }
                         callback(false)
                     }
                 }
                 .addOnFailureListener { e ->
-                    if (SessionSharedPreferencesManager.isSessionAvailable(mycontext)){
-                        SessionSharedPreferencesManager.deleteSharedPreferences(mycontext)
-                    }
                     callback(false)
                 }
         }
         catch (ex:java.lang.Exception){
-            if (SessionSharedPreferencesManager.isSessionAvailable(mycontext)){
-                SessionSharedPreferencesManager.deleteSharedPreferences(mycontext)
-            }
             callback(false)
         }
 

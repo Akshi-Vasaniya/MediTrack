@@ -1,34 +1,30 @@
 package com.example.meditrack.homeActivity.devices
 
 import android.app.AlertDialog
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.meditrack.R
 import com.example.meditrack.adapter.RecyclerViewAdapter
-import com.example.meditrack.dataModel.dataClasses.UserSessionData
 import com.example.meditrack.dataModel.dataClasses.UserSessionData2
+import com.example.meditrack.dataModel.dataClasses.UserSessionData2.Companion.toUserSessionData
 import com.example.meditrack.dataModel.enumClasses.others.SessionStatus
 import com.example.meditrack.databinding.FragmentDevicesBinding
 import com.example.meditrack.firebase.FBase
 import com.example.meditrack.firebase.FirestorePaginationManager
 import com.example.meditrack.mainActivity.MainActivity
 import com.example.meditrack.userSession.SessionSharedPreferencesManager
-import com.example.meditrack.utility.UtilityFunction.Companion.showToast
-import com.example.meditrack.utility.UtilityFunction.Companion.toUserSessionData
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentChange
-import okhttp3.internal.notifyAll
-import java.util.ArrayList
 
 class DevicesFragment : Fragment() {
 
@@ -46,6 +42,7 @@ class DevicesFragment : Fragment() {
     private lateinit var currectSessionID : String
     private var currentSessionData: UserSessionData2?=null
     private var isLoading = false
+    private val tAG = "DevicesFragment"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -146,7 +143,7 @@ class DevicesFragment : Fragment() {
                             // Document removed
                             DocumentChange.Type.REMOVED -> {
                                 val removedDocument = change.document
-                                val removedData = removedDocument.data
+                                //val removedData = removedDocument.data
                                 // Handle removed document
                                 if(rowsArrayList.isEmpty()){
                                     return@addSnapshotListener
@@ -210,18 +207,20 @@ class DevicesFragment : Fragment() {
                 "status" to SessionStatus.LOGGED_OUT.name,
                 "logoutTimestamp" to com.example.meditrack.userSession.TimeUtils.getLogoutTimestamp()
             )
-
+            FBase.getFireBaseAuth().signOut()
+            SessionSharedPreferencesManager.deleteSharedPreferences(requireContext())
             sessionDocRef.update(updates)
                 .addOnSuccessListener {
-                    FBase.getFireBaseAuth().signOut()
-                    SessionSharedPreferencesManager.deleteSharedPreferences(requireContext())
                     Intent(requireContext(), MainActivity::class.java).apply {
                         startActivity(this)
                     }
                     requireActivity().finish()
                 }
                 .addOnFailureListener {
-
+                    Intent(requireContext(), MainActivity::class.java).apply {
+                        startActivity(this)
+                    }
+                    requireActivity().finish()
                 }
         }
 
@@ -308,10 +307,11 @@ class DevicesFragment : Fragment() {
 
                         firestorePaginationManager.fetchNextBatch(currectSessionID,
                             onSuccess = { dataList ->
+
                                 if(dataList.isNotEmpty()){
+                                    Log.i(tAG,"$dataList")
                                     isLoading = true
                                     loadMore(dataList)
-
                                 }
                             },
                             onFailure = { exception ->

@@ -1,13 +1,9 @@
 package com.example.meditrack.firebase
 
-import com.example.meditrack.dataModel.dataClasses.UserSessionData
 import com.example.meditrack.dataModel.dataClasses.UserSessionData2
-import com.example.meditrack.dataModel.enumClasses.others.SessionStatus
-import com.example.meditrack.utility.UtilityFunction.Companion.toUserSessionData
-import com.google.firebase.firestore.DocumentSnapshot
+import com.example.meditrack.dataModel.dataClasses.UserSessionData2.Companion.toUserSessionData
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QueryDocumentSnapshot
-import com.google.firebase.firestore.QuerySnapshot
 
 class FirestorePaginationManager {
 

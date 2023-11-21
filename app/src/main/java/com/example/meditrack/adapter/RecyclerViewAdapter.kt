@@ -76,6 +76,10 @@ class RecyclerViewAdapter(private val mItemList: List<UserSessionData2?>, privat
             viewHolder.btnSignOut.setTextAppearance(R.style.DevicesFragmentSignOut)
             viewHolder.btnSignOut.isEnabled=false
         }
+        else{
+            viewHolder.btnSignOut.setTextAppearance(R.style.LoginHead)
+            viewHolder.btnSignOut.isEnabled=true
+        }
         viewHolder.txtDeviceVersion.text = "${item?.osVersion} (${item?.apiLevel})"
         val locationList = mutableListOf<String>()
         if(item?.country!=null && item.country!="" && item.country!="null"){

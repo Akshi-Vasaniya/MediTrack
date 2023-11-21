@@ -81,11 +81,12 @@ class SplashFragment : Fragment() {
                     MainScope().launch(Dispatchers.IO) {
                         if(SessionSharedPreferencesManager.isSessionAvailable(requireContext())){
                             val sessionID = SessionSharedPreferencesManager.fetchSessionId(requireContext())
-                            sessionManagementMediTrack.checkSession(FBase.getUserId(),sessionID!!) { sessionCheckResult ->
+                            sessionManagementMediTrack.checkSession(sessionID!!) { sessionCheckResult ->
                                 if (sessionCheckResult) {
                                     gotoHomeActivity()
                                 }
                                 else{
+                                    SessionSharedPreferencesManager.deleteSharedPreferences(requireContext())
                                     FBase.getFireBaseAuth().signOut()
                                     gotoLoginFragment()
                                 }

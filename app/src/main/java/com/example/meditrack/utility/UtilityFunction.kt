@@ -288,25 +288,7 @@ class UtilityFunction {
 
         }
 
-        fun Map<String, Any>.toUserSessionData(sId:String): UserSessionData2 {
-            return UserSessionData2(
-                sessionId = sId,
-                deviceId = this["deviceId"] as? String,
-                deviceName = this["deviceName"] as? String,
-                deviceType = this["deviceType"] as? String,
-                osVersion = this["osVersion"] as? String,
-                appVersion = this["appVersion"] as? String,
-                apiLevel = this["apiLevel"] as? String,
-                country = this["country"] as? String,
-                state = this["state"] as? String,
-                city = this["city"] as? String,
-                area = this["area"] as? String,
-                loginTimestamp = this["loginTimestamp"] as String,
-                logoutTimestamp = this["logoutTimestamp"] as? String,
-                status = SessionStatus.valueOf(this["status"] as String),
-                expiryTimestamp = this["expiryTimestamp"] as String
-            )
-        }
+
 
         fun showToast(context: Context,message: String) {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()

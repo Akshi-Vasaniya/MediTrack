@@ -17,8 +17,11 @@ object SessionSharedPreferencesManager {
 
     // Function to delete SharedPreferences
     fun deleteSharedPreferences(context: Context) {
-        val sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-        sharedPreferences.edit().clear().apply()
+        if(isSessionAvailable(context))
+        {
+            val sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+            sharedPreferences.edit().clear().apply()
+        }
     }
 
     // Function to fetch session ID from SharedPreferences

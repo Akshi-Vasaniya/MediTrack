@@ -26,13 +26,13 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import com.bumptech.glide.Glide
 import com.example.meditrack.R
 import com.example.meditrack.dataModel.dataClasses.UserData
+import com.example.meditrack.dataModel.dataClasses.UserSessionData2.Companion.toUserSessionData
 import com.example.meditrack.dataModel.enumClasses.others.SessionStatus
 import com.example.meditrack.databinding.ActivityHomeBinding
 import com.example.meditrack.firebase.FBase
 import com.example.meditrack.mainActivity.MainActivity
 import com.example.meditrack.userSession.SessionSharedPreferencesManager
 import com.example.meditrack.utility.MediTrackNotificationManager
-import com.example.meditrack.utility.UtilityFunction.Companion.toUserSessionData
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -212,7 +212,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         DocumentChange.Type.MODIFIED -> {
                             val modifiedDocument = change.document
                             val modifiedData = modifiedDocument.data
-                            if(currentSessionID==modifiedDocument.id && !SessionSharedPreferencesManager.isSessionAvailable(this))
+                            if(currentSessionID==modifiedDocument.id && SessionSharedPreferencesManager.isSessionAvailable(this))
                             {
                                 val objData = modifiedData.toUserSessionData(modifiedDocument.id)
                                 if(objData.status==SessionStatus.LOGGED_OUT)
@@ -265,18 +265,20 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 "status" to SessionStatus.LOGGED_OUT.name,
                 "logoutTimestamp" to com.example.meditrack.userSession.TimeUtils.getLogoutTimestamp()
             )
-
+            FBase.getFireBaseAuth().signOut()
+            SessionSharedPreferencesManager.deleteSharedPreferences(this@HomeActivity)
             sessionDocRef.update(updates)
                 .addOnSuccessListener {
-                    FBase.getFireBaseAuth().signOut()
-                    SessionSharedPreferencesManager.deleteSharedPreferences(this@HomeActivity)
                     Intent(this, MainActivity::class.java).apply {
                         startActivity(this)
                     }
                     this.finish()
                 }
                 .addOnFailureListener {
-
+                    Intent(this, MainActivity::class.java).apply {
+                        startActivity(this)
+                    }
+                    this.finish()
                 }
         }
 
