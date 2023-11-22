@@ -265,10 +265,10 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 "status" to SessStatus.LOGGED_OUT.name,
                 "logoutTimestamp" to SessionUtils.getLogoutTimestamp()
             )
-            FBase.getFireBaseAuth().signOut()
             LocalSession.deleteSession(this@HomeActivity)
             sessionDocRef.update(updates)
                 .addOnSuccessListener {
+                    FBase.getFireBaseAuth().signOut()
                     Intent(this, MainActivity::class.java).apply {
                         startActivity(this)
                     }

@@ -14,10 +14,7 @@ import com.example.meditrack.databinding.FragmentAboutUsBinding
 import com.example.meditrack.firebase.FBase
 import com.example.meditrack.homeActivity.HomeActivity
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class AboutUsFragment : Fragment() {
 
@@ -47,56 +44,60 @@ class AboutUsFragment : Fragment() {
                 val collegeDetailsDocument = aboutUsCollectionRef.document("college_details")
                 val teamMemberDetailsDocument = aboutUsCollectionRef.document("team_member_details")
 
-                aboutProjectDetailsDocument.addSnapshotListener { value, error ->
-                    if (error != null) {
-                        Toast.makeText(requireContext(),"Error",Toast.LENGTH_SHORT).show()
-                        Log.e("aboutProjectDetailsDocument.addSnapshotListener","${error.message}")
-                        // Handle any errors
-                        return@addSnapshotListener
-                    }
+                launch {
+                    aboutProjectDetailsDocument.addSnapshotListener { value, error ->
+                        if (error != null) {
+                            Toast.makeText(requireContext(),"Error",Toast.LENGTH_SHORT).show()
+                            Log.e("aboutProjectDetailsDocument.addSnapshotListener","${error.message}")
+                            // Handle any errors
+                            return@addSnapshotListener
+                        }
 
-                    if (value != null) {
-                        viewModel.setAboutProjectDetails(value.get("data") as String)
-                    } else {
-                        Toast.makeText(requireContext(),"about_us collection is empty",Toast.LENGTH_SHORT).show()
-                        // Handle the case when the collection is empty
+                        if (value != null) {
+                            viewModel.setAboutProjectDetails(value.get("data") as String)
+                        } else {
+                            Toast.makeText(requireContext(),"about_us collection is empty",Toast.LENGTH_SHORT).show()
+                            // Handle the case when the collection is empty
+                        }
+                    }
+                }
+                launch {
+                    collegeDetailsDocument.addSnapshotListener { value, error ->
+                        if (error != null) {
+                            Toast.makeText(requireContext(),"Error",Toast.LENGTH_SHORT).show()
+                            Log.e("collegeDetailsDocument.addSnapshotListener","${error.message}")
+                            // Handle any errors
+                            return@addSnapshotListener
+                        }
+
+                        if (value != null) {
+                            viewModel.setCollegeDetails(value.get("data") as String)
+                        } else {
+                            Toast.makeText(requireContext(),"about_us collection is empty",Toast.LENGTH_SHORT).show()
+                            // Handle the case when the collection is empty
+                        }
                     }
                 }
 
-                collegeDetailsDocument.addSnapshotListener { value, error ->
-                    if (error != null) {
-                        Toast.makeText(requireContext(),"Error",Toast.LENGTH_SHORT).show()
-                        Log.e("collegeDetailsDocument.addSnapshotListener","${error.message}")
-                        // Handle any errors
-                        return@addSnapshotListener
-                    }
+                launch {
+                    teamMemberDetailsDocument.addSnapshotListener { value, error ->
+                        if (error != null) {
+                            Toast.makeText(requireContext(),"Error",Toast.LENGTH_SHORT).show()
+                            Log.e("teamMemberDetailsDocument.addSnapshotListener","${error.message}")
+                            // Handle any errors
+                            return@addSnapshotListener
+                        }
 
-                    if (value != null) {
-                        viewModel.setCollegeDetails(value.get("data") as String)
-                    } else {
-                        Toast.makeText(requireContext(),"about_us collection is empty",Toast.LENGTH_SHORT).show()
-                        // Handle the case when the collection is empty
-                    }
-                }
-
-
-
-                teamMemberDetailsDocument.addSnapshotListener { value, error ->
-                    if (error != null) {
-                        Toast.makeText(requireContext(),"Error",Toast.LENGTH_SHORT).show()
-                        Log.e("teamMemberDetailsDocument.addSnapshotListener","${error.message}")
-                        // Handle any errors
-                        return@addSnapshotListener
-                    }
-
-                    if (value != null) {
-                        viewModel.setTeamMemberDetailsData(value.get("data") as String)
-                    } else {
-                        Toast.makeText(requireContext(),"about_us collection is empty",Toast.LENGTH_SHORT).show()
-                        // Handle the case when the collection is empty
+                        if (value != null) {
+                            viewModel.setTeamMemberDetailsData(value.get("data") as String)
+                        } else {
+                            Toast.makeText(requireContext(),"about_us collection is empty",Toast.LENGTH_SHORT).show()
+                            // Handle the case when the collection is empty
+                        }
                     }
                 }
 
+                
                 withContext(Dispatchers.Main)
                 {
                     viewModel.aboutProjectDetails.observe(viewLifecycleOwner){
@@ -109,10 +110,6 @@ class AboutUsFragment : Fragment() {
                         teamDetailsTextView.text = HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
                     }
                 }
-
-
-
-
 
             }
             // Retrieve the HTML string from resources

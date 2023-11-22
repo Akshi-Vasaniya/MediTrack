@@ -42,6 +42,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class LoginFragment : Fragment() {
@@ -210,29 +211,28 @@ class LoginFragment : Fragment() {
                                 if(FBase.getCurrentUser()!=null)
                                 {
                                     /*viewModel.fetchUserData()*/
-                                    sessMan.createSession { sessionID ->
-                                        progressDialog.stop()
-                                        if(sessionID!=null){
-                                            Intent(requireActivity(),HomeActivity::class.java).apply {
-                                                startActivity(this)
+                                    MainScope().launch(Dispatchers.IO) {
+                                        try{
+                                            sessMan.createSession { sessionID ->
+                                                progressDialog.stop()
+                                                if(sessionID!=null){
+                                                    Intent(requireActivity(),HomeActivity::class.java).apply {
+                                                        startActivity(this)
+                                                    }
+                                                    requireActivity().finish()
+                                                }
                                             }
-                                            requireActivity().finish()
                                         }
-                                        else{
+                                        catch (ex:Exception)
+                                        {
                                             FirebaseAuth.getInstance().signOut()
                                         }
                                     }
+
                                 }
                                 else{
-                                    MainScope().launch(Dispatchers.Main)
-                                    {
-                                        //val sharedPreferences = requireActivity().getSharedPreferences("UserData", Context.MODE_PRIVATE)
-                                        //val editor = sharedPreferences.edit()
-                                        //editor.clear()
-                                        //editor.apply()
-                                        findNavController().popBackStack()
-                                        findNavController().navigate(R.id.loginFragment)
-                                    }
+                                    findNavController().popBackStack()
+                                    findNavController().navigate(R.id.loginFragment)
                                 }
 
                             }
@@ -304,10 +304,7 @@ class LoginFragment : Fragment() {
 
     private val multiplePermissionsListener = object : MultiplePermissionsListener {
         override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-            // Check if all permissions are granted
             if (report != null && report.areAllPermissionsGranted()) {
-                // Permissions are granted, proceed with your logic
-                showToast("Permission Granted")
                 if(!isLocationEnabled(requireContext())){
                     showLocationSettingsDialog(requireContext())
                 }
@@ -322,7 +319,6 @@ class LoginFragment : Fragment() {
             token: PermissionToken?
         ) {
             token?.continuePermissionRequest()
-            // You can show a rationale dialog here and call token.continuePermissionRequest() if the user agrees
         }
     }
 

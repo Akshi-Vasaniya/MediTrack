@@ -140,6 +140,13 @@ class AddMedicineFragment : Fragment() {
         return binding.root
     }
 
+    fun fetchOCRMediName(bundle: Bundle?):String?{
+        return try{bundle!!.getString("ocrMedNameString")}catch(e:Exception){null}
+    }
+
+    fun fetchScanImageByteArray(bundle: Bundle?):ByteArray?{
+        return try{bundle!!.getByteArray("scanImageByteArray")}catch(e:Exception){null}
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -147,27 +154,27 @@ class AddMedicineFragment : Fragment() {
         hiddenView = binding.hiddenView
 
 
-
-
-
         binding.apply {
             fillChipGroup()
-            MainScope().launch {
+            MainScope().launch(Dispatchers.IO) {
                 try{
                     // Get the Bundle from arguments
                     val bundle = arguments
 
-                    viewModel.selectedMedNameText = bundle!!.getString("ocrMedNameString")
-                    if(viewModel.selectedMedNameText!=null && viewModel.selectedMedNameText != "")
-                    {
-                        viewModel.medName = viewModel.selectedMedNameText
-                        fragmentMedicineNameTextInputEditText.setText(viewModel.medName)
-                        fragmentMedicineNameTextInputLayout.helperText=null
+                    val mediName = async { fetchOCRMediName(bundle) }
+                    val scanImageByteArray = async { fetchScanImageByteArray(bundle)}
+                    viewModel.selectedMedNameText = mediName.await()
+                    viewModel.bimapMedImage = UtilityFunction.byteArrayToBitmap(scanImageByteArray.await()!!)
+                    runBlocking {
+                        if(viewModel.selectedMedNameText!=null && viewModel.selectedMedNameText != "")
+                        {
+                            viewModel.medName = viewModel.selectedMedNameText
+                            fragmentMedicineNameTextInputEditText.setText(viewModel.medName)
+                            fragmentMedicineNameTextInputLayout.helperText=null
+
+                        }
+                        medicineImage.setImageBitmap(viewModel.bimapMedImage)
                     }
-                    // Retrieve the bitmap from the Bundle
-                    val scanImageByteArray = bundle.getByteArray("scanImageByteArray")
-                    viewModel.bimapMedImage = UtilityFunction.byteArrayToBitmap(scanImageByteArray!!)
-                    medicineImage.setImageBitmap(viewModel.bimapMedImage)
 
                 }catch(e:Exception){
                     viewModel.medName = null

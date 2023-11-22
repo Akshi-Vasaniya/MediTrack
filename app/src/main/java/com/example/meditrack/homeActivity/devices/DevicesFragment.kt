@@ -27,6 +27,8 @@ import com.example.meditrack.userSession.SessionUtils
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentChange
+import kotlinx.coroutines.*
+import java.util.concurrent.atomic.AtomicBoolean
 
 class DevicesFragment : Fragment() {
 
@@ -92,6 +94,7 @@ class DevicesFragment : Fragment() {
                             locationList.add(0,area)
                         }
                         txtLocation.text = locationList.joinToString(", ")
+
                     }
 
                 }
@@ -130,7 +133,40 @@ class DevicesFragment : Fragment() {
                                 if(rowsArrayList.isEmpty()){
                                     return@addSnapshotListener
                                 }
-                                for (i in 0 until rowsArrayList.size)
+                                // Chunk size
+                                val chunkSize = 5
+                                MainScope().launch(Dispatchers.IO) {
+
+                                    // Split the list into chunks
+                                    val chunkedIndices = (0 until rowsArrayList.size).chunked(chunkSize)
+                                    // Shared flag to signal if the condition is met
+                                    val conditionMetFlag = AtomicBoolean(false)
+
+                                    for (indices in chunkedIndices) {
+                                        launch {
+                                            for (i in indices.first() until (indices.last() + 1)) {
+                                                if (conditionMetFlag.get()) {
+                                                    // If the condition is met, cancel the job and return
+                                                    return@launch
+                                                }
+                                                if (rowsArrayList[i]?.sessionId == modifiedDocument.id) {
+                                                    rowsArrayList[i] = modifiedData.toUserSessionData(modifiedDocument.id)
+                                                    withContext(Dispatchers.Main) {
+                                                        recyclerViewAdapter.notifyItemChanged(i)
+                                                    }
+                                                    // Set the flag to true when the condition is met
+                                                    conditionMetFlag.set(true)
+                                                    // Cancel all other jobs
+                                                    coroutineContext.cancelChildren()
+                                                    // Return to the main thread
+                                                    return@launch
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                /*for (i in 0 until rowsArrayList.size)
                                 {
                                     if(rowsArrayList[i]!!.sessionId==modifiedDocument.id)
                                     {
@@ -138,7 +174,7 @@ class DevicesFragment : Fragment() {
                                         recyclerViewAdapter.notifyItemChanged(i)
                                         return@addSnapshotListener
                                     }
-                                }
+                                }*/
 
                                 // Handle modified document
                             }
@@ -209,10 +245,11 @@ class DevicesFragment : Fragment() {
                 "status" to SessStatus.LOGGED_OUT.name,
                 "logoutTimestamp" to SessionUtils.getLogoutTimestamp()
             )
-            FBase.getFireBaseAuth().signOut()
+
             LocalSession.deleteSession(requireContext())
             sessionDocRef.update(updates)
                 .addOnSuccessListener {
+                    FBase.getFireBaseAuth().signOut()
                     Intent(requireContext(), MainActivity::class.java).apply {
                         startActivity(this)
                     }

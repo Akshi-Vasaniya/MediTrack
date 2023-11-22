@@ -4,18 +4,10 @@ import android.Manifest
 import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
-import android.content.Context.CAMERA_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.Matrix
-import android.graphics.Rect
 import android.graphics.RectF
-import android.hardware.camera2.CameraAccessException
-import android.hardware.camera2.CameraCharacteristics
-import android.hardware.camera2.CameraManager
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.util.SparseIntArray
@@ -25,23 +17,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.meditrack.R
 import com.example.meditrack.databinding.FragmentOCRBinding
-import com.example.meditrack.homeActivity.medicine.addMedicine.AddMedicineFragment
 import com.example.meditrack.utility.UtilityFunction
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.Text.Line
+import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
@@ -52,13 +41,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.lang.Math.cos
-import java.lang.Math.sin
-import java.lang.StrictMath.atan2
+import kotlinx.coroutines.*
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -83,7 +66,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
     private lateinit var viewModel: OCRViewModel
     private lateinit var binding: FragmentOCRBinding
     private lateinit var recognizer: TextRecognizer
-    private val tAG = "Testing"
+    private val tAG = "ju"
     private val savedTestTag = "SavedText"
     private var currentRotation: Float = 0f
 
@@ -196,21 +179,19 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
                     withContext(Dispatchers.Main) {
                         progressDialog.start("Saving...")
                     }
-                    val scanImageByteArray = UtilityFunction.bitmapToByteArray(savedBitmap!!)
+                    var scanImageByteArray: ByteArray? = null
+                    var medName: String? = null
+                    val job1 = launch { scanImageByteArray = UtilityFunction.bitmapToByteArray(savedBitmap!!) }
+                    val job2 = launch { medName = bindSelectedMedName() }
+
+                    job1.join()
+                    job2.join()
 
                     // Add the bitmap to the Bundle
                     bundle.putByteArray("scanImageByteArray", scanImageByteArray)
 
-                    var medName = ""
-                    viewModel.listSelectedMedName.forEach {
-                        medName += it.second
-                    }
-                    medName = medName.trim()
-                    medName = medName.replace("\n", " ")
-
                     // Add the ArrayList to the Bundle
                     bundle.putString("ocrMedNameString", medName)
-
                     withContext(Dispatchers.Main) {
                         progressDialog.stop()
                         findNavController().popBackStack(R.id.addMedicineFragment, true)
@@ -229,12 +210,19 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
         }
     }
 
+    private fun bindSelectedMedName():String{
+        var medName = ""
+        viewModel.listSelectedMedName.forEach {
+            medName += it.second
+        }
+        medName = medName.trim()
+        medName = medName.replace("\n", " ")
+        return medName
+    }
 
     private fun init() {
 
         cameraExecutor = Executors.newSingleThreadExecutor()
-
-
 
         recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
@@ -332,7 +320,9 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
         }
     }
 
+
     private fun runTextRecognition(bitmap: Bitmap) {
+        val chunkSize = 2
         val inputImage = InputImage.fromBitmap(bitmap,0)
 
         recognizer
@@ -340,62 +330,80 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
             .addOnSuccessListener { text ->
                 viewModel.listSelectedMedName = ArrayList()
                 val rectList: ArrayList<Pair<RectF, String>> = ArrayList()
-                Log.d(tAG, "Text is: " + text.text)
-                for (textBlock in text.textBlocks) {
-                    Log.d(tAG, "TextBlock text is: " + textBlock.text)
-                    Log.d(tAG, "TextBlock boundingbox is: " + textBlock.boundingBox)
-                    Log.d(
-                        tAG,
-                        "TextBlock cornerpoint is: " + Arrays.toString(textBlock.cornerPoints)
-                    )
-                    for (line in textBlock.lines) {
+                val job1 = MainScope().launch(Dispatchers.IO) {
 
-                        val box = RectF(line.boundingBox ?: continue)
-                        val txt = line.text
-                        rectList.add(Pair(box, txt))
-                        Log.d(tAG, "Line text is: " + line.text)
-                        Log.d(tAG, "Line boundingbox is: " + line.boundingBox)
-                        Log.d(tAG, "Line cornerpoint is: " + Arrays.toString(line.cornerPoints))
-                        for (element in line.elements) {
-                            Log.d(tAG, "Element text is: " + element.text)
-                            Log.d(tAG, "Element boundingbox is: " + element.boundingBox)
-                            Log.d(
-                                tAG,
-                                "Element cornerpoint is: " + Arrays.toString(element.cornerPoints)
-                            )
-                            Log.d(tAG, "Element language is: " + element.recognizedLanguage)
+                    for (textBlock in text.textBlocks) {
+                        //Log.d(tAG, "TextBlock text is: " + textBlock.text)
+                        //Log.d(tAG, "TextBlock boundingbox is: " + textBlock.boundingBox)
+                        //Log.d( tAG, "TextBlock cornerpoint is: " + Arrays.toString(textBlock.cornerPoints) )
+
+                        // Split the list into chunks
+                        val chunks = textBlock.lines.chunked(chunkSize)
+                        val jobs = ArrayList<Job>()
+                        for (chunk in chunks) {
+                            val job = launch {
+                                for (line in chunk) {
+                                    val box = RectF(line.boundingBox ?: continue)
+                                    val txt = line.text
+                                    rectList.add(Pair(box, txt))
+                                }
+                            }
+                            jobs.add(job)
                         }
+                        // Wait for all jobs to complete
+                        jobs.forEach { it.join() }
+
+                        /*for (line in textBlock.lines) {
+                            val box = async { RectF(line.boundingBox) }
+                            val txt = async { line.text }
+                            rectList.add(Pair(box.await(), txt.await()))
+                            Log.d(tAG, "Line text is: ${txt.await()}")
+                            Log.d(tAG, "Line boundingbox is: " + line.boundingBox)
+                            Log.d(tAG, "Line cornerpoint is: " + Arrays.toString(line.cornerPoints))
+                            for (element in line.elements) {
+                                Log.d(tAG, "Element text is: " + element.text)
+                                Log.d(tAG, "Element boundingbox is: " + element.boundingBox)
+                                Log.d(
+                                    tAG,
+                                    "Element cornerpoint is: " + Arrays.toString(element.cornerPoints)
+                                )
+                                Log.d(tAG, "Element language is: " + element.recognizedLanguage)
+                            }
+                        }*/
                     }
                 }
-                //var filterOutput = UtilityFunction.filterFirstSecondThirdLargestRect(rectList)
-                //var filterOutput = UtilityFunction.findNearlySimilarRectangles(rectList,0.9)
+                runBlocking {
+                    job1.join()
+                    overlayView.setBoundingRects(rectList)
+                }
+                /*var filterOutput = UtilityFunction.filterFirstSecondThirdLargestRect(rectList)
+                var filterOutput = UtilityFunction.findNearlySimilarRectangles(rectList,0.9)
 
-                overlayView.setBoundingRects(rectList)
-                /*filterOutput?.let { (firstList, secondList, thirdList) ->
+                filterOutput?.let { (firstList, secondList, thirdList) ->
 
                     //overlayView.setBoundingRects((ArrayList(firstList)+ArrayList(secondList)+ArrayList(thirdList)) as ArrayList<Pair<Rect, String>>)
                     //binding.textInImageLayout.visibility = View.VISIBLE
                     //processTextRecognitionResult(text)
 
                     // Accessing the first list of pairs
-                    *//*println("First List:")
+                    println("First List:")
                     firstList.forEach { (rect, string) ->
                         println("Rect: $rect, String: $string")
-                    }*//*
+                    }
 
                     // Accessing the second list of pairs
-                    *//*println("Second List:")
+                    println("Second List:")
                     secondList.forEach { (rect, string) ->
                         println("Rect: $rect, String: $string")
-                    }*//*
+                    }
 
                     // Accessing the third list of pairs
-                    *//*println("Third List:")
+                    println("Third List:")
                     thirdList.forEach { (rect, string) ->
                         println("Rect: $rect, String: $string")
-                    }*//*
-                }*/
-                /*overlayView.setBoundingRects(rectList)
+                    }
+                }
+                overlayView.setBoundingRects(rectList)
                 binding.textInImageLayout.visibility = View.VISIBLE
                 processTextRecognitionResult(text)*/
 
