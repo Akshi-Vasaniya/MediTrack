@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -26,6 +27,14 @@ class NotificationFragment : Fragment() {
     private lateinit var binding: FragmentNotificationBinding
     private lateinit var progressDialog: CustomProgressDialog
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        for(i in 0 until menu.size()){
+            menu.getItem(i).isVisible = false
+        }
+
+        super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,6 +42,9 @@ class NotificationFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_notification, container, false)
         viewModel = ViewModelProvider(this)[NotificationViewModel::class.java]
         binding = FragmentNotificationBinding.bind(view)
+
+        setHasOptionsMenu(true)
+
         progressDialog = CustomProgressDialog(requireContext())
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

@@ -11,6 +11,7 @@ import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
@@ -86,6 +87,14 @@ class AddMedicineFragment : Fragment() {
         }
     }*/
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        for(i in 0 until menu.size()){
+            menu.getItem(i).isVisible = false
+        }
+
+        super.onPrepareOptionsMenu(menu)
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -93,6 +102,9 @@ class AddMedicineFragment : Fragment() {
     ): View {
         val view = inflater.inflate(R.layout.fragment_add_medicine, container, false)
         binding = FragmentAddMedicineBinding.bind(view)
+
+        setHasOptionsMenu(true)
+
         viewModel = ViewModelProvider(this)[AddMedicineViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
         medicineDataDocRef = FBase.getUsersMedicineDataCollection()

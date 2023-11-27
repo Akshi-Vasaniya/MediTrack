@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -45,12 +46,23 @@ class UpdateProfileImageFragment : Fragment() {
     private lateinit var progressDialog: CustomProgressDialog
     private var changesMade = false
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        for(i in 0 until menu.size()){
+            menu.getItem(i).isVisible = false
+        }
+
+        super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.fragment_update_profile_image, container, false)
         binding = FragmentUpdateProfileImageBinding.bind(view)
+
+        setHasOptionsMenu(true)
+
         viewModel = ViewModelProvider(this)[UpdateProfileImageViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
         val onBackPressedCallback = object : OnBackPressedCallback(true) {
