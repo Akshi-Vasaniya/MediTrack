@@ -172,10 +172,8 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
             } else {
                 // Create a Bundle
                 val bundle = Bundle()
-                MainScope().launch(Dispatchers.IO) {
-                    withContext(Dispatchers.Main) {
-                        progressDialog.start("Saving...")
-                    }
+                MainScope().launch(Dispatchers.Main) {
+                    progressDialog.start("Saving...")
                     var scanImageByteArray: ByteArray? = null
                     var medName: String? = null
                     val job1 = launch { scanImageByteArray = savedBitmap!!.toByteArray() }
@@ -189,11 +187,13 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
 
                     // Add the ArrayList to the Bundle
                     bundle.putString("ocrMedNameString", medName)
-                    withContext(Dispatchers.Main) {
-                        progressDialog.stop()
-                        findNavController().popBackStack(R.id.addMedicineFragment, true)
-                        findNavController().navigate(R.id.addMedicineFragment, bundle)
+                    progressDialog.stop()
+                    if(scanImageByteArray==null)
+                    {
+                        return@launch
                     }
+                    findNavController().popBackStack(R.id.addMedicineFragment, true)
+                    findNavController().navigate(R.id.addMedicineFragment, bundle)
 
 
                     // Navigate to the receiving fragment

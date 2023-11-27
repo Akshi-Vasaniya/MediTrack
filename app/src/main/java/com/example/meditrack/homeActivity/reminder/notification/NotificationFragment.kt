@@ -50,7 +50,7 @@ class NotificationFragment : Fragment() {
         val reminderDialogBox = view.findViewById<FloatingActionButton>(R.id.add_new_reminder)
 
         reminderDialogBox.setOnClickListener {
-            val dialog = MedicineReminderDialog()
+            val dialog = MedicineReminderDialog(requireActivity())
             dialog.show(childFragmentManager, "MedicineReminderDialog")
         }
 

@@ -10,7 +10,10 @@ import android.util.Base64
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.FileProvider
+import com.example.meditrack.utility.UtilsFunctions.Companion.showToast
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.*
 import java.text.SimpleDateFormat
@@ -94,10 +97,8 @@ class UtilsFunctions {
             }
         }
 
-        suspend fun ByteArray.toBitmap(): Bitmap {
-            return withContext(Dispatchers.IO){
-                BitmapFactory.decodeByteArray(this@toBitmap, 0, this@toBitmap.size)
-            }
+        fun ByteArray.toBitmap(): Bitmap {
+            return BitmapFactory.decodeByteArray(this, 0, this.size)
         }
 
         suspend fun Bitmap.toBase64(): String {
@@ -290,7 +291,10 @@ class UtilsFunctions {
 
 
         fun Context.showToast(message: String) {
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            MainScope().launch(Dispatchers.Main) {
+                Toast.makeText(this@showToast, message, Toast.LENGTH_SHORT).show()
+            }
+
         }
 
         // Function to get the Uri from ImageView

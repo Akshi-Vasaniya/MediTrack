@@ -142,13 +142,6 @@ class AddMedicineFragment : Fragment() {
         return binding.root
     }
 
-    fun fetchOCRMediName(bundle: Bundle?):String?{
-        return try{bundle!!.getString("ocrMedNameString")}catch(e:Exception){null}
-    }
-
-    fun fetchScanImageByteArray(bundle: Bundle?):ByteArray?{
-        return try{bundle!!.getByteArray("scanImageByteArray")}catch(e:Exception){null}
-    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -158,31 +151,26 @@ class AddMedicineFragment : Fragment() {
 
         binding.apply {
             fillChipGroup()
-            MainScope().launch(Dispatchers.IO) {
-                try{
-                    // Get the Bundle from arguments
-                    val bundle = arguments
+            try{
+                // Get the Bundle from arguments
+                val bundle = arguments
 
-                    val mediName = async { fetchOCRMediName(bundle) }
-                    val scanImageByteArray = async { fetchScanImageByteArray(bundle)}
-                    viewModel.selectedMedNameText = mediName.await()
-                    viewModel.bimapMedImage = scanImageByteArray.await()!!.toBitmap()
-                    runBlocking {
-                        if(viewModel.selectedMedNameText!=null && viewModel.selectedMedNameText != "")
-                        {
-                            viewModel.medName = viewModel.selectedMedNameText
-                            fragmentMedicineNameTextInputEditText.setText(viewModel.medName)
-                            fragmentMedicineNameTextInputLayout.helperText=null
+                val mediName = bundle!!.getString("ocrMedNameString")
+                val scanImageByteArray = bundle.getByteArray("scanImageByteArray")
+                viewModel.selectedMedNameText = mediName
+                viewModel.bimapMedImage = scanImageByteArray!!.toBitmap()
+                if(viewModel.selectedMedNameText!=null && viewModel.selectedMedNameText != "")
+                {
+                    viewModel.medName = viewModel.selectedMedNameText
+                    fragmentMedicineNameTextInputEditText.setText(viewModel.medName)
+                    fragmentMedicineNameTextInputLayout.helperText=null
 
-                        }
-                        medicineImage.setImageBitmap(viewModel.bimapMedImage)
-                    }
-
-                }catch(e:Exception){
-                    viewModel.medName = null
-                    e.printStackTrace()
                 }
+                medicineImage.setImageBitmap(viewModel.bimapMedImage)
 
+            }catch(e:Exception){
+                viewModel.medName = null
+                e.printStackTrace()
             }
 
 
@@ -226,7 +214,7 @@ class AddMedicineFragment : Fragment() {
                         viewModel.expDate = "${month}/${year}"
                         if(viewModel.mfgDate!=null)
                         {
-                            if(UtilsFunctions.validateMedicine(viewModel.mfgDate!!,viewModel.expDate!!))
+                            if(UtilsFunctions.validateMedicine(viewModel.mfgDate!!,viewModel.expDate!!) && (viewModel.mfgDate!=viewModel.expDate))
                             {
                                 fragmentMedicineExpirydateTextInputEditText.setText(viewModel.expDate)
                                 binding.fragmentMedicineExpirydateTextInputLayout.helperText=null
@@ -539,12 +527,10 @@ class AddMedicineFragment : Fragment() {
                             return@launch
                         }
 
-
                         /*withContext(Dispatchers.Main)
                         {
                             Toast.makeText(requireContext(),"Done",Toast.LENGTH_SHORT).show()
                         }*/
-
 
                         withContext(Dispatchers.Main)
                         {
@@ -572,8 +558,6 @@ class AddMedicineFragment : Fragment() {
                                     catch (ex:Exception){
                                         requireContext().showToast("Your Medicine added successfully, (No worry) Error at server side")
                                     }
-
-
                                 }
 
                                 override fun onFailure(call: Call<JsonElement>, t: Throwable) {
@@ -587,7 +571,7 @@ class AddMedicineFragment : Fragment() {
                                 override fun onSuccess() {
                                     MainScope().launch(Dispatchers.IO) {
                                         try {
-                                            val dialog = MedicineReminderDialog()
+                                            val dialog = MedicineReminderDialog(requireActivity())
                                             withContext(Dispatchers.Main)
                                             {
                                                 progressDialog.stop()
@@ -596,8 +580,7 @@ class AddMedicineFragment : Fragment() {
 
                                                 progressDialog.start("Server Increase Medicine Dataset...")
                                             }
-
-                                            MainScope().launch(Dispatchers.IO) {
+                                            launch {
                                                 val response = ApiInstance.api.insertDocument(medicineData!!.medName)
                                                 response.enqueue(insertDocumentFlaskPython)
                                             }
@@ -616,13 +599,13 @@ class AddMedicineFragment : Fragment() {
                                                     }
                                                 }
                                             }
-
                                         }
                                         catch (ex:Exception)
                                         {
                                             requireContext().showToast("Unexpected Error")
-                                            Log.e("addOnSuccessListener","${ex.message}")
+                                            Log.e("addOnSuccessListener","$ex")
                                         }
+
                                     }
 
                                 }
@@ -699,10 +682,7 @@ class AddMedicineFragment : Fragment() {
                                         Toast.makeText(requireContext(),"Medicine Already Exists",Toast.LENGTH_SHORT).show()
                                     }
                                 }
-                                override fun onFailure(exception: Exception) {
-
-                                }
-
+                                override fun onFailure(exception: Exception) {}
                             }
 
 
@@ -1315,7 +1295,5 @@ class AddMedicineFragment : Fragment() {
 
         datePickerDialog.show()
     }*/
-
-
 
 }

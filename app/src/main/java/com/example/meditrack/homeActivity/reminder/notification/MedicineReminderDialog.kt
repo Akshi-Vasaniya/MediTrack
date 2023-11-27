@@ -20,7 +20,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.properties.Delegates
 
-class MedicineReminderDialog: DialogFragment() {
+class MedicineReminderDialog(val reqActivity: Activity): DialogFragment() {
     private lateinit var dialog: View
 //    private lateinit var timePickerDialog: TimePickerDialog
     private var notfiHour by Delegates.notNull<Int>()
@@ -30,7 +30,7 @@ class MedicineReminderDialog: DialogFragment() {
 
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val inflater = requireActivity().layoutInflater
+        val inflater = reqActivity.layoutInflater
         dialog = inflater.inflate(R.layout.addmedicine_reminder_dialogbox_layout, null)
 
         val medicineName: TextInputEditText = dialog.findViewById(R.id.add_medi_name_editText)
@@ -44,7 +44,7 @@ class MedicineReminderDialog: DialogFragment() {
             val currentMinute = calendar.get(Calendar.MINUTE)
 
             val timePickerDialog = TimePickerDialog(
-                requireContext(),
+                reqActivity,
                 { _, hourOfDay, minute ->
                     setTime(hourOfDay, minute)
                     notfiHour = hourOfDay
@@ -81,7 +81,7 @@ class MedicineReminderDialog: DialogFragment() {
             Log.i("TAG", "onCreateDialog: selectedDays = $selectedDays")
         }
 
-        val builder: AlertDialog.Builder = AlertDialog.Builder(requireActivity())
+        val builder: AlertDialog.Builder = AlertDialog.Builder(reqActivity)
         builder.setView(dialog)
             .setTitle("Medicine Reminder")
             .setPositiveButton("Set Reminder") { dialog, which ->
@@ -91,12 +91,12 @@ class MedicineReminderDialog: DialogFragment() {
                 scheduleNotifications(medicineName.text.toString(), selectedDays, notfiHour, notfiMin)
                 // Dismiss the dialog
                 dialog.dismiss()
-                Toast.makeText(requireContext(), "Reminder Successfully set", Toast.LENGTH_SHORT).show()
+                Toast.makeText(reqActivity, "Reminder Successfully set", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("Cancel") { dialog, which ->
                 // Handle the "Cancel" button click
                 dialog.dismiss()
-                Toast.makeText(requireContext(), "Reminder Canceled", Toast.LENGTH_SHORT).show()
+                Toast.makeText(reqActivity, "Reminder Canceled", Toast.LENGTH_SHORT).show()
             }
 
         createNotificationChannel()
@@ -111,7 +111,7 @@ class MedicineReminderDialog: DialogFragment() {
                 "Medicine Reminder",
                 NotificationManager.IMPORTANCE_DEFAULT
             )
-            val notificationManager = context?.getSystemService(NotificationManager::class.java)
+            val notificationManager = reqActivity?.getSystemService(NotificationManager::class.java)
             notificationManager?.createNotificationChannel(channel)
         }
     }
@@ -165,20 +165,20 @@ class MedicineReminderDialog: DialogFragment() {
 
     private fun scheduleNotification(content: String, dayOfWeek: Int, hour: Int, minute: Int) {
         // Create an Intent for the ReminderReceiver
-        val intent = Intent(requireContext(), ReminderReceiver::class.java)
+        val intent = Intent(reqActivity, ReminderReceiver::class.java)
         intent.putExtra("title", "Medicine Reminder")
         intent.putExtra("content", content)
 
 
         val pendingIntent = PendingIntent.getBroadcast(
-            requireContext(),
+            reqActivity,
             Random().nextInt(),
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         // Get an instance of the AlarmManager
-        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmManager = reqActivity.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
 //        Log.i("TAG", "scheduleNotification: $dayOfWeek")
 //        Log.i("TAG", "scheduleNotification: $hour")
