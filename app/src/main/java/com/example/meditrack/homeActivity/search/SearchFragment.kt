@@ -8,16 +8,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.meditrack.R
 import com.example.meditrack.adapter.SearchItemAdapter
 import com.example.meditrack.dataModel.api.ApiInstance
 import com.example.meditrack.dataModel.dataClasses.SearchItemData
 import com.example.meditrack.databinding.FragmentSearchBinding
-import com.example.meditrack.utility.UtilityFunction.Companion.showToast
+import com.example.meditrack.utility.UtilsFunctions.Companion.showToast
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -91,7 +89,7 @@ class SearchFragment : Fragment() {
                                 catch (ex:Exception)
                                 {
                                     progressDialog.stop()
-                                    showToast(requireContext(),"An unexpected error occurred")
+                                    requireContext().showToast("An unexpected error occurred")
                                 }
                             }
 
@@ -105,14 +103,14 @@ class SearchFragment : Fragment() {
                     catch (e: IOException) {
                         if(isNetworkAvailable(requireContext()))
                         {
-                            showToast(requireContext(),"server unavailable")
+                            requireContext().showToast("server unavailable")
                         }
                         else{
-                            showToast(requireContext(),"Network issue")
+                            requireContext().showToast("Network issue")
                         }
 
                     } catch (e: Exception) {
-                        showToast(requireContext(),"An unexpected error occurred")
+                        requireContext().showToast("An unexpected error occurred")
                     }
 
                 }

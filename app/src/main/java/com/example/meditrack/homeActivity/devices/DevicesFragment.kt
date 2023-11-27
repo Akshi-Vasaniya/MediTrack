@@ -1,6 +1,7 @@
 package com.example.meditrack.homeActivity.devices
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -204,7 +206,7 @@ class DevicesFragment : Fragment() {
 
 
             btnSignOut.setOnClickListener {
-                showSignOutConfirmationDialog()
+                requireActivity().showSignOutConfirmationDialog()
                 /*val sessionDocRef = FBase.getUsersSessionsDataCollection()
                     .document(currectSessionID)
 
@@ -230,8 +232,8 @@ class DevicesFragment : Fragment() {
     }
 
 
-    private fun showSignOutConfirmationDialog() {
-        val builder = AlertDialog.Builder(requireContext())
+    private fun FragmentActivity.showSignOutConfirmationDialog() {
+        val builder = AlertDialog.Builder(this)
 
         builder.setTitle("Confirmation")
         builder.setMessage("Are you sure you want to sign out your account?")
@@ -246,20 +248,20 @@ class DevicesFragment : Fragment() {
                 "logoutTimestamp" to SessionUtils.getLogoutTimestamp()
             )
 
-            LocalSession.deleteSession(requireContext())
+            LocalSession.deleteSession(this)
             sessionDocRef.update(updates)
                 .addOnSuccessListener {
                     FBase.getFireBaseAuth().signOut()
-                    Intent(requireContext(), MainActivity::class.java).apply {
+                    Intent(this, MainActivity::class.java).apply {
                         startActivity(this)
                     }
-                    requireActivity().finish()
+                    this.finish()
                 }
                 .addOnFailureListener {
-                    Intent(requireContext(), MainActivity::class.java).apply {
+                    Intent(this, MainActivity::class.java).apply {
                         startActivity(this)
                     }
-                    requireActivity().finish()
+                    this.finish()
                 }
         }
 
@@ -271,8 +273,8 @@ class DevicesFragment : Fragment() {
         dialog.show()
     }
 
-    private fun showSignOutConfirmationDialogOther(position:Int) {
-        val builder = AlertDialog.Builder(requireContext())
+    private fun Context.showSignOutConfirmationDialogOther(position:Int) {
+        val builder = AlertDialog.Builder(this)
 
         builder.setTitle("Confirmation")
         builder.setMessage("Are you sure you want to sign out your account?")
@@ -325,7 +327,7 @@ class DevicesFragment : Fragment() {
 
     private val signOutClickListener = object : RecyclerViewAdapter.SignOutClickListener{
         override fun onClick(position:Int) {
-            showSignOutConfirmationDialogOther(position)
+            requireContext().showSignOutConfirmationDialogOther(position)
         }
 
     }

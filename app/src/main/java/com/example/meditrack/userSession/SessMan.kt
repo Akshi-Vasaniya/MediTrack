@@ -4,7 +4,7 @@ import android.content.Context
 import com.example.meditrack.dataModel.dataClasses.SessData
 import com.example.meditrack.dataModel.enumClasses.others.SessStatus
 import com.example.meditrack.firebase.FBase
-import com.example.meditrack.utility.UtilityFunction
+import com.example.meditrack.utility.UtilsFunctions.Companion.getDeviceInformation
 import kotlinx.coroutines.*
 
 class SessMan(val mycontext: Context, private var locationUtils: LocationUtils = LocationUtils(mycontext)) {
@@ -135,7 +135,7 @@ class SessMan(val mycontext: Context, private var locationUtils: LocationUtils =
 
     private fun findDeviceInfo(): HashMap<String, String>? {
         return try {
-            val deviceInfo = UtilityFunction.getDeviceInformation(mycontext)
+            val deviceInfo = mycontext.getDeviceInformation()
             deviceInfo
         } catch (ex:java.lang.Exception){
             null

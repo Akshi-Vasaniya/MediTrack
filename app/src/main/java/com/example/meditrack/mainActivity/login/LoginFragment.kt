@@ -1,12 +1,10 @@
 package com.example.meditrack.mainActivity.login
 
-import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.location.LocationManager
+import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
@@ -17,7 +15,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -28,21 +25,16 @@ import com.example.meditrack.databinding.FragmentLoginBinding
 import com.example.meditrack.exception.HandleException
 import com.example.meditrack.firebase.FBase
 import com.example.meditrack.homeActivity.HomeActivity
+import com.example.meditrack.permissionsHandle.PermissionUtils.Companion.isLocationEnabled
+import com.example.meditrack.permissionsHandle.PermissionUtils.Companion.requestPermissions
+import com.example.meditrack.permissionsHandle.PermissionUtils.Companion.toCheckLocationAccess
 import com.example.meditrack.regularExpression.ListPattern
 import com.example.meditrack.regularExpression.MatchPattern.Companion.validate
 import com.example.meditrack.userSession.SessMan
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 
 class LoginFragment : Fragment() {
@@ -77,11 +69,21 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (!isLocationPermissionGranted()){
-            requestPermissions()
+        if (!requireContext().toCheckLocationAccess()){
+            requireContext().requestPermissions(mutableListOf(android.Manifest.permission.ACCESS_FINE_LOCATION)){
+                if(it)
+                {
+                    if(!requireContext().isLocationEnabled()){
+                        showLocationSettingsDialog(requireContext())
+                    }
+                }
+                else{
+                    showPermissionSettingsDialog(requireContext())
+                }
+            }
         }
         else{
-            if(!isLocationEnabled(requireContext())){
+            if(!requireContext().isLocationEnabled()){
                 showLocationSettingsDialog(requireContext())
             }
         }
@@ -181,12 +183,23 @@ class LoginFragment : Fragment() {
             fragmentLoginButton.setOnClickListener {
                 if(fragmentLoginEmailTextInputLayout.helperText==null && fragmentLoginPasswordTextInputLayout.helperText==null && viewModel.inputEmail!=null && viewModel.inputPassword!=null)
                 {
-                    if (!isLocationPermissionGranted()){
-                        requestPermissions()
+                    if (!requireContext().toCheckLocationAccess()){
+                        requireContext().requestPermissions(mutableListOf(android.Manifest.permission.ACCESS_FINE_LOCATION)){
+                            if(it)
+                            {
+                                if(!requireContext().isLocationEnabled()){
+                                    showLocationSettingsDialog(requireContext())
+                                    return@requestPermissions
+                                }
+                            }
+                            else{
+                                requireActivity().finishAffinity()
+                            }
+                        }
                         return@setOnClickListener
                     }
                     else{
-                        if(!isLocationEnabled(requireContext())){
+                        if(!requireContext().isLocationEnabled()){
                             showLocationSettingsDialog(requireContext())
                             return@setOnClickListener
                         }
@@ -194,54 +207,51 @@ class LoginFragment : Fragment() {
                     viewModel.inputEmail=viewModel.inputEmail!!.trim()
                     viewModel.inputPassword=viewModel.inputPassword!!.trim()
                     progressDialog.start("Loading...")
-                    FBase.getFireBaseAuth().signInWithEmailAndPassword(viewModel.inputEmail!!,viewModel.inputPassword!!).addOnCompleteListener {
-                        if(it.isSuccessful)
+                    FBase.getFireBaseAuth().signInWithEmailAndPassword(viewModel.inputEmail!!,viewModel.inputPassword!!).addOnSuccessListener {
+                        if(!FBase.getCurrentUser()!!.isEmailVerified)
                         {
-                            if(!FBase.getCurrentUser()!!.isEmailVerified)
-                            {
-                                progressDialog.stop()
-                                Toast.makeText(requireContext(),"Please Verify your email", Toast.LENGTH_SHORT).show()
-                            }
-                            else{
-                                /*viewModel.userData.observe(viewLifecycleOwner) { userData ->
-                                    MainScope().launch(Dispatchers.IO)
-                                    {
-                                    }
-                                }*/
-                                if(FBase.getCurrentUser()!=null)
+                            progressDialog.stop()
+                            Toast.makeText(requireContext(),"Please Verify your email", Toast.LENGTH_SHORT).show()
+                            return@addOnSuccessListener
+                        }
+                        /*viewModel.userData.observe(viewLifecycleOwner) { userData ->
+                                MainScope().launch(Dispatchers.IO)
                                 {
-                                    /*viewModel.fetchUserData()*/
-                                    MainScope().launch(Dispatchers.IO) {
-                                        try{
-                                            sessMan.createSession { sessionID ->
-                                                progressDialog.stop()
-                                                if(sessionID!=null){
-                                                    Intent(requireActivity(),HomeActivity::class.java).apply {
-                                                        startActivity(this)
-                                                    }
-                                                    requireActivity().finish()
-                                                }
+                                }
+                            }*/
+                        if(FBase.getCurrentUser()!=null)
+                        {
+                            /*viewModel.fetchUserData()*/
+                            MainScope().launch(Dispatchers.IO) {
+                                try{
+                                    sessMan.createSession { sessionID ->
+                                        progressDialog.stop()
+                                        if(sessionID!=null){
+                                            Intent(requireActivity(),HomeActivity::class.java).apply {
+                                                startActivity(this)
                                             }
-                                        }
-                                        catch (ex:Exception)
-                                        {
-                                            FirebaseAuth.getInstance().signOut()
+                                            requireActivity().finish()
                                         }
                                     }
-
                                 }
-                                else{
-                                    findNavController().popBackStack()
-                                    findNavController().navigate(R.id.loginFragment)
+                                catch (ex:Exception)
+                                {
+                                    progressDialog.stop()
+                                    FirebaseAuth.getInstance().signOut()
                                 }
-
                             }
-
+                        }
+                        else{
+                            progressDialog.stop()
+                            return@addOnSuccessListener
                         }
                     }.addOnFailureListener {
                         progressDialog.stop()
                         HandleException.firebaseCommonExceptions(requireContext(),it,tag)
+                    }.addOnCanceledListener {
+                        progressDialog.stop()
                     }
+
                 }
             }
         }
@@ -251,11 +261,44 @@ class LoginFragment : Fragment() {
             // Handle the result here if needed
             val resultCode = result.resultCode
             if (resultCode != Activity.RESULT_OK) {
-                if(!isLocationEnabled(requireContext())){
+                if(!requireContext().isLocationEnabled()){
                     showLocationSettingsDialog(requireContext())
                 }
             }
         }
+
+    private val permissionActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (!requireContext().toCheckLocationAccess()){
+            showPermissionSettingsDialog(requireContext())
+        }
+        else{
+            if(!requireContext().isLocationEnabled()){
+                showLocationSettingsDialog(requireContext())
+            }
+        }
+    }
+
+    fun showPermissionSettingsDialog(context: Context) {
+        val alertDialogBuilder = AlertDialog.Builder(context)
+        alertDialogBuilder.setCancelable(false)
+        alertDialogBuilder.setTitle("Location Permission")
+        alertDialogBuilder.setMessage("Location Permission are required for this app.")
+
+        alertDialogBuilder.setPositiveButton("Settings") { _, _ ->
+            // Open device settings for location
+            val settingsIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + context.packageName))
+            permissionActivityResultLauncher.launch(settingsIntent)
+            //context.startActivity(settingsIntent)
+        }
+
+        alertDialogBuilder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.dismiss()
+            requireActivity().finishAffinity()
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
 
     fun showLocationSettingsDialog(context: Context) {
         val alertDialogBuilder = AlertDialog.Builder(context)
@@ -279,51 +322,5 @@ class LoginFragment : Fragment() {
         alertDialog.show()
     }
 
-    fun isLocationEnabled(context: Context): Boolean {
-        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-    }
-
-    private fun isLocationPermissionGranted(): Boolean {
-        return ContextCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun requestPermissions() {
-        Dexter.withContext(requireContext())
-            .withPermissions(
-                Manifest.permission.ACCESS_FINE_LOCATION
-                // Add more permissions if needed
-            )
-            .withListener(multiplePermissionsListener)
-            .check()
-    }
-
-    private val multiplePermissionsListener = object : MultiplePermissionsListener {
-        override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-            if (report != null && report.areAllPermissionsGranted()) {
-                if(!isLocationEnabled(requireContext())){
-                    showLocationSettingsDialog(requireContext())
-                }
-            }
-            else {
-                requireActivity().finishAffinity()
-            }
-        }
-
-        override fun onPermissionRationaleShouldBeShown(
-            permissions: MutableList<PermissionRequest>?,
-            token: PermissionToken?
-        ) {
-            token?.continuePermissionRequest()
-        }
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show()
-    }
 
 }

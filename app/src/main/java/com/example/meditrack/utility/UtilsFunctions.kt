@@ -16,16 +16,20 @@ import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class UtilityFunction {
+class UtilsFunctions {
 
     companion object{
         private const val tAG="utilityFunction"
-        suspend fun uriToBitmap(context: Context, uri: Uri): Bitmap? {
+        const val DATE_TIME_FORMAT = "dd-MM-yyyy HH:mm:ss"
+        const val DATE_FORMAT = "dd-MM-yyyy"
+        const val TIME_FORMAT = "hh:mm:ss a"
+        const val MEDICINE_DATE_FORMAT = "MM/yyyy"
+        suspend fun Uri.toBitmap(context: Context): Bitmap? {
             return withContext(Dispatchers.IO){
                 var inputStream: InputStream? = null
                 val bitmap: Bitmap?
                 try {
-                    inputStream = context.contentResolver.openInputStream(uri)
+                    inputStream = context.contentResolver.openInputStream(this@toBitmap)
                     bitmap = BitmapFactory.decodeStream(inputStream)
                 } catch (e: FileNotFoundException) {
                     throw e
@@ -42,19 +46,19 @@ class UtilityFunction {
 
         // Function to get the current date in dd/MM/yyyy format
         fun getCurrentDate(): String {
-            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val sdf = SimpleDateFormat(DATE_FORMAT, Locale.getDefault())
             return sdf.format(Date())
         }
 
         // Function to get the current time in hh:mm a format
         fun getCurrentTime(): String {
-            val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
+            val sdf = SimpleDateFormat(TIME_FORMAT, Locale.getDefault())
             return sdf.format(Date())
         }
-        suspend fun getCircularBitmap(srcBitmap: Bitmap?): Bitmap {
+        suspend fun Bitmap?.toCircularBitmap(): Bitmap {
             return withContext(Dispatchers.IO) {
                 try {
-                    val squareBitmapWidth = srcBitmap!!.width.coerceAtMost(srcBitmap.height)
+                    val squareBitmapWidth = this@toCircularBitmap!!.width.coerceAtMost(this@toCircularBitmap.height)
                     val dstBitmap = Bitmap.createBitmap(
                         squareBitmapWidth,
                         squareBitmapWidth,
@@ -68,10 +72,10 @@ class UtilityFunction {
                     val rectF = RectF(rect)
                     canvas.drawOval(rectF, paint)
                     paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
-                    val left = ((squareBitmapWidth - srcBitmap.width) / 2).toFloat()
-                    val top = ((squareBitmapWidth - srcBitmap.height) / 2).toFloat()
-                    canvas.drawBitmap(srcBitmap, left, top, paint)
-                    srcBitmap.recycle()
+                    val left = ((squareBitmapWidth - this@toCircularBitmap.width) / 2).toFloat()
+                    val top = ((squareBitmapWidth - this@toCircularBitmap.height) / 2).toFloat()
+                    canvas.drawBitmap(this@toCircularBitmap, left, top, paint)
+                    this@toCircularBitmap.recycle()
                     dstBitmap
                 }
                 catch (ex:Exception)
@@ -82,26 +86,25 @@ class UtilityFunction {
             }
         }
 
-        suspend fun bitmapToByteArray(bitmap: Bitmap): ByteArray {
+        suspend fun Bitmap.toByteArray(): ByteArray {
             return withContext(Dispatchers.IO){
                 val stream = ByteArrayOutputStream()
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                this@toByteArray.compress(Bitmap.CompressFormat.PNG, 100, stream)
                 stream.toByteArray()
             }
-
         }
 
-        suspend fun byteArrayToBitmap(byteArray: ByteArray): Bitmap {
+        suspend fun ByteArray.toBitmap(): Bitmap {
             return withContext(Dispatchers.IO){
-                BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+                BitmapFactory.decodeByteArray(this@toBitmap, 0, this@toBitmap.size)
             }
         }
 
-        suspend fun bitmapToBase64(bitmap: Bitmap): String {
+        suspend fun Bitmap.toBase64(): String {
             return withContext(Dispatchers.IO){
                 try {
                     val byteArrayOutputStream = ByteArrayOutputStream()
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream)
+                    this@toBase64.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream)
                     val byteArray = byteArrayOutputStream.toByteArray()
                     Base64.encodeToString(byteArray, Base64.DEFAULT)
                 }
@@ -131,16 +134,15 @@ class UtilityFunction {
             return String(compressedBytes)
         }*/
 
-        fun stringtobase64(inputString: String): String {
-            val trimmedLowerCaseString = inputString.trim().lowercase(Locale.getDefault())
-
+        fun String.toBase64(): String {
+            val trimmedLowerCaseString = this.trim().lowercase(Locale.getDefault())
             return Base64.encodeToString(trimmedLowerCaseString.toByteArray(), Base64.DEFAULT)
         }
 
-        suspend fun decodeBase64ToBitmap(base64String: String): Bitmap {
+        suspend fun String.fromBase64ToBitmap(): Bitmap {
             return withContext(Dispatchers.IO){
                 try{
-                    val imageBytes = Base64.decode(base64String, Base64.DEFAULT)
+                    val imageBytes = Base64.decode(this@fromBase64ToBitmap, Base64.DEFAULT)
                     BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
                 }
                 catch (exNull:NullPointerException)
@@ -158,7 +160,7 @@ class UtilityFunction {
         }
 
         fun validateMedicine(mfgDate: String, expDate: String): Boolean {
-            val dateFormat = SimpleDateFormat("MM/yyyy", Locale.getDefault())
+            val dateFormat = SimpleDateFormat(MEDICINE_DATE_FORMAT, Locale.getDefault())
             dateFormat.isLenient = false
 
             try {
@@ -227,7 +229,7 @@ class UtilityFunction {
 
 
         // Function to convert Bitmap to Uri
-        fun bitmapToUri(context: Context, bitmap: Bitmap): Uri? {
+        fun Bitmap.toUri(context: Context): Uri? {
             // Get the context's cache directory
             val cachePath = File(context.cacheDir, "images")
             cachePath.mkdirs()
@@ -237,7 +239,7 @@ class UtilityFunction {
             try {
                 // Compress the bitmap and write it to the temporary file
                 val stream = FileOutputStream(file)
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream)
+                this.compress(Bitmap.CompressFormat.JPEG, 50, stream)
                 stream.close()
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -253,16 +255,16 @@ class UtilityFunction {
             }
         }
 
-        fun getDeviceInformation(context: Context): HashMap<String, String>? {
+        fun Context.getDeviceInformation(): HashMap<String, String>? {
             try {
                 val deviceInfo = HashMap<String, String>()
 
                 // Device ID or Name
                 deviceInfo["deviceId"] = Build.ID
-                deviceInfo["deviceName"] = Build.MODEL
+                deviceInfo["deviceName"] = "${Build.MANUFACTURER} ${Build.MODEL}".trim()
 
                 // Device Type
-                val isTablet = context.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK >= Configuration.SCREENLAYOUT_SIZE_LARGE
+                val isTablet = this.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK >= Configuration.SCREENLAYOUT_SIZE_LARGE
                 deviceInfo["deviceType"] = if (isTablet) "Tablet" else "Phone"
 
                 // Device Operating System
@@ -271,7 +273,7 @@ class UtilityFunction {
 
                 // App Version
                 try {
-                    val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+                    val packageInfo = this.packageManager.getPackageInfo(this.packageName, 0)
                     deviceInfo["appVersion"] = packageInfo.versionName
                 } catch (e: PackageManager.NameNotFoundException) {
                     e.printStackTrace()
@@ -287,13 +289,13 @@ class UtilityFunction {
 
 
 
-        fun showToast(context: Context,message: String) {
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        fun Context.showToast(message: String) {
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
 
         // Function to get the Uri from ImageView
-        /*fun getImageUriFromImageView(context: Context,imageView: ImageView): Uri? {
-            val bitmap = (imageView.drawable as BitmapDrawable).bitmap
+        /*fun ImageView.toUri(context: Context): Uri? {
+            val bitmap = (this.drawable as BitmapDrawable).bitmap
             var imageUri: Uri? = null
             try {
                 val file = File(context.externalCacheDir, "${UUID.randomUUID()}.jpg")

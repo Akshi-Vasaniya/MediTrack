@@ -2,17 +2,45 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!--don't need to request-->
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!--need to request-->
     <uses-permission android:name="android.permission.CAMERA" />
+
+    <!--need to request (If your app targets Android 13 or higher).
+    If your app targets Android 12L (API level 32) or lower, you don’t need to request -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- If your app is used on a device that runs Android 9 or lower,
+    or if your app has temporarily opted out of scoped storage,
+    you must request the READ_EXTERNAL_STORAGE -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <!-- if your app targets Android 10 or lower, you must request the WRITE_EXTERNAL_STORAGE permission.
+     If your app targets Android 11 or higher,
+     you don’t need to request the WRITE_EXTERNAL_STORAGE permission to write to any file outside the app-specific directory. -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29"/>
+
+    <!--need to request (target Android 13 (API level 33) or later)-->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+
+    <!--don't need to request-->
     <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!--don't need to request-->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!--don't need to request-->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!--don't need to request-->
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+
+    <!-- need to request -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <!-- need to request -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application

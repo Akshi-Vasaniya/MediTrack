@@ -2,13 +2,16 @@ package com.example.meditrack.homeActivity.ocr
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.RectF
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.util.SparseIntArray
 import android.view.LayoutInflater
@@ -16,6 +19,7 @@ import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -27,18 +31,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.meditrack.R
 import com.example.meditrack.databinding.FragmentOCRBinding
-import com.example.meditrack.utility.UtilityFunction
+import com.example.meditrack.permissionsHandle.PermissionUtils.Companion.requestPermissions
+import com.example.meditrack.permissionsHandle.PermissionUtils.Companion.toCheckCameraAccess
+import com.example.meditrack.utility.UtilsFunctions.Companion.showToast
+import com.example.meditrack.utility.UtilsFunctions.Companion.toByteArray
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.coroutines.*
@@ -129,7 +130,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
                             Log.i(tAG, "cameraInfo.hasFlashUnit(): ${cameraInfo.hasFlashUnit()}")
                             cameraControl.enableTorch(cameraInfo.torchState.value == TorchState.OFF)
                         } else {
-                            showToast(getString(R.string.torch_not_available_msg))
+                            requireContext().showToast(getString(R.string.torch_not_available_msg))
                         }
 
                         cameraInfo.torchState.observe(requireActivity()) { torchState ->
@@ -152,15 +153,11 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
         init()
 
         binding.ocrCamera.setOnClickListener {
-            if (!allPermissionsGranted()) {
-                requestPermissions()
-            } else {
-                overlayView.clearOverlay()
-                binding.viewFinder.visibility = View.VISIBLE
-                binding.previewImage.visibility = View.GONE
-                binding.textInImageLayout.visibility = View.GONE
-                savedBitmap = null
-            }
+            overlayView.clearOverlay()
+            binding.viewFinder.visibility = View.VISIBLE
+            binding.previewImage.visibility = View.GONE
+            binding.textInImageLayout.visibility = View.GONE
+            savedBitmap = null
         }
         binding.ocrGallery.setOnClickListener {
             overlayView.clearOverlay()
@@ -181,7 +178,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
                     }
                     var scanImageByteArray: ByteArray? = null
                     var medName: String? = null
-                    val job1 = launch { scanImageByteArray = UtilityFunction.bitmapToByteArray(savedBitmap!!) }
+                    val job1 = launch { scanImageByteArray = savedBitmap!!.toByteArray() }
                     val job2 = launch { medName = bindSelectedMedName() }
 
                     job1.join()
@@ -227,10 +224,18 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
         recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
         // Request camera permissions
-        if (allPermissionsGranted()) {
+        if (requireContext().toCheckCameraAccess()) {
             startCamera()
         } else {
-            requestPermissions()
+            requireContext().requestPermissions(mutableListOf(Manifest.permission.CAMERA)){
+                if(it)
+                {
+                    startCamera()
+                }
+                else{
+                    showPermissionSettingsDialog(requireContext())
+                }
+            }
         }
 
         binding.apply {
@@ -248,7 +253,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
                         runTextRecognition(savedBitmap!!)
                     }
                     else -> {
-                        showToast(getString(R.string.camera_error_default_msg))
+                        requireContext().showToast(getString(R.string.camera_error_default_msg))
                     }
                 }
             }
@@ -260,7 +265,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
                 if (isTextValid(textToCopy.toString())) {
                     copyToClipboard(textToCopy)
                 } else {
-                    showToast(getString(R.string.no_text_found))
+                    requireContext().showToast(getString(R.string.no_text_found))
                 }
             }
 
@@ -269,7 +274,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
                 if (isTextValid(textToCopy)) {
                     shareText(textToCopy)
                 } else {
-                    showToast(getString(R.string.no_text_found))
+                    requireContext().showToast(getString(R.string.no_text_found))
                 }
             }*/
 
@@ -313,7 +318,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
                     Log.i("OCR Crop Image", "$requestCode")
                 }
             } catch (ex: Exception) {
-                showToast("Error")
+                requireContext().showToast("Error")
                 Log.i("OCR", "${ex.message}")
             }
 
@@ -409,7 +414,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
 
             }.addOnFailureListener { e ->
                 e.printStackTrace()
-                showToast(e.localizedMessage ?: getString(R.string.error_default_msg))
+                requireContext().showToast(e.localizedMessage ?: getString(R.string.error_default_msg))
             }
     }
 
@@ -482,7 +487,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
                         } else {
                             torchButton.setOnClickListener {
                                 Log.i(tAG,"torchButton.setOnClickListener: true")
-                                showToast(getString(R.string.torch_not_available_msg))
+                                requireContext().showToast(getString(R.string.torch_not_available_msg))
                             }
                         }
 
@@ -500,45 +505,12 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
 
 
             } catch (exc: Exception) {
-                showToast(getString(R.string.error_default_msg))
+                requireContext().showToast(getString(R.string.error_default_msg))
                 Log.e(tAG, "Use case binding failed", exc)
             }
 
         }, ContextCompat.getMainExecutor(requireActivity()))
 
-    }
-
-    private fun requestPermissions() {
-        Dexter.withContext(requireContext())
-            .withPermissions(
-                Manifest.permission.CAMERA
-                // Add more permissions if needed
-            )
-            .withListener(multiplePermissionsListener)
-            .check()
-    }
-
-    private val multiplePermissionsListener = object : MultiplePermissionsListener {
-        override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-            // Check if all permissions are granted
-            if (report != null && report.areAllPermissionsGranted()) {
-                // Permissions are granted, proceed with your logic
-                startCamera()
-            } else {
-                // At least one permission is denied
-                showToast(
-                    getString(R.string.permission_denied_msg)
-                )
-            }
-        }
-
-        override fun onPermissionRationaleShouldBeShown(
-            permissions: MutableList<PermissionRequest>?,
-            token: PermissionToken?
-        ) {
-            token?.continuePermissionRequest()
-            // You can show a rationale dialog here and call token.continuePermissionRequest() if the user agrees
-        }
     }
 
     /*private fun requestPermissions() {
@@ -557,23 +529,13 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
             if (allPermissionsGranted()) {
                 startCamera()
             } else {
-                showToast(
+                requireContext().showToast(
                     getString(R.string.permission_denied_msg)
                 )
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }*/
-
-    private fun allPermissionsGranted() = requiredPermissions.all {
-        ContextCompat.checkSelfPermission(
-            requireContext(), it
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show()
-    }
 
     private fun isTextValid(text: String?): Boolean {
         if (text == null)
@@ -595,7 +557,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
             ContextCompat.getSystemService(requireActivity(), ClipboardManager::class.java)
         val clip = ClipData.newPlainText("label", text)
         clipboard?.setPrimaryClip(clip)
-        showToast(getString(R.string.clipboard_text))
+        requireContext().showToast(getString(R.string.clipboard_text))
     }
 
     override fun onDestroy() {
@@ -620,5 +582,34 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
         Log.i("OCR Fragment", rect.toString())
     }
 
+    private val permissionActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (!requireContext().toCheckCameraAccess()){
+            showPermissionSettingsDialog(requireContext())
+        }
+        else{
+            startCamera()
+        }
+    }
+    fun showPermissionSettingsDialog(context: Context) {
+        val alertDialogBuilder = AlertDialog.Builder(context)
+        alertDialogBuilder.setCancelable(false)
+        alertDialogBuilder.setTitle("Camera Permission")
+        alertDialogBuilder.setMessage("Camera Permission are required for this app.")
+
+        alertDialogBuilder.setPositiveButton("Settings") { _, _ ->
+            // Open device settings for location
+            val settingsIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + context.packageName))
+            permissionActivityResultLauncher.launch(settingsIntent)
+            //context.startActivity(settingsIntent)
+        }
+
+        alertDialogBuilder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.dismiss()
+            requireActivity().finishAffinity()
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
 
 }

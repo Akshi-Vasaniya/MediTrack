@@ -23,7 +23,7 @@ import com.bumptech.glide.Glide
 import com.example.meditrack.R
 import com.example.meditrack.databinding.FragmentUpdateProfileImageBinding
 import com.example.meditrack.firebase.FBase
-import com.example.meditrack.utility.UtilityFunction
+import com.example.meditrack.utility.UtilsFunctions.Companion.toBitmap
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
@@ -204,7 +204,7 @@ class UpdateProfileImageFragment : Fragment() {
                         if (selectedImageUri != null) {
                             try {
                                 profileImageUri = selectedImageUri
-                                val bimapImage = UtilityFunction.uriToBitmap(requireActivity(), selectedImageUri)
+                                val bimapImage = selectedImageUri.toBitmap(requireContext())
                                 withContext(Dispatchers.Main){
                                     binding.imageViewProfile.setImageBitmap(bimapImage)
                                     changesMade = true

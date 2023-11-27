@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.example.meditrack.R
 import com.example.meditrack.homeActivity.reminder.recevier.ReminderReceiver
+import com.example.meditrack.utility.UtilsFunctions.Companion.TIME_FORMAT
 import com.google.android.material.textfield.TextInputEditText
 import java.text.SimpleDateFormat
 import java.util.*
@@ -119,7 +120,7 @@ class MedicineReminderDialog: DialogFragment() {
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.HOUR_OF_DAY, Hour)
         calendar.set(Calendar.MINUTE, Min)
-        val sdf = SimpleDateFormat("h:mm a", Locale.getDefault()) // Format for 12-hour time with AM/PM
+        val sdf = SimpleDateFormat(TIME_FORMAT, Locale.getDefault()) // Format for 12-hour time with AM/PM
         val formattedTime = sdf.format(calendar.time)
         reminderTimeEditText.text = formattedTime
     }

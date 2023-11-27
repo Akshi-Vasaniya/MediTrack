@@ -115,10 +115,6 @@ class SplashFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
-    private fun showToast(message: String) {
-        Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show()
-    }
-
     private fun gotoLoginFragment(){
         MainScope().launch(Dispatchers.Main)
         {

@@ -34,11 +34,13 @@ import com.example.meditrack.firebase.FBase
 import com.example.meditrack.homeActivity.reminder.notification.MedicineReminderDialog
 import com.example.meditrack.regularExpression.ListPattern
 import com.example.meditrack.regularExpression.MatchPattern.Companion.validate
-import com.example.meditrack.utility.UtilityFunction
-import com.example.meditrack.utility.UtilityFunction.Companion.bitmapToUri
-import com.example.meditrack.utility.UtilityFunction.Companion.getCurrentDate
-import com.example.meditrack.utility.UtilityFunction.Companion.getCurrentTime
-import com.example.meditrack.utility.UtilityFunction.Companion.stringNormalize
+import com.example.meditrack.utility.UtilsFunctions
+import com.example.meditrack.utility.UtilsFunctions.Companion.getCurrentDate
+import com.example.meditrack.utility.UtilsFunctions.Companion.getCurrentTime
+import com.example.meditrack.utility.UtilsFunctions.Companion.showToast
+import com.example.meditrack.utility.UtilsFunctions.Companion.stringNormalize
+import com.example.meditrack.utility.UtilsFunctions.Companion.toBitmap
+import com.example.meditrack.utility.UtilsFunctions.Companion.toUri
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.example.meditrack.utility.ownDialogs.MonthYearPickerDialog
 import com.google.android.material.chip.Chip
@@ -164,7 +166,7 @@ class AddMedicineFragment : Fragment() {
                     val mediName = async { fetchOCRMediName(bundle) }
                     val scanImageByteArray = async { fetchScanImageByteArray(bundle)}
                     viewModel.selectedMedNameText = mediName.await()
-                    viewModel.bimapMedImage = UtilityFunction.byteArrayToBitmap(scanImageByteArray.await()!!)
+                    viewModel.bimapMedImage = scanImageByteArray.await()!!.toBitmap()
                     runBlocking {
                         if(viewModel.selectedMedNameText!=null && viewModel.selectedMedNameText != "")
                         {
@@ -197,7 +199,7 @@ class AddMedicineFragment : Fragment() {
                         viewModel.mfgDate="${month}/${year}"
                         if(viewModel.expDate!=null)
                         {
-                            if(UtilityFunction.validateMedicine(viewModel.mfgDate!!,viewModel.expDate!!))
+                            if(UtilsFunctions.validateMedicine(viewModel.mfgDate!!,viewModel.expDate!!))
                             {
                                 fragmentMedicineStartdateTextInputEditText.setText(viewModel.mfgDate)
                                 binding.fragmentMedicineStartdateTextInputLayout.helperText=null
@@ -224,7 +226,7 @@ class AddMedicineFragment : Fragment() {
                         viewModel.expDate = "${month}/${year}"
                         if(viewModel.mfgDate!=null)
                         {
-                            if(UtilityFunction.validateMedicine(viewModel.mfgDate!!,viewModel.expDate!!))
+                            if(UtilsFunctions.validateMedicine(viewModel.mfgDate!!,viewModel.expDate!!))
                             {
                                 fragmentMedicineExpirydateTextInputEditText.setText(viewModel.expDate)
                                 binding.fragmentMedicineExpirydateTextInputLayout.helperText=null
@@ -432,18 +434,18 @@ class AddMedicineFragment : Fragment() {
                                         }
                                     }
                                     catch (e: JsonSyntaxException) {
-                                        showToast("JSON syntax error")
+                                        requireContext().showToast("JSON syntax error")
                                     } catch (e: JsonIOException) {
-                                        showToast("JSON I/O error")
+                                        requireContext().showToast("JSON I/O error")
                                     } catch (e: JsonParseException) {
-                                        showToast("JSON parsing error")
+                                        requireContext().showToast("JSON parsing error")
                                     }
                                     catch (e:NullPointerException){
-                                        showToast("server unavailable or respond null")
+                                        requireContext().showToast("server unavailable or respond null")
                                     }
                                     catch (e: Exception) {
                                         Log.e("JSOnDATA", "Error processing the JSON response", e)
-                                        showToast("An unexpected error occurred")
+                                        requireContext().showToast("An unexpected error occurred")
                                     }
                                 }
 
@@ -459,14 +461,14 @@ class AddMedicineFragment : Fragment() {
                             {
                                 withContext(Dispatchers.Main)
                                 {
-                                    showToast("server unavailable")
+                                    requireContext().showToast("server unavailable")
                                 }
 
                             }
                             else{
                                 withContext(Dispatchers.Main)
                                 {
-                                    showToast("Network issue")
+                                    requireContext().showToast("Network issue")
                                 }
 
                             }
@@ -474,7 +476,7 @@ class AddMedicineFragment : Fragment() {
                         } catch (e: Exception) {
                             withContext(Dispatchers.Main)
                             {
-                                showToast("An unexpected error occurred")
+                                requireContext().showToast("An unexpected error occurred")
                             }
                         }
                     }
@@ -526,7 +528,7 @@ class AddMedicineFragment : Fragment() {
                         Log.i("MedicineData","Medicine Notes : ${viewModel.medNotes}")
                         Log.i("MedicineData","Medicine Quantity : ${viewModel.medQuantity}")
 
-                        val imageUri = bitmapToUri(requireContext(),viewModel.bimapMedImage!!)
+                        val imageUri = viewModel.bimapMedImage!!.toUri(requireContext())
                         if(imageUri==null)
                         {
                             withContext(Dispatchers.Main)
@@ -568,7 +570,7 @@ class AddMedicineFragment : Fragment() {
                                         Toast.makeText(requireContext(),toastMessage,Toast.LENGTH_SHORT).show()
                                     }
                                     catch (ex:Exception){
-                                        showToast("Your Medicine added successfully, (No worry) Error at server side")
+                                        requireContext().showToast("Your Medicine added successfully, (No worry) Error at server side")
                                     }
 
 
@@ -618,7 +620,7 @@ class AddMedicineFragment : Fragment() {
                                         }
                                         catch (ex:Exception)
                                         {
-                                            showToast("Unexpected Error")
+                                            requireContext().showToast("Unexpected Error")
                                             Log.e("addOnSuccessListener","${ex.message}")
                                         }
                                     }
@@ -723,7 +725,7 @@ class AddMedicineFragment : Fragment() {
                         }
                         catch (ex:Exception)
                         {
-                            showToast("Unexpected Error")
+                            requireContext().showToast("Unexpected Error")
                         }
 
 
@@ -1248,10 +1250,6 @@ class AddMedicineFragment : Fragment() {
                                 && viewModel.selectedMedicineTimeOfDayType1.isNotEmpty()))
                 &&
                 (viewModel.selectedFreqTags== MedicineFrequency.DAILY || (viewModel.selectedFreqTags== MedicineFrequency.WEEKLY && viewModel.selectedWeekDayItem.isNotEmpty()))
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
     private fun isNetworkAvailable(context: Context): Boolean {

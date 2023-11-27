@@ -1,12 +1,16 @@
 package com.example.meditrack.mainActivity.register
 
+import android.Manifest
 import android.app.Activity.RESULT_OK
+import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -14,6 +18,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -25,11 +30,22 @@ import com.example.meditrack.databinding.FragmentRegistrationBinding
 import com.example.meditrack.exception.HandleException
 import com.example.meditrack.firebase.FBase
 import com.example.meditrack.homeActivity.medicine.addMedicine.AddMedicineFragment
+import com.example.meditrack.permissionsHandle.PermissionUtils.Companion.requestPermissions
+import com.example.meditrack.permissionsHandle.PermissionUtils.Companion.toCheckCameraAccess
+import com.example.meditrack.permissionsHandle.PermissionUtils.Companion.toCheckReadMediaImagesAccess
+import com.example.meditrack.permissionsHandle.PermissionUtils.Companion.toCheckReadStorageAccess
+import com.example.meditrack.permissionsHandle.PermissionUtils.Companion.toCheckWriteStorageAccess
 import com.example.meditrack.regularExpression.ListPattern
 import com.example.meditrack.regularExpression.MatchPattern.Companion.validate
-import com.example.meditrack.utility.UtilityFunction
-import com.example.meditrack.utility.UtilityFunction.Companion.uriToBitmap
+import com.example.meditrack.utility.UtilsFunctions.Companion.toBitmap
+import com.example.meditrack.utility.UtilsFunctions.Companion.toCircularBitmap
+import com.example.meditrack.utility.UtilsFunctions.Companion.toUri
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.coroutines.Dispatchers
@@ -234,12 +250,9 @@ class RegistrationFragment : Fragment() {
                         {
                             MainScope().launch(Dispatchers.IO) {
                                 try{
-                                    var imageString:String? = null
+                                    //var imageString:String? = null
                                     if(inputProfileImage!=null){
-                                        val imageUri = UtilityFunction.bitmapToUri(
-                                            requireContext(),
-                                            inputProfileImage!!
-                                        )
+                                        val imageUri = inputProfileImage!!.toUri(requireContext())
                                         uploadImageToFirebaseStorage(it.result?.user!!.uid,imageUri!!, object :
                                             AddMedicineFragment.UploadCallback {
                                             override fun onUploadSuccess(downloadUrl: String) {
@@ -295,29 +308,18 @@ class RegistrationFragment : Fragment() {
             }
 
             profileImage.setOnClickListener {
-                if (checkPermission()) {
+                if (requireContext().toCheckCameraAccess() && requireContext().toCheckReadStorageAccess() && requireContext().toCheckReadMediaImagesAccess()) {
                     //openImagePicker()
                     getContent.launch("image/*")
                 } else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                        requestPermissions(
-                            arrayOf(
-                                android.Manifest.permission.CAMERA,
-                                android.Manifest.permission.READ_MEDIA_IMAGES
-                            ),
-                            101
-                        )
+                    requireContext().requestPermissions(mutableListOf(Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.READ_MEDIA_IMAGES)){
+                        if (it) {
+                            getContent.launch("image/*")
+                        }
+                        else{
+                            showPermissionsSettingsDialog(requireContext())
+                        }
                     }
-                    else{
-                        requestPermissions(
-                            arrayOf(
-                                android.Manifest.permission.CAMERA,
-                                android.Manifest.permission.READ_EXTERNAL_STORAGE
-                            ),
-                            101
-                        )
-                    }
-
                 }
             }
         }
@@ -377,47 +379,36 @@ class RegistrationFragment : Fragment() {
                 !viewModel.inputConfirmPassword.isNullOrBlank())
     }
 
-    private fun checkPermission(): Boolean {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-        {
-            val cameraPermission = ContextCompat.checkSelfPermission(
-                requireContext(),
-                android.Manifest.permission.CAMERA
-            )
-            val readMediaImagesPermission = ContextCompat.checkSelfPermission(
-                requireContext(),
-                android.Manifest.permission.READ_MEDIA_IMAGES
-            )
-            return cameraPermission == PackageManager.PERMISSION_GRANTED &&
-                    readMediaImagesPermission == PackageManager.PERMISSION_GRANTED
+    fun showPermissionsSettingsDialog(context: Context) {
+        val alertDialogBuilder = AlertDialog.Builder(context)
+        alertDialogBuilder.setCancelable(false)
+        alertDialogBuilder.setTitle("Required Permission")
+        alertDialogBuilder.setMessage("Camera and other permissions are required for this app.")
+
+        alertDialogBuilder.setPositiveButton("Settings") { dialog, _ ->
+            // Open device settings for location
+            val settingsIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,Uri.parse("package:" + requireActivity().packageName))
+            //settingsIntent.flags=Intent.FLAG_ACTIVITY_NEW_TASK
+            activityResultLauncher.launch(settingsIntent)
+            dialog.dismiss()
+            //context.startActivity(settingsIntent)
+        }
+
+        alertDialogBuilder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.dismiss()
+            requireActivity().finishAffinity()
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+    private val activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (requireContext().toCheckCameraAccess() && requireContext().toCheckReadStorageAccess() && requireContext().toCheckReadMediaImagesAccess()) {
+            getContent.launch("image/*")
         }
         else{
-            val cameraPermission = ContextCompat.checkSelfPermission(
-                requireContext(),
-                android.Manifest.permission.CAMERA
-            )
-            val storagePermission = ContextCompat.checkSelfPermission(
-                requireContext(),
-                android.Manifest.permission.READ_EXTERNAL_STORAGE
-            )
-            return cameraPermission == PackageManager.PERMISSION_GRANTED &&
-                    storagePermission == PackageManager.PERMISSION_GRANTED
-        }
-
-
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == 101) {
-            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                //openImagePicker()
-                getContent.launch("image/*")
-            }
+            showPermissionsSettingsDialog(requireContext())
         }
     }
 
@@ -433,8 +424,8 @@ class RegistrationFragment : Fragment() {
                         if (selectedImageUri != null) {
                             try {
                                 binding.profileImage.setPadding(0, 0, 0, 0)
-                                inputProfileImage = uriToBitmap(requireActivity(),selectedImageUri)
-                                inputProfileImage = UtilityFunction.getCircularBitmap(inputProfileImage)
+                                inputProfileImage = selectedImageUri.toBitmap(requireContext())
+                                inputProfileImage = inputProfileImage.toCircularBitmap()
                                 withContext(Dispatchers.Main){
                                     binding.profileImage.setImageBitmap(inputProfileImage)
                                 }

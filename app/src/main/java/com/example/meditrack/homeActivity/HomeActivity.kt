@@ -25,8 +25,8 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.bumptech.glide.Glide
 import com.example.meditrack.R
-import com.example.meditrack.dataModel.dataClasses.UserData
 import com.example.meditrack.dataModel.dataClasses.SessData2.Companion.toUserSessionData
+import com.example.meditrack.dataModel.dataClasses.UserData
 import com.example.meditrack.dataModel.enumClasses.others.SessStatus
 import com.example.meditrack.databinding.ActivityHomeBinding
 import com.example.meditrack.firebase.FBase
@@ -52,7 +52,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var navView:NavigationView
     private lateinit var navHostFragment:NavHostFragment
     private val viewModel: HomeActivityViewModel by viewModels()
-    private lateinit var notificationManager: MediTrackNotificationManager
 
     /*val myToolbarImage: ImageView
         get() = findViewById(R.id.toolbar_profile_image)*/
@@ -72,10 +71,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val userName = headerView?.findViewById<TextView>(R.id.user_name_menu_header)
         val userEmail = headerView?.findViewById<TextView>(R.id.user_email_menu_header)
         val userImage = headerView?.findViewById<ImageView>(R.id.user_image_menu_header)
-
-        //notificationManager = MediTrackNotificationManager(this)
-
-
 
 
         /*val navigationView = findViewById<NavigationView>(R.id.nav_view)
@@ -117,13 +112,15 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         // Creating Channel to show notification
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                "1",
-                "Medicine Reminder",
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
             val notificationManager = getSystemService(NotificationManager::class.java)
-            notificationManager.createNotificationChannel(channel)
+            if (notificationManager.getNotificationChannel("1") == null) {
+                val channel = NotificationChannel(
+                    "1",
+                    "Medicine Reminder",
+                    NotificationManager.IMPORTANCE_DEFAULT
+                )
+                notificationManager.createNotificationChannel(channel)
+            }
         }
         MainScope().launch(Dispatchers.IO) {
             val userQuery = FBase.getUserDataQuery()
@@ -208,7 +205,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             if (snapshot != null) {
                 for (change in snapshot.documentChanges) {
                     when (change.type) {
-                        // Document modified
                         DocumentChange.Type.MODIFIED -> {
                             val modifiedDocument = change.document
                             val modifiedData = modifiedDocument.data
@@ -220,8 +216,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                     showSignOutAlert()
                                 }
                             }
-
-                            // Handle modified document
                         }
                         else -> {}
                     }

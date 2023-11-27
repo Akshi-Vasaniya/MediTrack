@@ -1,10 +1,16 @@
 package com.example.meditrack.homeActivity.home
 
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -13,6 +19,7 @@ import com.example.meditrack.R
 import com.example.meditrack.databinding.FragmentHomeBinding
 import com.example.meditrack.firebase.FirestorePaginationManager
 import com.example.meditrack.homeActivity.HomeActivity
+import com.example.meditrack.utility.MediTrackNotificationManager
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -29,6 +36,7 @@ class HomeFragment : Fragment() {
     //private lateinit var homeActivity: HomeActivity
     //private val tAG = "HomeFragment"
     private lateinit var progressDialog: CustomProgressDialog
+    //private lateinit var mediTrackNotificationManager: MediTrackNotificationManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,12 +52,15 @@ class HomeFragment : Fragment() {
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
         (activity as? HomeActivity)?.setNavigationDrawerSelection(R.id.nav_home)
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        //mediTrackNotificationManager.showNewLoginNotification("New Login Detected","A new login was detected on your account.")
         //homeActivity.getToolbarMenuLayout().visibility = View.VISIBLE
 
        /* val navigationView = activity?.findViewById<NavigationView>(R.id.nav_view)
@@ -303,6 +314,22 @@ class HomeFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         (activity as? HomeActivity)?.clearNavigationDrawerSelection(R.id.nav_home)
+    }
+
+    fun deleteAllNotificationChannels(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationManager = NotificationManagerCompat.from(context)
+
+            val notificationManagerCompat = NotificationManagerCompat.from(context)
+            //val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val notificationChannels = notificationManager.notificationChannels
+                for (channel in notificationChannels) {
+                    notificationManagerCompat.deleteNotificationChannel(channel.id)
+                }
+            }
+        }
     }
 
 }
