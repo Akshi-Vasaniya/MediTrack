@@ -49,6 +49,7 @@ class DevicesFragment : Fragment() {
     private var currentSessionData: SessData2?=null
     private var isLoading = false
     private val tAG = "DevicesFragment"
+    private var itemAdded=true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -120,7 +121,8 @@ class DevicesFragment : Fragment() {
                             DocumentChange.Type.ADDED -> {
                                 val addedDocument = change.document
                                 val addedData = addedDocument.data
-                                if(rowsArrayList.isEmpty()){
+                                if(itemAdded){
+                                    itemAdded=false
                                     return@addSnapshotListener
                                 }
                                 rowsArrayList.add(0,addedData.toUserSessionData(addedDocument.id))
@@ -153,9 +155,19 @@ class DevicesFragment : Fragment() {
                                                 }
                                                 if (rowsArrayList[i]?.sessionId == modifiedDocument.id) {
                                                     rowsArrayList[i] = modifiedData.toUserSessionData(modifiedDocument.id)
-                                                    withContext(Dispatchers.Main) {
-                                                        recyclerViewAdapter.notifyItemChanged(i)
+                                                    if(rowsArrayList[i]!!.status==SessStatus.LOGGED_OUT)
+                                                    {
+                                                        rowsArrayList.removeAt(i)
+                                                        withContext(Dispatchers.Main) {
+                                                            recyclerViewAdapter.notifyItemRemoved(i)
+                                                        }
                                                     }
+                                                    else{
+                                                        withContext(Dispatchers.Main) {
+                                                            recyclerViewAdapter.notifyItemChanged(i)
+                                                        }
+                                                    }
+
                                                     // Set the flag to true when the condition is met
                                                     conditionMetFlag.set(true)
                                                     // Cancel all other jobs
@@ -292,8 +304,15 @@ class DevicesFragment : Fragment() {
 
                 sessionDocRef.update(updates)
                     .addOnSuccessListener {
-                        rowsArrayList[position]!!.status = SessStatus.LOGGED_OUT
-                        recyclerViewAdapter.notifyItemChanged(position)
+                        try {
+                            rowsArrayList.removeAt(position)
+                            recyclerViewAdapter.notifyItemRemoved(position)
+                        }
+                        catch (ex:Exception)
+                        {
+                            ex.printStackTrace()
+                        }
+
                     }
                     .addOnFailureListener {
 
@@ -348,7 +367,6 @@ class DevicesFragment : Fragment() {
 
                         firestorePaginationManager.fetchNextBatch(currectSessionID,
                             onSuccess = { dataList ->
-
                                 if(dataList.isNotEmpty()){
                                     Log.i(tAG,"$dataList")
                                     isLoading = true

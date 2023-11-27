@@ -2,6 +2,7 @@ package com.example.meditrack.firebase
 
 import com.example.meditrack.dataModel.dataClasses.SessData2
 import com.example.meditrack.dataModel.dataClasses.SessData2.Companion.toUserSessionData
+import com.example.meditrack.dataModel.enumClasses.others.SessStatus
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QueryDocumentSnapshot
 
@@ -40,6 +41,10 @@ class FirestorePaginationManager {
                             continue
                         }
                         val data = (document.data).toUserSessionData(document.id)
+                        if(data.status==SessStatus.LOGGED_OUT)
+                        {
+                            continue
+                        }
                         // Add the data to the list
                         dataList.add(data)
                     }
