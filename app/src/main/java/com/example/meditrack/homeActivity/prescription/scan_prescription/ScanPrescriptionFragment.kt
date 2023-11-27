@@ -2,6 +2,7 @@ package com.example.meditrack.homeActivity.prescription.scan_prescription
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -22,12 +23,23 @@ class ScanPrescriptionFragment : Fragment() {
     private lateinit var binding: FragmentScanPrescriptionBinding
     private lateinit var progressDialog: CustomProgressDialog
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        for(i in 0 until menu.size()){
+            menu.getItem(i).isVisible = false
+        }
+
+        super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.fragment_scan_prescription, container, false)
         binding = FragmentScanPrescriptionBinding.bind(view)
+
+        setHasOptionsMenu(true)
+
         viewModel = ViewModelProvider(this)[ScanPrescriptionFragmentViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
         return binding.root

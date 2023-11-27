@@ -8,15 +8,18 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -30,6 +33,7 @@ import com.example.meditrack.dataModel.dataClasses.UserData
 import com.example.meditrack.dataModel.enumClasses.others.SessStatus
 import com.example.meditrack.databinding.ActivityHomeBinding
 import com.example.meditrack.firebase.FBase
+import com.example.meditrack.homeActivity.medicine.medicineStock.MedicineStockFragment
 import com.example.meditrack.mainActivity.MainActivity
 import com.example.meditrack.userSession.LocalSession
 import com.example.meditrack.userSession.SessionUtils
@@ -52,6 +56,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var navView:NavigationView
     private lateinit var navHostFragment:NavHostFragment
     private val viewModel: HomeActivityViewModel by viewModels()
+    private lateinit var notificationManager: MediTrackNotificationManager
+    private var currentFragment: Fragment? = null
 
     /*val myToolbarImage: ImageView
         get() = findViewById(R.id.toolbar_profile_image)*/
@@ -302,10 +308,33 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }*/
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+//        when (currentFragment) {
+//            is MedicineStockFragment -> menuInflater.inflate(R.menu.medicine_stock_options_menu, menu)
+//        }
+        menuInflater.inflate(R.menu.medicine_stock_options_menu, menu)
+        return true
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
+        when (item.itemId) {
+            R.id.action_select_all -> {
+                Toast.makeText(this, "Clicked Select all", Toast.LENGTH_SHORT).show()
+                return true
+            }
+            R.id.action_inverse_select -> {
+                Toast.makeText(this, "Clicked Inverse", Toast.LENGTH_SHORT).show()
+                return true
+            }
+            R.id.action_unselect_all -> {
+                Toast.makeText(this, "Clicked Unselect all", Toast.LENGTH_SHORT).show()
+                return true
+            }
+            R.id.action_delete_selection -> {
+                Toast.makeText(this, "Clicked Delete selection", Toast.LENGTH_SHORT).show()
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
         }
     }
 

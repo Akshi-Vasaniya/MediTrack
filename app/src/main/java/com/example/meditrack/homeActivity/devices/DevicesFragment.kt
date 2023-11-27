@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -51,12 +52,23 @@ class DevicesFragment : Fragment() {
     private val tAG = "DevicesFragment"
     private var itemAdded=true
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        for(i in 0 until menu.size()){
+            menu.getItem(i).isVisible = false
+        }
+
+        super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_devices, container, false)
         binding = FragmentDevicesBinding.bind(view)
+
+        setHasOptionsMenu(true)
+
         viewModel = ViewModelProvider(this)[DevicesViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
         firestorePaginationManager = FirestorePaginationManager()

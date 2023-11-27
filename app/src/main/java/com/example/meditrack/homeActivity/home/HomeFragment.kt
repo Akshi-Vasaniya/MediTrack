@@ -4,8 +4,8 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
@@ -17,7 +17,6 @@ import androidx.navigation.fragment.findNavController
 import com.caverock.androidsvg.SVG
 import com.example.meditrack.R
 import com.example.meditrack.databinding.FragmentHomeBinding
-import com.example.meditrack.firebase.FirestorePaginationManager
 import com.example.meditrack.homeActivity.HomeActivity
 import com.example.meditrack.utility.MediTrackNotificationManager
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
@@ -38,6 +37,14 @@ class HomeFragment : Fragment() {
     private lateinit var progressDialog: CustomProgressDialog
     //private lateinit var mediTrackNotificationManager: MediTrackNotificationManager
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        for(i in 0 until menu.size()){
+            menu.getItem(i).isVisible = false
+        }
+
+        super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -49,6 +56,9 @@ class HomeFragment : Fragment() {
         }*/
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         binding = FragmentHomeBinding.bind(view)
+
+        setHasOptionsMenu(true)
+
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
         (activity as? HomeActivity)?.setNavigationDrawerSelection(R.id.nav_home)

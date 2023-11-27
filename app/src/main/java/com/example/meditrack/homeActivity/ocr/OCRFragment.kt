@@ -15,6 +15,7 @@ import android.provider.Settings
 import android.util.Log
 import android.util.SparseIntArray
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
@@ -84,6 +85,14 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
     private lateinit var progressDialog: CustomProgressDialog
     private lateinit var imageAnalysis: ImageAnalysis
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        for(i in 0 until menu.size()){
+            menu.getItem(i).isVisible = false
+        }
+
+        super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -91,6 +100,9 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
         val view = inflater.inflate(R.layout.fragment_o_c_r, container, false)
         viewModel = ViewModelProvider(this)[OCRViewModel::class.java]
         binding = FragmentOCRBinding.bind(view)
+
+        setHasOptionsMenu(true)
+
         progressDialog = CustomProgressDialog(requireContext())
 
         overlayView = OverlayView(requireContext())
