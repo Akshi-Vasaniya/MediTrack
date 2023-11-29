@@ -1,12 +1,16 @@
 package com.example.meditrack.homeActivity.medicine.medicineStock
 
 import android.app.AlertDialog
+import android.app.Dialog
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,6 +20,8 @@ import com.example.meditrack.dataModel.ItemsViewModel
 import com.example.meditrack.databinding.FragmentMedicineStockBinding
 import com.example.meditrack.firebase.FBase
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
@@ -24,6 +30,7 @@ class MedicineStockFragment : Fragment() {
     private lateinit var medicineAdapter: MedicineStockItemAdapter
     private val medicineList = ArrayList<ItemsViewModel>()
     private lateinit var dialog: View
+    private lateinit var medFilterDialog: View
     private lateinit var dropDown: Spinner
     private val tAG = "MedicineStockfragment"
     private lateinit var customAdapter: ArrayAdapter<String>
@@ -44,9 +51,54 @@ class MedicineStockFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_medicine_stock, container, false)
         binding = FragmentMedicineStockBinding.bind(view)
+
         viewModel = ViewModelProvider(this)[MedicineStockViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
         medicineList.clear()
+
+        /*val inflater = requireActivity().layoutInflater
+        medFilterDialog = inflater.inflate(R.layout.medicine_stock_filter_layout, null)
+
+        val sortByChipGroup: ChipGroup = medFilterDialog.findViewById(R.id.sortByChipGroup)
+
+        val chipValues = listOf("Alphabetical", "Expiry Date", "Time to expire")
+        for (value in chipValues) {
+            val chip = Chip(requireContext())
+            chip.text = value
+            chip.isCheckable = true
+            chip.isChecked = true
+
+            sortByChipGroup.addView(chip)
+        }
+
+        val resetBtn: Button = medFilterDialog.findViewById(R.id.btnReset)
+        resetBtn.setOnClickListener {
+            sortByChipGroup.clearCheck()
+        }
+        val applyBtn: Button = medFilterDialog.findViewById(R.id.btnApply)
+        applyBtn.setOnClickListener {
+            val selectedChipId = sortByChipGroup.checkedChipId
+            if (selectedChipId != View.NO_ID) {
+                val selectedChip: Chip = medFilterDialog.findViewById(selectedChipId)
+                val selectedValue = selectedChip.text.toString()
+                // Do something with the selected value
+                Toast.makeText(requireContext(),"Selected ${selectedValue}",Toast.LENGTH_SHORT)
+            }
+        }
+
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(medFilterDialog)
+
+        val closeButton = dialog.findViewById<ImageButton>(R.id.filterCloseButton)
+        closeButton.setOnClickListener { dialog.dismiss() }
+
+        // Add animation
+        dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation*/
+
+        binding.filterAndSortIcon.setOnClickListener {
+            openFilterAndSortDialog()
+        }
+
         // Drop Down
         val items = arrayOf("Inventory", "Expired", "Deleted")
         customAdapter = object : ArrayAdapter<String>(
@@ -96,6 +148,106 @@ class MedicineStockFragment : Fragment() {
             }
         }
         return view
+    }
+
+    private fun openFilterAndSortDialog(){
+        val inflater = requireActivity().layoutInflater
+        medFilterDialog = inflater.inflate(R.layout.medicine_stock_filter_layout, null)
+
+        val sortByChipGroup: ChipGroup = medFilterDialog.findViewById(R.id.sortByChipGroup)
+        val applyFiltersChipGroup: ChipGroup = medFilterDialog.findViewById(R.id.applyFiltersChipGroup)
+
+        val sortChipValues = listOf("Alphabetical", "Expiry Date", "Time to expire")
+        for (sortByChipValue in sortChipValues) {
+            val sortChip = Chip(requireContext())
+            sortChip.text = sortByChipValue
+            sortChip.isCheckable = true
+            sortChip.isChecked = false
+
+            sortByChipGroup.addView(sortChip)
+        }
+
+        val applyFiltersChipValues = listOf("Inventory", "Expired", "Deleted")
+        for (applyFilterChipValue in applyFiltersChipValues) {
+            val applyFilterChip = Chip(requireContext())
+            applyFilterChip.text = applyFilterChipValue
+            applyFilterChip.isCheckable = true
+            applyFilterChip.isChecked = false
+
+            applyFiltersChipGroup.addView(applyFilterChip)
+        }
+
+        val resetBtn: Button = medFilterDialog.findViewById(R.id.btnReset)
+
+        val initialBackground = ContextCompat.getDrawable(requireContext(), R.drawable.custom_filter_reset_button_background)
+        resetBtn.background = initialBackground
+
+        resetBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.coffeetype))
+
+        resetBtn.setOnTouchListener { _, motionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    // Change the text color when the button is pressed
+                    resetBtn.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    // Restore the initial text color when the button is released or touch is canceled
+                    resetBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.coffeetype))
+                }
+            }
+            // Return false to allow onClickListener to handle the click event
+            false
+        }
+
+// Set a dummy onFocusChangeListener to make the button focusable
+        resetBtn.onFocusChangeListener = View.OnFocusChangeListener { _, _ -> }
+
+// Set the background back to initial state when focus is lost
+        resetBtn.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                resetBtn.backgroundTintList = null
+                resetBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.coffeetype))
+            }
+        }
+
+        resetBtn.setOnClickListener {
+            sortByChipGroup.clearCheck()
+            applyFiltersChipGroup.clearCheck()
+        }
+
+        val applyBtn: Button = medFilterDialog.findViewById(R.id.btnApply)
+        applyBtn.setOnClickListener {
+            val selectedSortChipId = sortByChipGroup.checkedChipId
+            val selectedApplyFilterChipId = applyFiltersChipGroup.checkedChipId
+
+            if (selectedSortChipId != View.NO_ID || selectedApplyFilterChipId != View.NO_ID) {
+                val selectedSortChip: Chip = medFilterDialog.findViewById(selectedSortChipId)
+                val selectedSortChipValue = selectedSortChip.text.toString()
+
+                val selectedApplyFilterChip: Chip = medFilterDialog.findViewById(selectedApplyFilterChipId)
+                val selectedApplyFilterChipValue = selectedApplyFilterChip.text.toString()
+
+                // Do something with the selected value
+                Toast.makeText(requireContext(),"Selected $selectedSortChipValue",Toast.LENGTH_SHORT)
+                Toast.makeText(requireContext(),"Selected $selectedApplyFilterChipValue",Toast.LENGTH_SHORT)
+            }
+        }
+
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(medFilterDialog)
+
+        val width = resources.displayMetrics.widthPixels * 1.0 // Adjust the percentage as needed
+        val params = dialog.window?.attributes
+        params?.width = width.toInt()
+        dialog.window?.attributes = params
+
+        val closeButton = dialog.findViewById<ImageButton>(R.id.filterCloseButton)
+        closeButton.setOnClickListener { dialog.dismiss() }
+
+        // Add animation
+//        dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
+
+        dialog.show()
     }
 
     private fun addMedicineInRecycleView(filter: MedicineFilter){

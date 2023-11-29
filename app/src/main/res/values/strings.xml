@@ -77,6 +77,13 @@
     <string name="Capsules_Dec">The active part of the medicine is contained inside a plastic shell that dissolves slowly in the stomach. You can take some capsules apart and mix the contents with your child’s favourite food. Others need to be swallowed whole, so the medicine isn’t absorbed until the stomach acid breaks down the capsule shell.</string>
     <string name="Liquid_Dec">The active part of the medicine is combined with a liquid to make it easier to take or better absorbed. A liquid may also be called a ‘mixture’, ‘solution’ or ‘syrup’. Many common liquids are now available without any added colouring or sugar.</string>
 
+    <string name="medicine_filter_title">Sort &amp; Filter</string>
+    <string name="filter_sheet_label_sort_by">Sort by</string>
+    <string name="filter_sheet_label_filter">Apply Filters</string>
+    <string name="action_apply">Apply</string>
+    <string name="action_reset_all">Reset All</string>
+    <string name="filterandsorttext">Filter&amp;Sort</string>
+
     <string name="about_project_details">Personalized Medicine Track Mobile Application</string>
 
     <string name="college_details">

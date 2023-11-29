@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingVertical="12dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_minus5sdp"
+        android:text="@string/filterandsorttext"
+        android:textStyle="bold"
+        android:textSize="@dimen/_15sdp"
+        android:textColor="@color/prusianblue"
+        android:fontFamily="@font/comfortaa_bold"
+        android:layout_centerHorizontal="true"/>
+
+    <ImageButton
+        android:id="@+id/filterCloseButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_12sdp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Close Button"
+        android:src="@drawable/ic_close"
+        style="@style/AdditionalDetailsDownArrow"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/filterCloseButton">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/_12sdp">
+
+                <!-- Sort by section -->
+                <TextView
+                    android:id="@+id/textSortBy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Sort by"
+                    android:fontFamily="@font/comfortaa_bold"
+                    android:paddingVertical="10dp"/>
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/sortByChipGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_minus8sdp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="@dimen/_10sdp"
+                    android:background="#CCCCCC"/>
+
+                <!-- Apply Filters section -->
+                <TextView
+                    android:id="@+id/textApplyFilters"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Apply Filters"
+                    android:fontFamily="@font/comfortaa_bold"
+                    android:paddingVertical="10dp"/>
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/applyFiltersChipGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_minus8sdp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="@dimen/_10sdp"
+                    android:background="#CCCCCC"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/_10sdp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnReset"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_marginBottom="@dimen/_20sdp"
+                        android:layout_marginHorizontal="@dimen/_12sdp"
+                        android:layout_height="@dimen/_32sdp"
+                        android:textColor="@color/coffeetype"
+                        android:textSize="@dimen/_10sdp"
+                        android:fontFamily="@font/comfortaa_bold"
+                        android:background="@drawable/custom_filter_reset_button_background"
+                        app:backgroundTint="@color/coffeetype"
+                        android:text="Reset"/>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="@dimen/_32sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="#CCCCCC"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnApply"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_marginBottom="@dimen/_20sdp"
+                        android:layout_marginHorizontal="@dimen/_12sdp"
+                        android:layout_height="@dimen/_32sdp"
+                        android:text="Apply"
+                        android:textSize="@dimen/_10sdp"
+                        android:fontFamily="@font/comfortaa_bold"
+                        app:backgroundTint="@null"
+                        android:background="@drawable/button_background"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+
+</RelativeLayout>
