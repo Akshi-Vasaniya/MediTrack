@@ -2,7 +2,6 @@ package com.example.meditrack.homeActivity.medicine.medicineStock
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
+import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,6 +22,7 @@ import com.example.meditrack.firebase.FBase
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
@@ -154,15 +155,26 @@ class MedicineStockFragment : Fragment() {
         val inflater = requireActivity().layoutInflater
         medFilterDialog = inflater.inflate(R.layout.medicine_stock_filter_layout, null)
 
-        val sortByChipGroup: ChipGroup = medFilterDialog.findViewById(R.id.sortByChipGroup)
-        val applyFiltersChipGroup: ChipGroup = medFilterDialog.findViewById(R.id.applyFiltersChipGroup)
+        val filterDialog = Dialog(requireContext())
+        filterDialog.setContentView(medFilterDialog)
+
+        val width = resources.displayMetrics.widthPixels * 1.0 // Adjust the percentage as needed
+        val params = filterDialog.window?.attributes
+        params?.width = width.toInt()
+        filterDialog.window?.attributes = params
+
+//        val sortByChipGroup: ChipGroup = medFilterDialog.findViewById(R.id.sortByChipGroup)
+//        val applyFiltersChipGroup: ChipGroup = medFilterDialog.findViewById(R.id.applyFiltersChipGroup)
+
+        val sortByChipGroup: ChipGroup = filterDialog.findViewById(R.id.sortByChipGroup)
+        val applyFiltersChipGroup: ChipGroup = filterDialog.findViewById(R.id.applyFiltersChipGroup)
 
         val sortChipValues = listOf("Alphabetical", "Expiry Date", "Time to expire")
         for (sortByChipValue in sortChipValues) {
             val sortChip = Chip(requireContext())
             sortChip.text = sortByChipValue
             sortChip.isCheckable = true
-            sortChip.isChecked = false
+            sortChip.isClickable = true
 
             sortByChipGroup.addView(sortChip)
         }
@@ -172,9 +184,44 @@ class MedicineStockFragment : Fragment() {
             val applyFilterChip = Chip(requireContext())
             applyFilterChip.text = applyFilterChipValue
             applyFilterChip.isCheckable = true
-            applyFilterChip.isChecked = false
+            applyFilterChip.isClickable = true
 
             applyFiltersChipGroup.addView(applyFilterChip)
+        }
+
+        val applyBtn: Button = medFilterDialog.findViewById(R.id.btnApply)
+        applyBtn.setOnClickListener {
+//            Log.d("FilterDialog", "Apply button clicked")
+
+            val selectedSortByChips = sortByChipGroup.children.filter {
+                (it as Chip).isChecked
+            }.map {
+                (it as Chip).text.toString()
+            }.toList()
+
+            val selectedApplyFiltersChips = applyFiltersChipGroup.children.filter {
+                (it as Chip).isChecked
+            }.map {
+                (it as Chip).text.toString()
+            }.toList()
+
+            val allSelectedChips = selectedSortByChips + selectedApplyFiltersChips
+//            val selectedChipsString = allSelectedChips.joinToString(", ")
+//            val selectedChipsString = if (allSelectedChips.isEmpty()) {
+//                "No chips are selected"
+//            } else {
+//                allSelectedChips.joinToString(", ")
+//            }
+            if(allSelectedChips.isEmpty()){
+                val snackbar = Snackbar.make(requireView(),"No chips are selected",Snackbar.LENGTH_LONG)
+                snackbar.show()
+            } else{
+                val selectedChipsString = allSelectedChips.joinToString(", ")
+                val snackbar = Snackbar.make(requireView(),"Selected Chips: $selectedChipsString",Snackbar.LENGTH_LONG)
+                snackbar.show()
+            }
+
+//            Log.i("FilterDialog", "openFilterAndSortDialog: $selectedSortByChips")
         }
 
         val resetBtn: Button = medFilterDialog.findViewById(R.id.btnReset)
@@ -215,39 +262,13 @@ class MedicineStockFragment : Fragment() {
             applyFiltersChipGroup.clearCheck()
         }
 
-        val applyBtn: Button = medFilterDialog.findViewById(R.id.btnApply)
-        applyBtn.setOnClickListener {
-            val selectedSortChipId = sortByChipGroup.checkedChipId
-            val selectedApplyFilterChipId = applyFiltersChipGroup.checkedChipId
-
-            if (selectedSortChipId != View.NO_ID || selectedApplyFilterChipId != View.NO_ID) {
-                val selectedSortChip: Chip = medFilterDialog.findViewById(selectedSortChipId)
-                val selectedSortChipValue = selectedSortChip.text.toString()
-
-                val selectedApplyFilterChip: Chip = medFilterDialog.findViewById(selectedApplyFilterChipId)
-                val selectedApplyFilterChipValue = selectedApplyFilterChip.text.toString()
-
-                // Do something with the selected value
-                Toast.makeText(requireContext(),"Selected $selectedSortChipValue",Toast.LENGTH_SHORT)
-                Toast.makeText(requireContext(),"Selected $selectedApplyFilterChipValue",Toast.LENGTH_SHORT)
-            }
-        }
-
-        val dialog = Dialog(requireContext())
-        dialog.setContentView(medFilterDialog)
-
-        val width = resources.displayMetrics.widthPixels * 1.0 // Adjust the percentage as needed
-        val params = dialog.window?.attributes
-        params?.width = width.toInt()
-        dialog.window?.attributes = params
-
-        val closeButton = dialog.findViewById<ImageButton>(R.id.filterCloseButton)
-        closeButton.setOnClickListener { dialog.dismiss() }
+        val closeButton = filterDialog.findViewById<ImageButton>(R.id.filterCloseButton)
+        closeButton.setOnClickListener { filterDialog.dismiss() }
 
         // Add animation
 //        dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
 
-        dialog.show()
+        filterDialog.show()
     }
 
     private fun addMedicineInRecycleView(filter: MedicineFilter){
