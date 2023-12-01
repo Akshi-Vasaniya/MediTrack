@@ -59,6 +59,8 @@
                             android:textColor="@color/prusianblue"/>
                     </LinearLayout>
                 </LinearLayout>
+
+
 <!--                <Spinner-->
 <!--                    android:id="@+id/dropdownSpinner"-->
 <!--                    android:layout_width="wrap_content"-->

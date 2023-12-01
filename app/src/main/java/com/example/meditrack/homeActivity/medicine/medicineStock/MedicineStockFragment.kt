@@ -93,21 +93,6 @@ class MedicineStockFragment : Fragment() {
             // Attach the custom adapter to the Spinner
 //            dropdownSpinner.adapter = customAdapter
             addMedicineInRecycleView("INVENTORY")
-
-////            dropdownSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-////                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-////                    when (position) {
-////                        0 -> selectedFilter = MedicineFilter.INVENTORY
-////                        1 -> selectedFilter = MedicineFilter.EXPIRED
-////                        2 -> selectedFilter = MedicineFilter.DELETED
-////                    }
-//////                    addMedicineInRecycleView(selectedFilter)
-////                }
-//
-//                override fun onNothingSelected(p0: AdapterView<*>?) {
-//                    TODO("Not yet implemented")
-//                }
-//            }
         }
         return view
     }
