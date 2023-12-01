@@ -84,6 +84,8 @@
     <string name="action_reset_all">Reset All</string>
     <string name="filterandsorttext">Filter&amp;Sort</string>
 
+    <string name="notificationpicktime">Time (HH:MM:SS AM/PM)</string>
+
     <string name="about_project_details">Personalized Medicine Track Mobile Application</string>
 
     <string name="college_details">

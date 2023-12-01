@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.TextView
@@ -32,6 +33,10 @@ class MedicineReminderDialog(val reqActivity: Activity): DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = reqActivity.layoutInflater
         dialog = inflater.inflate(R.layout.addmedicine_reminder_dialogbox_layout, null)
+
+//        val desiredWidth = resources.getDimensionPixelSize(com.intuit.sdp.R.dimen._200sdp)
+//        val layoutParams = ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
+//        dialog.layoutParams = layoutParams
 
         val medicineName: TextInputEditText = dialog.findViewById(R.id.add_medi_name_editText)
         reminderTimeEditText = dialog.findViewById(R.id.showSetReminderTime)

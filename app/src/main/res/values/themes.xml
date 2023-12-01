@@ -5,6 +5,11 @@
         <item name="colorPrimary">@color/prusianblue</item>
         <item name="colorPrimaryVariant">@color/prusianblue</item>
         <item name="colorOnPrimary">@color/white</item>
+
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/prusianblue</item>
+        <item name="colorSecondaryVariant">@color/prusianblue</item>
+        <item name="colorOnSecondary">@color/white</item>
         <!-- Status bar color. -->
         <!--<item name="android:statusBarColor">@color/white</item>
         <item name="android:windowLightStatusBar">true</item>-->
