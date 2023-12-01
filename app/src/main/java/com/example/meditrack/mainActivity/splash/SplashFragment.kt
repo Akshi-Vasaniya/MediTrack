@@ -61,8 +61,6 @@ class SplashFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        binding.mediIcon.setSVG(viewModel.getAppSVG(resources))
-
         val fadeIn = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
         binding.mediIcon.startAnimation(fadeIn)
         binding.welcomeMsg.startAnimation(fadeIn)

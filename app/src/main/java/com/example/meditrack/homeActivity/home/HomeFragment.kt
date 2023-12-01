@@ -1,6 +1,5 @@
 package com.example.meditrack.homeActivity.home
 
-import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
@@ -8,22 +7,17 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultLauncher
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.caverock.androidsvg.SVG
 import com.example.meditrack.R
 import com.example.meditrack.databinding.FragmentHomeBinding
 import com.example.meditrack.homeActivity.HomeActivity
-import com.example.meditrack.utility.MediTrackNotificationManager
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 class HomeFragment : Fragment() {
@@ -195,10 +189,6 @@ class HomeFragment : Fragment() {
                 })
             }*/
             MainScope().launch(Dispatchers.IO) {
-                val addMedicineSVG = SVG.getFromResource(resources, R.raw.add_medicine)
-                //val addPrescriptionSVG = SVG.getFromResource(resources, R.raw.add_prescription)
-                val checkStockMedicineSVG = SVG.getFromResource(resources, R.raw.check_stock_medicine)
-                val medicineSuggestionSVG = SVG.getFromResource(resources, R.raw.medicine_sugestion)
 
                 /*val sharedPreferences = requireActivity().getSharedPreferences("UserData", Context.MODE_PRIVATE)
                 val userData = User(
@@ -235,13 +225,7 @@ class HomeFragment : Fragment() {
                     }
 
                 }*/
-                withContext(Dispatchers.Main){
-                    /*menuLayout.usernameTxt.text=requireActivity().getString(R.string.full_name,userData.name,userData.surname)*/
-                    addMedicineImageView.setSVG(addMedicineSVG)
-//                    addPrescriptionImageView.setSVG(addPrescriptionSVG)
-                    checkStockMedicinesImageView.setSVG(checkStockMedicineSVG)
-                    medicineSuggestionsImageView.setSVG(medicineSuggestionSVG)
-                }
+
             }
 
             /*menuLayout.slidingMenu.setOnClickListener {  }
