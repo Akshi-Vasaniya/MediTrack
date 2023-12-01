@@ -35,7 +35,8 @@ class MedicineStockFragment : Fragment() {
     private lateinit var dropDown: Spinner
     private val tAG = "MedicineStockfragment"
     private lateinit var customAdapter: ArrayAdapter<String>
-    private var selectedFilter: MedicineFilter = MedicineFilter.INVENTORY
+//    private var selectedFilter: MedicineFilter = MedicineFilter.INVENTORY
+    private var currentSortType: SortType = SortType.NONE
 
 
     companion object {
@@ -158,6 +159,16 @@ class MedicineStockFragment : Fragment() {
                 val selectedChipsString = allSelectedChips.joinToString(", ")
 //                val snackbar = Snackbar.make(requireView(),"Selected Chips: $selectedChipsString",Snackbar.LENGTH_LONG)
 //                snackbar.show()
+
+                // Sort
+                if(selectedSortByChips.isNotEmpty()){
+                    if(selectedSortByChips.contains("Alphabetical")) {
+                        currentSortType = SortType.ALPHABETICAL
+                    } else {
+                        currentSortType = SortType.NONE
+                    }
+                }
+
                 if(selectedApplyFiltersChips.isNotEmpty()){
                     medicineList.clear()
                     updateRecyclerView(medicineList)
@@ -229,6 +240,9 @@ class MedicineStockFragment : Fragment() {
                         for (document in querySnapshot) {
                             if((document.get("mediDeleted").toString() == "No" || document.get("mediDeleted").toString() == "NO") && !isExpired(document.get("expDate").toString())){
                                 medicineList.add(ItemsViewModel(document.id,document.get("medName").toString(), document.get("expDate").toString()))
+                                if(currentSortType == SortType.ALPHABETICAL){
+                                    medicineList.sortBy { it.medicine_name }
+                                }
                                 updateRecyclerView(medicineList)
                                 medicineAdapter.notifyDataSetChanged()
                             }
@@ -238,6 +252,9 @@ class MedicineStockFragment : Fragment() {
                         for (document in querySnapshot) {
                             if(isExpired(document.get("expDate").toString()) && (document.get("mediDeleted").toString() == "No" || document.get("mediDeleted").toString() == "NO")){
                                 medicineList.add(ItemsViewModel(document.id,document.get("medName").toString(), document.get("expDate").toString()))
+                                if(currentSortType == SortType.ALPHABETICAL){
+                                    medicineList.sortBy { it.medicine_name }
+                                }
                                 updateRecyclerView(medicineList)
                                 medicineAdapter.notifyDataSetChanged()
                             }
@@ -247,7 +264,9 @@ class MedicineStockFragment : Fragment() {
                         for (document in querySnapshot) {
                             if((document.get("mediDeleted").toString() == "Yes") || (document.get("mediDeleted").toString() == "YES")){
                                 medicineList.add(ItemsViewModel(document.id,document.get("medName").toString(), document.get("expDate").toString()))
-
+                                if(currentSortType == SortType.ALPHABETICAL){
+                                    medicineList.sortBy { it.medicine_name }
+                                }
                                 updateRecyclerView(medicineList)
                                 medicineAdapter.notifyDataSetChanged()
                             }
@@ -363,9 +382,13 @@ class MedicineStockFragment : Fragment() {
             Toast.makeText(requireContext(), "Fill up the all details", Toast.LENGTH_SHORT).show()
         }
     }
-
-
 }
+
+enum class SortType {
+    ALPHABETICAL,
+    NONE
+}
+
 
 enum class MedicineFilter{
     INVENTORY, EXPIRED, DELETED
