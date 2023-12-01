@@ -312,7 +312,6 @@ class AddMedicineFragment : Fragment() {
 
             fragmentMedicineQuantityTextInputEditText.addTextChangedListener(object :TextWatcher{
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
                     try {
                         viewModel.medQuantity = s.toString().toInt()
                         fragmentMedicineQuantityTextInputLayout.helperText=null

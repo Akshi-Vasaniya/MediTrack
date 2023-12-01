@@ -57,46 +57,7 @@ class MedicineStockFragment : Fragment() {
         progressDialog = CustomProgressDialog(requireContext())
         medicineList.clear()
 
-        /*val inflater = requireActivity().layoutInflater
-        medFilterDialog = inflater.inflate(R.layout.medicine_stock_filter_layout, null)
-
-        val sortByChipGroup: ChipGroup = medFilterDialog.findViewById(R.id.sortByChipGroup)
-
-        val chipValues = listOf("Alphabetical", "Expiry Date", "Time to expire")
-        for (value in chipValues) {
-            val chip = Chip(requireContext())
-            chip.text = value
-            chip.isCheckable = true
-            chip.isChecked = true
-
-            sortByChipGroup.addView(chip)
-        }
-
-        val resetBtn: Button = medFilterDialog.findViewById(R.id.btnReset)
-        resetBtn.setOnClickListener {
-            sortByChipGroup.clearCheck()
-        }
-        val applyBtn: Button = medFilterDialog.findViewById(R.id.btnApply)
-        applyBtn.setOnClickListener {
-            val selectedChipId = sortByChipGroup.checkedChipId
-            if (selectedChipId != View.NO_ID) {
-                val selectedChip: Chip = medFilterDialog.findViewById(selectedChipId)
-                val selectedValue = selectedChip.text.toString()
-                // Do something with the selected value
-                Toast.makeText(requireContext(),"Selected ${selectedValue}",Toast.LENGTH_SHORT)
-            }
-        }
-
-        val dialog = Dialog(requireContext())
-        dialog.setContentView(medFilterDialog)
-
-        val closeButton = dialog.findViewById<ImageButton>(R.id.filterCloseButton)
-        closeButton.setOnClickListener { dialog.dismiss() }
-
-        // Add animation
-        dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation*/
-
-        binding.filterAndSortIcon.setOnClickListener {
+        binding.innerFilterAndSortLayout.setOnClickListener {
             openFilterAndSortDialog()
         }
 
@@ -122,7 +83,7 @@ class MedicineStockFragment : Fragment() {
             }
 
         }
-        dropDown = view.findViewById(R.id.dropdownSpinner)
+//        dropDown = view.findViewById(R.id.dropdownSpinner)
         binding.apply {
             medicineListView.layoutManager = LinearLayoutManager(requireContext())
             // On edit or delete
@@ -130,23 +91,23 @@ class MedicineStockFragment : Fragment() {
             // Set the dropdown layout style
             customAdapter.setDropDownViewResource(R.layout.custom_spinner_item)
             // Attach the custom adapter to the Spinner
-            dropdownSpinner.adapter = customAdapter
-            addMedicineInRecycleView(MedicineFilter.INVENTORY)
+//            dropdownSpinner.adapter = customAdapter
+            addMedicineInRecycleView("INVENTORY")
 
-            dropdownSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-                    when (position) {
-                        0 -> selectedFilter = MedicineFilter.INVENTORY
-                        1 -> selectedFilter = MedicineFilter.EXPIRED
-                        2 -> selectedFilter = MedicineFilter.DELETED
-                    }
-                    addMedicineInRecycleView(selectedFilter)
-                }
-
-                override fun onNothingSelected(p0: AdapterView<*>?) {
-                    TODO("Not yet implemented")
-                }
-            }
+////            dropdownSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+////                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+////                    when (position) {
+////                        0 -> selectedFilter = MedicineFilter.INVENTORY
+////                        1 -> selectedFilter = MedicineFilter.EXPIRED
+////                        2 -> selectedFilter = MedicineFilter.DELETED
+////                    }
+//////                    addMedicineInRecycleView(selectedFilter)
+////                }
+//
+//                override fun onNothingSelected(p0: AdapterView<*>?) {
+//                    TODO("Not yet implemented")
+//                }
+//            }
         }
         return view
     }
@@ -179,7 +140,7 @@ class MedicineStockFragment : Fragment() {
             sortByChipGroup.addView(sortChip)
         }
 
-        val applyFiltersChipValues = listOf("Inventory", "Expired", "Deleted")
+        val applyFiltersChipValues = listOf("INVENTORY", "EXPIRED", "DELETED")
         for (applyFilterChipValue in applyFiltersChipValues) {
             val applyFilterChip = Chip(requireContext())
             applyFilterChip.text = applyFilterChipValue
@@ -191,8 +152,6 @@ class MedicineStockFragment : Fragment() {
 
         val applyBtn: Button = medFilterDialog.findViewById(R.id.btnApply)
         applyBtn.setOnClickListener {
-//            Log.d("FilterDialog", "Apply button clicked")
-
             val selectedSortByChips = sortByChipGroup.children.filter {
                 (it as Chip).isChecked
             }.map {
@@ -206,31 +165,35 @@ class MedicineStockFragment : Fragment() {
             }.toList()
 
             val allSelectedChips = selectedSortByChips + selectedApplyFiltersChips
-//            val selectedChipsString = allSelectedChips.joinToString(", ")
-//            val selectedChipsString = if (allSelectedChips.isEmpty()) {
-//                "No chips are selected"
-//            } else {
-//                allSelectedChips.joinToString(", ")
-//            }
+
             if(allSelectedChips.isEmpty()){
                 val snackbar = Snackbar.make(requireView(),"No chips are selected",Snackbar.LENGTH_LONG)
                 snackbar.show()
             } else{
                 val selectedChipsString = allSelectedChips.joinToString(", ")
-                val snackbar = Snackbar.make(requireView(),"Selected Chips: $selectedChipsString",Snackbar.LENGTH_LONG)
-                snackbar.show()
+//                val snackbar = Snackbar.make(requireView(),"Selected Chips: $selectedChipsString",Snackbar.LENGTH_LONG)
+//                snackbar.show()
+                if(selectedApplyFiltersChips.isNotEmpty()){
+                    medicineList.clear()
+                    updateRecyclerView(medicineList)
+                    if(selectedApplyFiltersChips.size == 1){
+                        addMedicineInRecycleView(selectedApplyFiltersChips[0])
+                    } else{
+                        for (i in selectedApplyFiltersChips){
+                            addMedicineInRecycleView(i)
+                        }
+                    }
+                }
             }
-
-//            Log.i("FilterDialog", "openFilterAndSortDialog: $selectedSortByChips")
+            filterDialog.dismiss()
         }
 
-        val resetBtn: Button = medFilterDialog.findViewById(R.id.btnReset)
 
+        // Reset Button Code
+        val resetBtn: Button = medFilterDialog.findViewById(R.id.btnReset)
         val initialBackground = ContextCompat.getDrawable(requireContext(), R.drawable.custom_filter_reset_button_background)
         resetBtn.background = initialBackground
-
         resetBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.coffeetype))
-
         resetBtn.setOnTouchListener { _, motionEvent ->
             when (motionEvent.action) {
                 MotionEvent.ACTION_DOWN -> {
@@ -245,43 +208,38 @@ class MedicineStockFragment : Fragment() {
             // Return false to allow onClickListener to handle the click event
             false
         }
-
-// Set a dummy onFocusChangeListener to make the button focusable
+        // Set a dummy onFocusChangeListener to make the button focusable
         resetBtn.onFocusChangeListener = View.OnFocusChangeListener { _, _ -> }
 
-// Set the background back to initial state when focus is lost
+        // Set the background back to initial state when focus is lost
         resetBtn.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 resetBtn.backgroundTintList = null
                 resetBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.coffeetype))
             }
         }
-
         resetBtn.setOnClickListener {
+            Log.i(tAG, "openFilterAndSortDialog: resetBtn")
             sortByChipGroup.clearCheck()
             applyFiltersChipGroup.clearCheck()
         }
 
         val closeButton = filterDialog.findViewById<ImageButton>(R.id.filterCloseButton)
         closeButton.setOnClickListener { filterDialog.dismiss() }
-
-        // Add animation
-//        dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
-
         filterDialog.show()
     }
 
-    private fun addMedicineInRecycleView(filter: MedicineFilter){
+    private fun addMedicineInRecycleView(filter: String){
         Log.i(tAG, "addMedicineInRecycleView: id ${FBase.getUserId()}")
         val db = FirebaseFirestore.getInstance()
         val medicineDataRef = db.collection("users_data").document(FBase.getUserId()).collection("medicine_data")
-        medicineList.clear()
+//        medicineList.clear()
         medicineAdapter.notifyDataSetChanged()
         medicineDataRef.get()
             .addOnSuccessListener { querySnapshot ->
                 when(filter){
-                    MedicineFilter.INVENTORY ->{
-                        medicineList.clear()
+                    "INVENTORY" ->{
+//                        medicineList.clear()
                         medicineAdapter.notifyDataSetChanged()
                         for (document in querySnapshot) {
                             if((document.get("mediDeleted").toString() == "No" || document.get("mediDeleted").toString() == "NO") && !isExpired(document.get("expDate").toString())){
@@ -291,7 +249,7 @@ class MedicineStockFragment : Fragment() {
                             }
                         }
                     }
-                    MedicineFilter.EXPIRED ->{
+                    "EXPIRED" ->{
                         for (document in querySnapshot) {
                             if(isExpired(document.get("expDate").toString()) && (document.get("mediDeleted").toString() == "No" || document.get("mediDeleted").toString() == "NO")){
                                 medicineList.add(ItemsViewModel(document.id,document.get("medName").toString(), document.get("expDate").toString()))
@@ -300,18 +258,17 @@ class MedicineStockFragment : Fragment() {
                             }
                         }
                     }
-                    MedicineFilter.DELETED ->{
+                    "DELETED" ->{
                         for (document in querySnapshot) {
                             if((document.get("mediDeleted").toString() == "Yes") || (document.get("mediDeleted").toString() == "YES")){
                                 medicineList.add(ItemsViewModel(document.id,document.get("medName").toString(), document.get("expDate").toString()))
+
                                 updateRecyclerView(medicineList)
                                 medicineAdapter.notifyDataSetChanged()
                             }
                         }
                     }
                 }
-
-
             }
             .addOnFailureListener { e ->
                 // Handle any errors that occur
@@ -415,7 +372,7 @@ class MedicineStockFragment : Fragment() {
                 medicineList.remove(deletedMedicine)
                 medicineAdapter.notifyDataSetChanged()
                 medicineList.clear()
-                addMedicineInRecycleView(MedicineFilter.INVENTORY)
+                addMedicineInRecycleView("INVENTORY")
             }
         } else{
             Toast.makeText(requireContext(), "Fill up the all details", Toast.LENGTH_SHORT).show()
