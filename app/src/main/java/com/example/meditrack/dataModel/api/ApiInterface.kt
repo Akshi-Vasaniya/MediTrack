@@ -17,4 +17,6 @@ interface ApiInterface {
     @GET("/spell_correct/{medicinename}")
     fun spellCorrect(@Path("medicinename") medicinename: String?): Call<JsonElement>
 
+    @GET("/label_data/{scandata}")
+    fun labelDataUsingNER(@Path("scandata") scandata: String?): Call<JsonElement>
 }

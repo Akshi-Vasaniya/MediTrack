@@ -351,7 +351,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 R.id.aboutUsFragment,
                 R.id.updateProfileImageFragment,
                 R.id.notificationFragment,
-                R.id.devicesFragment
+                R.id.devicesFragment,
+                R.id.scanPrescriptionFragment
             )
         ).build()
 

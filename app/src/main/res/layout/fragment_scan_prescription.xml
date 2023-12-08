@@ -19,13 +19,43 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Headline">
     </TextView>
 
-    <TextView
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/scanSearchData_layout"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/ScanPrescription_heading"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="10dp"
+        android:hint="Enter Searching Data">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/scanSearchData_editText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/ScanPrescription_SearchBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/ScanPrescription_heading"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="50dp"
+        android:text="Search"
+        android:textAllCaps="false"
+        />
+
+    <TextView
+        android:id="@+id/ScanPrescription_ReceivedData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/scanSearchData_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="10dp">
+        android:layout_margin="20dp"
+        android:textSize="15sp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp" >
     </TextView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
