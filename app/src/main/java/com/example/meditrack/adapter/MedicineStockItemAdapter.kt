@@ -1,5 +1,6 @@
 package com.example.meditrack.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.meditrack.R
 import com.example.meditrack.dataModel.ItemsViewModel
+import java.util.Calendar
 
 class MedicineStockItemAdapter(private val mList: List<ItemsViewModel>) : RecyclerView.Adapter<MedicineStockItemAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -28,6 +30,36 @@ class MedicineStockItemAdapter(private val mList: List<ItemsViewModel>) : Recycl
         // sets the expiry date to the textview from our itemHolder class
         holder.expiryDate.text = itemsViewModel.expiry_date
 
+        // Time and Date
+        holder.medicineAddedTime.text = itemsViewModel.medicine_add_time
+        holder.medicineAddedDate.text = itemsViewModel.medicine_add_date
+
+        // Expiry
+        val remaningDay = itemsViewModel.expiry_date
+        Log.i("TAG", "onBindViewHolder: ${remaningDay[0]}")
+        val calendar = Calendar.getInstance()
+        val currentHour = calendar.get(Calendar.MONTH)
+        val currentYear = calendar.get(Calendar.YEAR)
+        val currentMonth = calendar.get(Calendar.MONTH)
+
+        var month = remaningDay[0]+ ""+remaningDay[1]
+        var year = remaningDay[3]+""+remaningDay[4]+""+remaningDay[5]+""+remaningDay[6]
+
+        if(month.toInt() == currentMonth &&  year.toInt() == currentYear){
+            holder.expiryTime.text = "Expired In this Month"
+        } else if(year.toInt() > currentYear){
+            var totalYear: Int = year.toInt() - currentYear
+            var totalMonth =  (12 - currentMonth)
+            Log.i("TAG", "onBindViewHolder: $totalMonth")
+            holder.expiryTime.text = totalYear.toString()+" Year "+totalMonth.toString() + " Month"
+        } else if(year.toInt() == currentYear){
+            if(currentMonth < month.toInt()){
+                holder.expiryTime.text = (12 - month.toInt()).toString() + " Month"
+            }
+        }
+
+
+
     }
 
     // return the number of the items in the list
@@ -41,6 +73,9 @@ class MedicineStockItemAdapter(private val mList: List<ItemsViewModel>) : Recycl
         val expiryDate: TextView = itemView.findViewById(R.id.expiry_date)
         private val deleteIcon: ImageView = itemView.findViewById(R.id.delete_btn)
         private val editIcon: ImageView = itemView.findViewById(R.id.edit_btn)
+        val medicineAddedDate: TextView = itemView.findViewById(R.id.added_date)
+        val medicineAddedTime: TextView = itemView.findViewById(R.id.added_time)
+        val expiryTime: TextView = itemView.findViewById(R.id.expiry_remain_time)
 
         init {
             deleteIcon.setOnClickListener {

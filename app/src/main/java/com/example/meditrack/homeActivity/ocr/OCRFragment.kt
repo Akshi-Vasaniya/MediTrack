@@ -207,12 +207,6 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
                     findNavController().popBackStack(R.id.addMedicineFragment, true)
                     findNavController().navigate(R.id.addMedicineFragment, bundle)
 
-
-                    // Navigate to the receiving fragment
-                    /*val transaction = parentFragmentManager.beginTransaction()
-                    transaction.replace(R.id.fragment_container, fragment)
-                    transaction.addToBackStack(null)
-                    transaction.commit()*/
                 }
 
             }

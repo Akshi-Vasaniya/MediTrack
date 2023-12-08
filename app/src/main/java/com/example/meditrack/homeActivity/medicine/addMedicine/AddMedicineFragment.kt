@@ -493,10 +493,6 @@ class AddMedicineFragment : Fragment() {
                             return@launch
                         }
 //                        Log.i("MedicineData","Medicine Name : ${viewModel.medName}")
-//                        Log.i("MedicineData","Medicine Dosage : ${viewModel.dosage}")
-//                        Log.i("MedicineData","Medicine Mfg. Date : ${viewModel.mfgDate}")
-//                        Log.i("MedicineData","Medicine Exp. Date : ${viewModel.expDate}")
-//                        Log.i("MedicineData", "Medicine Frequency : ${viewModel.selectedfreqTags!!.name}")
 
                         val medicineTime: Any?
 
@@ -521,11 +517,6 @@ class AddMedicineFragment : Fragment() {
                         viewModel.weekDayItems.forEach {
                             Log.i("MedicineData", "Medicine Week Day : ${it.name}")
                         }
-                        Log.i("MedicineData","Medicine Doctor Name : ${viewModel.doctorName}")
-                        Log.i("MedicineData","Medicine Doctor Contact : ${viewModel.doctorContact}")
-                        Log.i("MedicineData","Medicine Instruction : ${viewModel.medInstruction}")
-                        Log.i("MedicineData","Medicine Notes : ${viewModel.medNotes}")
-                        Log.i("MedicineData","Medicine Quantity : ${viewModel.medQuantity}")
 
                         val imageUri = viewModel.bimapMedImage!!.toUri(requireContext())
                         if(imageUri==null)

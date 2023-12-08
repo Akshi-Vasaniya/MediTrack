@@ -19,6 +19,15 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Headline">
     </TextView>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/ScanPrescription_heading"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="10dp">
+    </TextView>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/ScanPrescription_btn"
         android:layout_width="wrap_content"
@@ -27,7 +36,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_margin="20dp"
         android:src="@drawable/round_document_scanner_24"
-        android:backgroundTint="@color/white"
+        android:backgroundTint="@color/black"
         android:outlineAmbientShadowColor="@color/black">
     </com.google.android.material.floatingactionbutton.FloatingActionButton>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -239,7 +239,12 @@ class MedicineStockFragment : Fragment() {
                         medicineAdapter.notifyDataSetChanged()
                         for (document in querySnapshot) {
                             if((document.get("mediDeleted").toString() == "No" || document.get("mediDeleted").toString() == "NO") && !isExpired(document.get("expDate").toString())){
-                                medicineList.add(ItemsViewModel(document.id,document.get("medName").toString(), document.get("expDate").toString()))
+                                medicineList.add(ItemsViewModel(
+                                    document.id,document.get("medName").toString(),
+                                    document.get("expDate").toString(),
+                                    document.get("createdDate").toString(),
+                                    document.get("createdTime").toString())
+                                )
                                 if(currentSortType == SortType.ALPHABETICAL){
                                     medicineList.sortBy { it.medicine_name }
                                 }
@@ -251,7 +256,12 @@ class MedicineStockFragment : Fragment() {
                     "EXPIRED" ->{
                         for (document in querySnapshot) {
                             if(isExpired(document.get("expDate").toString()) && (document.get("mediDeleted").toString() == "No" || document.get("mediDeleted").toString() == "NO")){
-                                medicineList.add(ItemsViewModel(document.id,document.get("medName").toString(), document.get("expDate").toString()))
+                                medicineList.add(ItemsViewModel(
+                                    document.id,document.get("medName").toString(),
+                                    document.get("expDate").toString(),
+                                    document.get("createdDate").toString(),
+                                    document.get("createdTime").toString())
+                                )
                                 if(currentSortType == SortType.ALPHABETICAL){
                                     medicineList.sortBy { it.medicine_name }
                                 }
@@ -263,7 +273,12 @@ class MedicineStockFragment : Fragment() {
                     "DELETED" ->{
                         for (document in querySnapshot) {
                             if((document.get("mediDeleted").toString() == "Yes") || (document.get("mediDeleted").toString() == "YES")){
-                                medicineList.add(ItemsViewModel(document.id,document.get("medName").toString(), document.get("expDate").toString()))
+                                medicineList.add(ItemsViewModel(
+                                    document.id,document.get("medName").toString(),
+                                    document.get("expDate").toString(),
+                                    document.get("createdDate").toString(),
+                                    document.get("createdTime").toString())
+                                )
                                 if(currentSortType == SortType.ALPHABETICAL){
                                     medicineList.sortBy { it.medicine_name }
                                 }
