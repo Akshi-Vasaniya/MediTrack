@@ -59,7 +59,7 @@
                         android:fontFamily="@font/comfortaa_bold" />
                     <TextView
                         android:id="@+id/added_time"
-                        android:layout_width="35dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="hh:mm"
                         android:textSize="@dimen/_8sdp"
@@ -89,15 +89,11 @@
                     android:fontFamily="@font/comfortaa_bold"
                     android:text="dd/mm/yy"
                     android:textSize="@dimen/_8sdp" />
-                <TextView
-                    android:id="@+id/or_sign"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="3dp"
-                    android:layout_weight="1"
-                    android:text="|"
-                    android:textSize="@dimen/_8sdp"
-                    android:fontFamily="@font/comfortaa_bold" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
                 <TextView
                     android:id="@+id/expiry_remain_time_txt"
                     android:layout_width="55dp"
@@ -108,7 +104,7 @@
                     android:layout_weight="1"/>
                 <TextView
                     android:id="@+id/expiry_remain_time"
-                    android:layout_width="41dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="3dp"
                     android:layout_weight="1"
@@ -122,19 +118,21 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="center_vertical"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:paddingEnd="@dimen/_10sdp">
             <ImageView
                 android:id="@+id/edit_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/round_edit_24"
-                app:tint="@color/cyanlight"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                app:tint="@color/cyanlight" />
             <ImageView
                 android:id="@+id/delete_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/round_delete_24"
+                android:layout_weight="1"
                 app:tint="@color/coffeetype"
                 android:layout_gravity="end"/>
         </LinearLayout>

@@ -42,8 +42,17 @@ class MedicineStockItemAdapter(private val mList: List<ItemsViewModel>) : Recycl
         val currentYear = calendar.get(Calendar.YEAR)
         val currentMonth = calendar.get(Calendar.MONTH)
 
-        var month = remaningDay[0]+ ""+remaningDay[1]
-        var year = remaningDay[3]+""+remaningDay[4]+""+remaningDay[5]+""+remaningDay[6]
+        var month: String = ""
+        var year: String = ""
+        if(remaningDay[1].toString() == "/"){
+            month = remaningDay[0].toString()
+            year = remaningDay[2]+""+remaningDay[3]+""+remaningDay[4]+""+remaningDay[5]
+        } else{
+            month = remaningDay[0]+ ""+remaningDay[1]
+            year = remaningDay[3]+""+remaningDay[4]+""+remaningDay[5]+""+remaningDay[6]
+        }
+
+
 
         if(month.toInt() == currentMonth &&  year.toInt() == currentYear){
             holder.expiryTime.text = "Expired In this Month"
