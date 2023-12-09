@@ -180,31 +180,42 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@drawable/shape_card_view">
+                        android:background="@drawable/side_nav_bar">
 
-                        <ImageView
-                            android:id="@+id/addPrescriptionImageView"
-                            android:layout_width="@dimen/_30sdp"
-                            android:layout_height="@dimen/_30sdp"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="@dimen/_5sdp"
-                            android:layout_marginStart="@dimen/_5sdp"
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/addPrescriptionCardView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            android:src="@drawable/add_prescription"/>
+                            android:elevation="25dp">
+
+                            <ImageView
+                                android:id="@+id/addPrescriptionImageView"
+                                android:layout_width="@dimen/_30sdp"
+                                android:layout_height="@dimen/_30sdp"
+                                android:layout_gravity="center_horizontal"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                android:layout_marginVertical="10dp"
+                                android:src="@drawable/add_prescription"/>
+
+                        </androidx.cardview.widget.CardView>
+
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:fontFamily="@font/comfortaa_bold"
-                            android:text="Add\nPrescription"
+                            android:text="Add Prescription"
                             style="@style/HomeCardViewText"
                             android:textSize="@dimen/_10sdp"
-                            android:layout_marginEnd="@dimen/_10sdp"
-                            android:layout_marginBottom="@dimen/_2sdp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"/>
+                            app:layout_constraintTop_toBottomOf="@id/addPrescriptionCardView"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </com.google.android.material.card.MaterialCardView>
                 <com.google.android.material.card.MaterialCardView
@@ -222,30 +233,42 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@drawable/shape_card_view">
+                        android:background="@drawable/side_nav_bar">
 
-                        <ImageView
-                            android:id="@+id/scanPrescriptionImageView"
-                            android:layout_width="@dimen/_30sdp"
-                            android:layout_height="@dimen/_30sdp"
-                            android:src="@drawable/round_document_scanner_24"
-                            android:layout_marginTop="@dimen/_5sdp"
-                            android:layout_marginStart="@dimen/_5sdp"
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/scanPrescriptionCardView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:elevation="25dp">
+
+                            <ImageView
+                                android:id="@+id/scanPrescriptionImageView"
+                                android:layout_width="@dimen/_30sdp"
+                                android:layout_height="@dimen/_30sdp"
+                                android:layout_gravity="center_horizontal"
+                                android:src="@drawable/round_document_scanner_24"
+                                android:layout_marginVertical="10dp"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                        </androidx.cardview.widget.CardView>
+
 
                         <TextView
+                            style="@style/HomeCardViewText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:fontFamily="@font/comfortaa_bold"
-                            android:text="Scan\nPrescription"
+                            android:text="Scan Prescription"
                             android:textSize="@dimen/_10sdp"
-                            style="@style/HomeCardViewText"
-                            android:layout_marginEnd="@dimen/_10sdp"
-                            android:layout_marginBottom="@dimen/_2sdp"
+                            app:layout_constraintTop_toBottomOf="@id/scanPrescriptionCardView"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent" />
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>

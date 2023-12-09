@@ -301,8 +301,6 @@ class RegistrationFragment : Fragment() {
                         progressDialog.stop()
                         HandleException.firebaseCommonExceptions(requireContext(),it,tag)
                     }
-
-
                 }
 
             }
