@@ -556,6 +556,7 @@ class AddMedicineFragment : Fragment() {
                                         }
                                         clearForm()
                                         Toast.makeText(requireContext(),toastMessage,Toast.LENGTH_SHORT).show()
+                                        findNavController().navigate(R.id.homeFragment)
                                     }
                                     catch (ex:Exception){
                                         requireContext().showToast("Your Medicine added successfully, (No worry) Error at server side")
@@ -585,6 +586,7 @@ class AddMedicineFragment : Fragment() {
                                             launch {
                                                 val response = ApiInstance.api.insertDocument(medicineData!!.medName)
                                                 response.enqueue(insertDocumentFlaskPython)
+
                                             }
                                             val takeTimeList: ArrayList<MedicineTimeOfDayType1>? = medicineData?.takeTime as? ArrayList<MedicineTimeOfDayType1>
                                             // Medicine Taking Reminder
@@ -592,8 +594,7 @@ class AddMedicineFragment : Fragment() {
                                             {
                                                 for(item in takeTimeList)
                                                 {
-                                                    val
-                                                            hour = item.time.split(":")
+                                                    val hour = item.time.split(":")
                                                     Log.i(tAG, "onUploadSuccess: ${hour[0]}")
                                                     if(medicineData!!.medFreq == MedicineFrequency.DAILY) {
                                                         dialog.scheduleNotifications(medicineData!!.medName, mutableListOf(0, 1, 2, 3, 4, 5, 6),  hour[0].toInt(), 0)
@@ -601,11 +602,12 @@ class AddMedicineFragment : Fragment() {
                                                         dialog.scheduleNotifications(medicineData!!.medName, medicineData!!.weekDay as MutableList<Int>,  hour[0].toInt(), 0)
                                                     }
                                                 }
+
                                             }
                                         }
                                         catch (ex:Exception)
                                         {
-                                            requireContext().showToast("Unexpected Error")
+//                                            requireContext().showToast("Unexpected Error")
                                             Log.e("addOnSuccessListener","$ex")
                                         }
 

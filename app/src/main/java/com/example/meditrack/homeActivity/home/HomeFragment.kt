@@ -102,9 +102,9 @@ class HomeFragment : Fragment() {
             addMedicineCard.setOnClickListener {
                 findNavController().navigate(R.id.addMedicineFragment)
             }
-            addPrescriptionCard.setOnClickListener {
-                findNavController().navigate(R.id.OCRFragment)
-            }
+//            addPrescriptionCard.setOnClickListener {
+//                findNavController().navigate(R.id.OCRFragment)
+//            }
             scanPrescriptionCard.setOnClickListener {
                 findNavController().navigate(R.id.scanPrescriptionFragment)
             }
