@@ -27,13 +27,13 @@ class AboutUsFragment : Fragment() {
     lateinit var binding:FragmentAboutUsBinding
     private lateinit var progressDialog: CustomProgressDialog
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        for(i in 0 until menu.size()){
-            menu.getItem(i).isVisible = false
-        }
-
-        super.onPrepareOptionsMenu(menu)
-    }
+//    override fun onPrepareOptionsMenu(menu: Menu) {
+//        for(i in 0 until menu.size()){
+//            menu.getItem(i).isVisible = false
+//        }
+//
+//        super.onPrepareOptionsMenu(menu)
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,7 +42,7 @@ class AboutUsFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_about_us, container, false)
         binding = FragmentAboutUsBinding.bind(view)
 
-        setHasOptionsMenu(true)
+//        setHasOptionsMenu(true)
 
         viewModel = ViewModelProvider(this)[AboutUsViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())

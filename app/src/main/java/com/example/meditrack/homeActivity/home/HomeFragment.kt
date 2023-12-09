@@ -31,13 +31,13 @@ class HomeFragment : Fragment() {
     private lateinit var progressDialog: CustomProgressDialog
     //private lateinit var mediTrackNotificationManager: MediTrackNotificationManager
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        for(i in 0 until menu.size()){
-            menu.getItem(i).isVisible = false
-        }
-
-        super.onPrepareOptionsMenu(menu)
-    }
+//    override fun onPrepareOptionsMenu(menu: Menu) {
+//        for(i in 0 until menu.size()){
+//            menu.getItem(i).isVisible = false
+//        }
+//
+//        super.onPrepareOptionsMenu(menu)
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,7 +51,7 @@ class HomeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         binding = FragmentHomeBinding.bind(view)
 
-        setHasOptionsMenu(true)
+//        setHasOptionsMenu(true)
 
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())

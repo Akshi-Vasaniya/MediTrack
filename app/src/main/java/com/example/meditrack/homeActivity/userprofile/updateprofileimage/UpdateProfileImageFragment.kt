@@ -46,13 +46,13 @@ class UpdateProfileImageFragment : Fragment() {
     private lateinit var progressDialog: CustomProgressDialog
     private var changesMade = false
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        for(i in 0 until menu.size()){
-            menu.getItem(i).isVisible = false
-        }
-
-        super.onPrepareOptionsMenu(menu)
-    }
+//    override fun onPrepareOptionsMenu(menu: Menu) {
+//        for(i in 0 until menu.size()){
+//            menu.getItem(i).isVisible = false
+//        }
+//
+//        super.onPrepareOptionsMenu(menu)
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,7 +61,7 @@ class UpdateProfileImageFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_update_profile_image, container, false)
         binding = FragmentUpdateProfileImageBinding.bind(view)
 
-        setHasOptionsMenu(true)
+//        setHasOptionsMenu(true)
 
         viewModel = ViewModelProvider(this)[UpdateProfileImageViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())

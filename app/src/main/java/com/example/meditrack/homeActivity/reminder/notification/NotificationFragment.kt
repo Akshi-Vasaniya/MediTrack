@@ -27,13 +27,13 @@ class NotificationFragment : Fragment() {
     private lateinit var binding: FragmentNotificationBinding
     private lateinit var progressDialog: CustomProgressDialog
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        for(i in 0 until menu.size()){
-            menu.getItem(i).isVisible = false
-        }
-
-        super.onPrepareOptionsMenu(menu)
-    }
+//    override fun onPrepareOptionsMenu(menu: Menu) {
+//        for(i in 0 until menu.size()){
+//            menu.getItem(i).isVisible = false
+//        }
+//
+//        super.onPrepareOptionsMenu(menu)
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,7 +43,7 @@ class NotificationFragment : Fragment() {
         viewModel = ViewModelProvider(this)[NotificationViewModel::class.java]
         binding = FragmentNotificationBinding.bind(view)
 
-        setHasOptionsMenu(true)
+//        setHasOptionsMenu(true)
 
         progressDialog = CustomProgressDialog(requireContext())
 

@@ -87,13 +87,13 @@ class AddMedicineFragment : Fragment() {
         }
     }*/
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        for(i in 0 until menu.size()){
-            menu.getItem(i).isVisible = false
-        }
-
-        super.onPrepareOptionsMenu(menu)
-    }
+//    override fun onPrepareOptionsMenu(menu: Menu) {
+//        for(i in 0 until menu.size()){
+//            menu.getItem(i).isVisible = false
+//        }
+//
+//        super.onPrepareOptionsMenu(menu)
+//    }
 
 
     override fun onCreateView(
@@ -103,7 +103,7 @@ class AddMedicineFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_add_medicine, container, false)
         binding = FragmentAddMedicineBinding.bind(view)
 
-        setHasOptionsMenu(true)
+//        setHasOptionsMenu(true)
 
         viewModel = ViewModelProvider(this)[AddMedicineViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
@@ -592,7 +592,8 @@ class AddMedicineFragment : Fragment() {
                                             {
                                                 for(item in takeTimeList)
                                                 {
-                                                    val hour = item.time.split(":")
+                                                    val
+                                                            hour = item.time.split(":")
                                                     Log.i(tAG, "onUploadSuccess: ${hour[0]}")
                                                     if(medicineData!!.medFreq == MedicineFrequency.DAILY) {
                                                         dialog.scheduleNotifications(medicineData!!.medName, mutableListOf(0, 1, 2, 3, 4, 5, 6),  hour[0].toInt(), 0)

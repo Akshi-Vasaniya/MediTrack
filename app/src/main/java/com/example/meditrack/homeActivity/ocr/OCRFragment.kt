@@ -85,13 +85,13 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
     private lateinit var progressDialog: CustomProgressDialog
     private lateinit var imageAnalysis: ImageAnalysis
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        for(i in 0 until menu.size()){
-            menu.getItem(i).isVisible = false
-        }
-
-        super.onPrepareOptionsMenu(menu)
-    }
+//    override fun onPrepareOptionsMenu(menu: Menu) {
+//        for(i in 0 until menu.size()){
+//            menu.getItem(i).isVisible = false
+//        }
+//
+//        super.onPrepareOptionsMenu(menu)
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -101,7 +101,7 @@ class OCRFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallbac
         viewModel = ViewModelProvider(this)[OCRViewModel::class.java]
         binding = FragmentOCRBinding.bind(view)
 
-        setHasOptionsMenu(true)
+//        setHasOptionsMenu(true)
 
         progressDialog = CustomProgressDialog(requireContext())
 

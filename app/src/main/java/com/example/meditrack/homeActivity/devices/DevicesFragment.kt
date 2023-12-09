@@ -52,13 +52,13 @@ class DevicesFragment : Fragment() {
     private val tAG = "DevicesFragment"
     private var itemAdded=true
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        for(i in 0 until menu.size()){
-            menu.getItem(i).isVisible = false
-        }
-
-        super.onPrepareOptionsMenu(menu)
-    }
+//    override fun onPrepareOptionsMenu(menu: Menu) {
+//        for(i in 0 until menu.size()){
+//            menu.getItem(i).isVisible = false
+//        }
+//
+//        super.onPrepareOptionsMenu(menu)
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,7 +67,7 @@ class DevicesFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_devices, container, false)
         binding = FragmentDevicesBinding.bind(view)
 
-        setHasOptionsMenu(true)
+//        setHasOptionsMenu(true)
 
         viewModel = ViewModelProvider(this)[DevicesViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())

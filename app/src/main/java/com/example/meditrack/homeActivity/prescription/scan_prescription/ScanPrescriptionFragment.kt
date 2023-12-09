@@ -40,13 +40,13 @@ class ScanPrescriptionFragment : Fragment() {
     private lateinit var binding: FragmentScanPrescriptionBinding
     private lateinit var progressDialog: CustomProgressDialog
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        for(i in 0 until menu.size()){
-            menu.getItem(i).isVisible = false
-        }
-
-        super.onPrepareOptionsMenu(menu)
-    }
+//    override fun onPrepareOptionsMenu(menu: Menu) {
+//        for(i in 0 until menu.size()){
+//            menu.getItem(i).isVisible = false
+//        }
+//
+//        super.onPrepareOptionsMenu(menu)
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,7 +55,7 @@ class ScanPrescriptionFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_scan_prescription, container, false)
         binding = FragmentScanPrescriptionBinding.bind(view)
 
-        setHasOptionsMenu(true)
+//        setHasOptionsMenu(true)
 
         viewModel = ViewModelProvider(this)[ScanPrescriptionFragmentViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
