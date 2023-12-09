@@ -642,13 +642,6 @@ class AddMedicineFragment : Fragment() {
                                                 getCurrentDate(),
                                                 getCurrentTime()
                                             )
-                                            Log.i(tAG, "onUploadSuccess: ${medicineData!!.medName}")
-                                            Log.i(tAG, "onUploadSuccess: ${medicineData!!.medicineType}")
-                                            Log.i(tAG, "onUploadSuccess: ${medicineData!!.medFreq}")
-                                            Log.i(tAG, "onUploadSuccess: ${medicineData!!.weekDay}")
-                                            Log.i(tAG, "onUploadSuccess: ${medicineData!!.takeTime}")
-                                            Log.i(tAG, "onUploadSuccess: ${medicineData!!.notes}")
-                                            Log.i(tAG, "onUploadSuccess: ${medicineData!!.totalQuantity}")
 
 
                                             medicineDataDocRef.document(docName).set(medicineData!!)
