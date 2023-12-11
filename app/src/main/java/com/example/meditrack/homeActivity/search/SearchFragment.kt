@@ -1,5 +1,6 @@
 package com.example.meditrack.homeActivity.search
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.res.Configuration
 import android.net.ConnectivityManager
@@ -11,11 +12,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.meditrack.R
 import com.example.meditrack.adapter.SearchItemAdapter
 import com.example.meditrack.dataModel.api.ApiInstance
 import com.example.meditrack.dataModel.dataClasses.SearchItemData
 import com.example.meditrack.databinding.FragmentSearchBinding
+import com.example.meditrack.utility.UtilsFunctions.Companion.isMediTrackServerLive
 import com.example.meditrack.utility.UtilsFunctions.Companion.showToast
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
 import kotlinx.coroutines.Dispatchers
@@ -68,6 +71,13 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        isMediTrackServerLive{
+            if(!it)
+            {
+                requireContext().showServerNotAvailableDialog()
+            }
+        }
+
         binding.apply {
             viewModel._dataList.observe(viewLifecycleOwner) { newDataList ->
                 // Update the RecyclerView with the new data
@@ -106,7 +116,6 @@ class SearchFragment : Fragment() {
                             }
 
                             override fun onFailure(call: Call<List<SearchItemData?>?>, t: Throwable) {
-
                                 Log.i("Search", "onResponse: ${t.message}")
                                 progressDialog.stop()
                             }
@@ -129,6 +138,18 @@ class SearchFragment : Fragment() {
             }
 
         }
+    }
+
+    fun Context.showServerNotAvailableDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Server Not Available")
+        builder.setMessage("The server is not set up or running. Please try again later.")
+        builder.setCancelable(false)
+        builder.setPositiveButton("OK") { dialog, _ ->
+            findNavController().popBackStack()
+        }
+        val alertDialog = builder.create()
+        alertDialog.show()
     }
 
 

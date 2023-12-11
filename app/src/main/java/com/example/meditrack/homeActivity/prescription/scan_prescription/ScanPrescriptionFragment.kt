@@ -1,5 +1,6 @@
 package com.example.meditrack.homeActivity.prescription.scan_prescription
 
+import android.app.AlertDialog
 import android.content.Context
 import android.net.ConnectivityManager
 import android.os.Bundle
@@ -16,6 +17,7 @@ import com.example.meditrack.R
 import com.example.meditrack.dataModel.api.ApiInstance
 import com.example.meditrack.dataModel.dataClasses.SearchItemData
 import com.example.meditrack.databinding.FragmentScanPrescriptionBinding
+import com.example.meditrack.utility.UtilsFunctions
 import com.example.meditrack.utility.UtilsFunctions.Companion.showToast
 import com.example.meditrack.utility.UtilsFunctions.Companion.toBase64
 import com.example.meditrack.utility.ownDialogs.CustomProgressDialog
@@ -65,6 +67,12 @@ class ScanPrescriptionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        UtilsFunctions.isMediTrackServerLive {
+            if (!it) {
+                requireContext().showServerNotAvailableDialog()
+            }
+        }
+
         binding.ScanPrescriptionBtn.setOnClickListener {
             findNavController().navigate(R.id.OCRFragment)
         }
@@ -77,7 +85,7 @@ class ScanPrescriptionFragment : Fragment() {
                 }
                 try {
                     val response = ApiInstance.api.labelDataUsingNER(search?.toBase64())
-                    response!!.enqueue(object : Callback<JsonElement?> {
+                    response.enqueue(object : Callback<JsonElement?> {
                         override fun onResponse(
                             call: Call<JsonElement?>,
                             response: Response<JsonElement?>
@@ -118,6 +126,18 @@ class ScanPrescriptionFragment : Fragment() {
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
         return networkInfo?.isConnectedOrConnecting == true
+    }
+
+    fun Context.showServerNotAvailableDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Server Not Available")
+        builder.setMessage("The server is not set up or running. Please try again later.")
+        builder.setCancelable(false)
+        builder.setPositiveButton("OK") { dialog, _ ->
+            findNavController().popBackStack()
+        }
+        val alertDialog = builder.create()
+        alertDialog.show()
     }
 
 }

@@ -542,7 +542,9 @@ class AddMedicineFragment : Fragment() {
                         try{
                             val insertDocumentFlaskPython = object : Callback<JsonElement>{
                                 override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-                                    try {
+                                    progressDialog.stop()
+                                    requireContext().showToast("Your Medicine added successfully")
+                                    /*try {
                                         progressDialog.stop()
                                         val res = response.body()!!.asJsonObject
                                         var toastMessage = ""
@@ -560,13 +562,14 @@ class AddMedicineFragment : Fragment() {
                                     }
                                     catch (ex:Exception){
                                         requireContext().showToast("Your Medicine added successfully, (No worry) Error at server side")
-                                    }
+                                    }*/
                                 }
 
                                 override fun onFailure(call: Call<JsonElement>, t: Throwable) {
                                     progressDialog.stop()
+                                    requireContext().showToast("Your Medicine added successfully")
                                     Log.i("onFailure: ",t.message.toString())
-                                    Toast.makeText(requireContext(),"Request Error",Toast.LENGTH_SHORT).show()
+                                    //Toast.makeText(requireContext(),"Request Error",Toast.LENGTH_SHORT).show()
                                 }
 
                             }
@@ -577,11 +580,11 @@ class AddMedicineFragment : Fragment() {
                                             val dialog = MedicineReminderDialog(requireActivity())
                                             withContext(Dispatchers.Main)
                                             {
-                                                progressDialog.stop()
+                                                //progressDialog.stop()
                                                 //Toast.makeText(requireContext(),"Medicine and Reminder Successfully Added",Toast.LENGTH_SHORT).show()
                                                 Log.d(tAG, "DocumentSnapshot added with ID: $docName")
 
-                                                progressDialog.start("Server Increase Medicine Dataset...")
+                                                //progressDialog.start("Server Increase Medicine Dataset...")
                                             }
                                             launch {
                                                 val response = ApiInstance.api.insertDocument(medicineData!!.medName)

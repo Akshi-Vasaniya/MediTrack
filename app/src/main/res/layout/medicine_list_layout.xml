@@ -11,6 +11,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:paddingVertical="@dimen/_5sdp">
+        <CheckBox
+            android:id="@+id/selectItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -133,7 +139,7 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/round_delete_24"
                 android:layout_weight="1"
-                app:tint="@color/coffeetype"
+                app:tint="@color/red"
                 android:layout_gravity="end"/>
         </LinearLayout>
     </LinearLayout>

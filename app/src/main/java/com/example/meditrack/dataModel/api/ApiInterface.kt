@@ -19,4 +19,7 @@ interface ApiInterface {
 
     @GET("/label_data/{scandata}")
     fun labelDataUsingNER(@Path("scandata") scandata: String?): Call<JsonElement>
+
+    @GET("/")
+    fun checkServer(): Call<Void>
 }

@@ -82,9 +82,7 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            android:elevation="25dp"
-
-                            >
+                            android:elevation="25dp">
                             <ImageView
                                 android:id="@+id/addMedicineImageView"
                                 android:layout_width="@dimen/_30sdp"
@@ -253,7 +251,8 @@
                                 android:src="@drawable/round_document_scanner_24"
                                 android:layout_marginVertical="10dp"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:tint="@color/mainColor" />
 
                         </androidx.cardview.widget.CardView>
 

@@ -1,5 +1,6 @@
 package com.example.meditrack.utility
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -10,11 +11,15 @@ import android.util.Base64
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.FileProvider
+import com.example.meditrack.dataModel.api.ApiInstance
 import com.example.meditrack.utility.UtilsFunctions.Companion.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -297,6 +302,8 @@ class UtilsFunctions {
 
         }
 
+
+
         // Function to get the Uri from ImageView
         /*fun ImageView.toUri(context: Context): Uri? {
             val bitmap = (this.drawable as BitmapDrawable).bitmap
@@ -313,5 +320,26 @@ class UtilsFunctions {
             }
             return imageUri
         }*/
+
+        fun isMediTrackServerLive(callback: (Boolean) -> Unit)
+        {
+            val call: Call<Void> =  ApiInstance.api.checkServer()
+
+            call.enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        callback(true)
+                    } else {
+                        callback(false)
+                    }
+                }
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    callback(false)
+                }
+            })
+        }
     }
+
+
 }

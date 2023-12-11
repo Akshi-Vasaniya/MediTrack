@@ -4,10 +4,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
@@ -51,6 +48,7 @@ class MedicineStockFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        setHasOptionsMenu(true)
         val view = inflater.inflate(R.layout.fragment_medicine_stock, container, false)
         binding = FragmentMedicineStockBinding.bind(view)
 
@@ -96,6 +94,36 @@ class MedicineStockFragment : Fragment() {
             addMedicineInRecycleView("INVENTORY")
         }
         return view
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.medicine_stock_options_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_select_all -> {
+                medicineAdapter.selectAll()
+                //Toast.makeText(requireContext(), "Clicked Select all", Toast.LENGTH_SHORT).show()
+                return true
+            }
+            R.id.action_inverse_select -> {
+                medicineAdapter.inverseSelect()
+                //Toast.makeText(requireContext(), "Clicked Inverse", Toast.LENGTH_SHORT).show()
+                return true
+            }
+            R.id.action_unselect_all -> {
+                medicineAdapter.unselectAll()
+                //Toast.makeText(requireContext(), "Clicked Unselect all", Toast.LENGTH_SHORT).show()
+                return true
+            }
+            R.id.action_delete_selection -> {
+                Toast.makeText(requireContext(), "Clicked Delete selection", Toast.LENGTH_SHORT).show()
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
     }
 
     private fun openFilterAndSortDialog(){
@@ -243,7 +271,8 @@ class MedicineStockFragment : Fragment() {
                                     document.id,document.get("medName").toString(),
                                     document.get("expDate").toString(),
                                     document.get("createdDate").toString(),
-                                    document.get("createdTime").toString())
+                                    document.get("createdTime").toString(),
+                                false)
                                 )
                                 if(currentSortType == SortType.ALPHABETICAL){
                                     medicineList.sortBy { it.medicine_name }
@@ -260,7 +289,8 @@ class MedicineStockFragment : Fragment() {
                                     document.id,document.get("medName").toString(),
                                     document.get("expDate").toString(),
                                     document.get("createdDate").toString(),
-                                    document.get("createdTime").toString())
+                                    document.get("createdTime").toString(),
+                                false)
                                 )
                                 if(currentSortType == SortType.ALPHABETICAL){
                                     medicineList.sortBy { it.medicine_name }
@@ -277,7 +307,8 @@ class MedicineStockFragment : Fragment() {
                                     document.id,document.get("medName").toString(),
                                     document.get("expDate").toString(),
                                     document.get("createdDate").toString(),
-                                    document.get("createdTime").toString())
+                                    document.get("createdTime").toString(),
+                                false)
                                 )
                                 if(currentSortType == SortType.ALPHABETICAL){
                                     medicineList.sortBy { it.medicine_name }

@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -12,6 +13,11 @@ import com.example.meditrack.dataModel.ItemsViewModel
 import java.util.Calendar
 
 class MedicineStockItemAdapter(private val mList: List<ItemsViewModel>) : RecyclerView.Adapter<MedicineStockItemAdapter.ViewHolder>() {
+
+    // Set to store selected items
+    private val selectedItems = mutableSetOf<Int>()
+    private var isItemSelection = false
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.medicine_list_layout, parent, false)
@@ -33,6 +39,39 @@ class MedicineStockItemAdapter(private val mList: List<ItemsViewModel>) : Recycl
         // Time and Date
         holder.medicineAddedTime.text = itemsViewModel.medicine_add_time
         holder.medicineAddedDate.text = itemsViewModel.medicine_add_date
+
+        if(isItemSelection)
+        {
+            holder.selectedCheckBox.visibility = View.VISIBLE
+            holder.deleteIcon.isClickable=false
+            holder.editIcon.isClickable=false
+        }
+        else{
+            holder.selectedCheckBox.visibility = View.GONE
+            holder.deleteIcon.isClickable=true
+            holder.editIcon.isClickable=true
+        }
+        holder.selectedCheckBox.isClickable=false
+        holder.selectedCheckBox.isChecked = itemsViewModel.isSelected
+
+        // Handle item long press for selection
+        holder.itemView.setOnLongClickListener {
+            isItemSelection = true
+            toggleSelection(position)
+            notifyDataSetChanged()
+            true
+        }
+
+
+        // Handle item click for additional actions if needed
+        holder.itemView.setOnClickListener {
+            if (isItemSelection) {
+                toggleSelection(position)
+                notifyDataSetChanged()
+            } else {
+                // Handle item click as needed
+            }
+        }
 
         // Expiry
         val remaningDay = itemsViewModel.expiry_date
@@ -67,24 +106,19 @@ class MedicineStockItemAdapter(private val mList: List<ItemsViewModel>) : Recycl
             }
         }
 
-
-
     }
 
-    // return the number of the items in the list
-    override fun getItemCount(): Int {
-        return mList.size
-    }
 
     // Holds the views for adding it to image and text
     inner class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
         val medicineName: TextView = itemView.findViewById(R.id.medicine_name)
         val expiryDate: TextView = itemView.findViewById(R.id.expiry_date)
-        private val deleteIcon: ImageView = itemView.findViewById(R.id.delete_btn)
-        private val editIcon: ImageView = itemView.findViewById(R.id.edit_btn)
+        val deleteIcon: ImageView = itemView.findViewById(R.id.delete_btn)
+        val editIcon: ImageView = itemView.findViewById(R.id.edit_btn)
         val medicineAddedDate: TextView = itemView.findViewById(R.id.added_date)
         val medicineAddedTime: TextView = itemView.findViewById(R.id.added_time)
         val expiryTime: TextView = itemView.findViewById(R.id.expiry_remain_time)
+        val selectedCheckBox:CheckBox = itemView.findViewById(R.id.selectItem)
 
         init {
             deleteIcon.setOnClickListener {
@@ -104,6 +138,84 @@ class MedicineStockItemAdapter(private val mList: List<ItemsViewModel>) : Recycl
             }
 
         }
+    }
+
+    // Toggle selection for the item at the given position
+    private fun toggleSelection(position: Int) {
+        if (selectedItems.contains(position)) {
+            mList[position].isSelected=false
+            selectedItems.remove(position)
+        } else {
+            mList[position].isSelected=true
+            selectedItems.add(position)
+        }
+
+        // Check if no items are selected to end the selection mode
+        if (selectedItems.isEmpty()) {
+            isItemSelection = false
+        }
+    }
+
+    // Select all items
+    fun selectAll() {
+        isItemSelection=true
+        selectedItems.clear()
+        for (i in 0 until itemCount)
+        {
+            mList[i].isSelected=true
+            selectedItems.add(i)
+        }
+        notifyDataSetChanged()
+    }
+
+    // Unselect all items
+    fun unselectAll() {
+        isItemSelection=false
+        selectedItems.clear()
+        for (i in 0 until itemCount)
+        {
+            mList[i].isSelected=false
+        }
+        notifyDataSetChanged()
+    }
+
+    // Inverse select items
+    fun inverseSelect() {
+        if(isItemSelection)
+        {
+            val totalItems = itemCount
+            val currentSelectedItems = selectedItems.toList()
+            selectedItems.clear()
+
+            for (position in 0 until totalItems) {
+                if (!currentSelectedItems.contains(position)) {
+                    selectedItems.add(position)
+                    mList[position].isSelected=true
+                }
+                else{
+                    mList[position].isSelected=false
+                }
+            }
+            if (selectedItems.isEmpty()) {
+                isItemSelection = false
+            }
+            notifyDataSetChanged()
+        }
+    }
+
+    // Get the count of selected items
+    fun getSelectedItemCount(): Int {
+        return selectedItems.size
+    }
+
+    // Get the list of selected items
+    fun getSelectedItems(): Set<Int> {
+        return selectedItems
+    }
+
+    // return the number of the items in the list
+    override fun getItemCount(): Int {
+        return mList.size
     }
 
     // Delete Medicine
