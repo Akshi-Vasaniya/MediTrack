@@ -10,7 +10,8 @@ Say goodbye to medicine management headaches and hello to MediTrack – the app 
 
 ## :framed_picture: Screenshot
 
-![image](https://github.com/Akshi-Vasaniya/MediTrack/assets/97498600/35cf32be-f602-44b1-99df-77ecc6608bca) ![Picture1](https://github.com/Akshi-Vasaniya/MediTrack/assets/97498600/5b8efea5-d227-40d4-bab3-73d873e8567e)
+![image](https://github.com/Akshi-Vasaniya/MediTrack/assets/97498600/35cf32be-f602-44b1-99df-77ecc6608bca) ![Screenshot_2023-12-17-10-28-01-703_com example meditrack](https://github.com/Akshi-Vasaniya/MediTrack/assets/97498600/a5148e58-210a-443e-84c3-c2b4417cb355)
+
 
 
 ## :dart: Roadmap
