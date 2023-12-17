@@ -10,7 +10,8 @@ Say goodbye to medicine management headaches and hello to MediTrack – the app 
 
 ## :framed_picture: Screenshot
 
-![image](https://github.com/Akshi-Vasaniya/MediTrack/assets/97498600/35cf32be-f602-44b1-99df-77ecc6608bca) ![image](https://github.com/Akshi-Vasaniya/MediTrack/assets/97498600/9d27cb5a-96eb-4285-b27b-d6ca5ec98e93)
+![image](https://github.com/Akshi-Vasaniya/MediTrack/assets/97498600/35cf32be-f602-44b1-99df-77ecc6608bca) ![Picture1](https://github.com/Akshi-Vasaniya/MediTrack/assets/97498600/5b8efea5-d227-40d4-bab3-73d873e8567e)
+
 
 ## :dart: Roadmap
 
@@ -23,7 +24,7 @@ Say goodbye to medicine management headaches and hello to MediTrack – the app 
 * [x] NER using Spacy
 
 ## :hammer_and_wrench: Languages and Tools 
-<p align="left"> <a href="https://developer.android.com" target="_blank" rel="noreferrer"> <img src="https://cdn.freebiesupply.com/logos/large/2x/android-logo-png-transparent.png" alt="android" width="40" height="40"/> </a> <a href="https://firebase.google.com/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/firebase/firebase-icon.svg" alt="firebase" width="40" height="40"/> </a> <a href="https://kotlinlang.org" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/kotlinlang/kotlinlang-icon.svg" alt="kotlin" width="40" height="40"/> </a> <a href="[https://firebase.google.com/](https://www.python.org/)" target="_blank" rel="noreferrer"> <img src="[https://www.vectorlogo.zone/logos/firebase/firebase-icon.svg](https://s3.dualstack.us-east-2.amazonaws.com/pythondotorg-assets/media/community/logos/python-logo-only.png)" alt="python" width="40" height="40"/> </a>  <a href="[[https://firebase.google.com/](https://www.python.org/)](https://www.mysql.com/)" target="_blank" rel="noreferrer"> <img src="[[https://www.vectorlogo.zone/logos/firebase/firebase-icon.svg](https://s3.dualstack.us-east-2.amazonaws.com/pythondotorg-assets/media/community/logos/python-logo-only.png)](https://www.mysql.com/common/logos/logo-mysql-170x115.png)" alt="python" width="40" height="40"/> </a> </p>
+<p align="left"> <a href="https://developer.android.com" target="_blank" rel="noreferrer"> <img src="https://cdn.freebiesupply.com/logos/large/2x/android-logo-png-transparent.png" alt="android" width="40" height="40"/> </a> <a href="https://firebase.google.com/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/firebase/firebase-icon.svg" alt="firebase" width="40" height="40"/> </a> <a href="https://kotlinlang.org" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/kotlinlang/kotlinlang-icon.svg" alt="kotlin" width="40" height="40"/> </a> <a href="https://www.python.org/" target="_blank" rel="noreferrer"> <img src="https://s3.dualstack.us-east-2.amazonaws.com/pythondotorg-assets/media/community/logos/python-logo-only.png" alt="python" width="40" height="40"/> </a>  <a href="https://www.mysql.com/" target="_blank" rel="noreferrer"> <img src="https://www.mysql.com/common/logos/logo-mysql-170x115.png" alt="MySQL" width="40" height="40"/> </a> </p>
 
 ## :computer: Libraries
 
